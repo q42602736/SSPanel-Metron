@@ -71,7 +71,7 @@ abstract class AbstractPayment
         $codeq->usedatetime = date('Y-m-d H:i:s');
         $codeq->userid = $user->id;
         $codeq->save();
-        
+
         if ($p->shop != null) {
             $p_buy = Metron::metronpay_buyshop($pid);
         }
@@ -81,7 +81,8 @@ abstract class AbstractPayment
         }
 
         if ($p->shop != null && MetronSetting::get('recharge_enable')){
-            Metron::recharge($p, $user);
+            $shop = json_decode($p->shop, true);
+            Metron::recharge($shop['id'], $user);
         }
 
         if ($_ENV['enable_donate'] == true) {

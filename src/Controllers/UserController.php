@@ -9,11 +9,11 @@ use App\Services\{
     Payment,
     MetronSetting
 };
-use App\Models\{
-    Ip,
+use App\Models\{Ip,
     Ann,
     Code,
     Node,
+    Paylist,
     Shop,
     User,
     Token,
@@ -30,8 +30,7 @@ use App\Models\{
     DetectRule,
     TrafficLog,
     InviteCode,
-    UserSubscribeLog
-};
+    UserSubscribeLog};
 use App\Utils\{
     GA,
     Pay,
@@ -918,6 +917,10 @@ class UserController extends BaseController
         $bought->save();
 
         $shop->buy($user);
+
+        if (MetronSetting::get('recharge_enable')){
+            Metron::recharge($shop->id, $user);
+        }
 
         $res['ret'] = 1;
         $res['msg'] = '购买成功';
