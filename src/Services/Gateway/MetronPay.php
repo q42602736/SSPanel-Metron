@@ -60,62 +60,6 @@ class MetronPay extends AbstractPayment
                 $payment_system = MetronSetting::get('max_alipay_pay');
             }
             switch ($payment_system) {
-                case ('wolfpay_qr'):
-                    $isqr = 'qr';
-                    $wolfpay = new wolfpay();
-                    $result = $wolfpay->MetronPay($type, $price, $shopinfo, $paylist_id, $isqr);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'img',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
-                case ('wolfpay_ur'):
-                    if ($paylist_id == 0 && $price < 3) {
-                        return json_encode(['ret' => 0, 'msg' => '支付系统限制金额需大于3元']);
-                    }
-                    $isqr = 'url';
-                    $wolfpay = new wolfpay();
-                    $result = $wolfpay->MetronPay($type, $price, $shopinfo, $paylist_id, $isqr);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
-                case ('paytaro'):
-                    $paytaro = new PayTaro(Config::get('paytaro_app_secret'));
-                    $result = $paytaro->MetronPay($type, $price, $shopinfo, $paylist_id);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
                 case ('epay'):
                     $epay = new Epay();
                     $result = $epay->MetronPay($type, $price, $shopinfo, $paylist_id);
@@ -158,40 +102,6 @@ class MetronPay extends AbstractPayment
                     $pcexPay = new PcexPay();
                     $result = $pcexPay->MetronPay($type, $price, $shopinfo, $paylist_id);
                     break;
-                case ('mgate'):
-                    $mgate = new MGate();
-                    $result = $mgate->MetronPay($type, $price, $shopinfo, $paylist_id);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
-                case ('theadpay'):
-                    $theadpay = new THeadPay();
-                    $result = $theadpay->MetronPay($type, $price, $shopinfo, $paylist_id);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => $result['type'],
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
                 case ('vmq'):
                     $vmq = new BobVmqPay();
                     $result = $vmq->MetronPay($type, $price, $shopinfo, $paylist_id);
@@ -256,62 +166,6 @@ class MetronPay extends AbstractPayment
                 $payment_system = MetronSetting::get('max_wxpay_pay');
             }
             switch ($payment_system) {
-                case ('wolfpay_qr'):
-                    $isqr = 'qr';
-                    $wolfpay = new wolfpay();
-                    $result = $wolfpay->MetronPay($type, $price, $shopinfo, $paylist_id, $isqr);
-                    if ($result['errcode'] == 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'img',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
-                case ('wolfpay_ur'):
-                    if ($paylist_id == 0 && $price < 3) {
-                        return json_encode(['ret' => 0, 'msg' => '支付系统限制金额需大于3元']);
-                    }
-                    $isqr = 'url';
-                    $wolfpay = new wolfpay();
-                    $result = $wolfpay->MetronPay($type, $price, $shopinfo, $paylist_id, $isqr);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
-                case ('paytaro'):
-                    $paytaro = new PayTaro(Config::get('paytaro_app_secret'));
-                    $result = $paytaro->MetronPay($type, $price, $shopinfo, $paylist_id);
-                    if ($result['errcode'] == 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
                 case ('payjs'):
                     $payjs = new PAYJS($_ENV['payjs_key']);
                     $result = $payjs->MetronPay($type, $price, $shopinfo, $paylist_id);
@@ -347,23 +201,6 @@ class MetronPay extends AbstractPayment
                             'ret' => 0,
                             'msg' => $result['msg']
                         ];
-                    }
-                    return json_encode($return);
-                case ('mgate'):
-                    $mgate = new MGate();
-                    $result = $mgate->MetronPay($type, $price, $shopinfo, $paylist_id);
-                    if ($result['errcode'] == 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
                     }
                     return json_encode($return);
                 case ('vmq'):
@@ -432,45 +269,6 @@ class MetronPay extends AbstractPayment
                 $payment_system = MetronSetting::get('max_qqpay_pay');
             }
             switch ($payment_system) {
-                case ('wolfpay_qr'):
-                    $isqr = 'qr';
-                    $wolfpay = new wolfpay();
-                    $result = $wolfpay->MetronPay($type, $price, $shopinfo, $paylist_id, $isqr);
-                    if ($result['errcode'] == 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'img',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
-                case ('wolfpay_ur'):
-                    if ($paylist_id == 0 && $price < 3) {
-                        return json_encode(['ret' => 0, 'msg' => '支付系统限制金额需大于3元']);
-                    }
-                    $isqr = 'url';
-                    $wolfpay = new wolfpay();
-                    $result = $wolfpay->MetronPay($type, $price, $shopinfo, $paylist_id, $isqr);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
                 case ('alpha'):
                     $alpha = new AlphaPay();
                     $result = $alpha->MetronPay($type, $price, $shopinfo, $paylist_id);
@@ -566,18 +364,6 @@ class MetronPay extends AbstractPayment
                 $vmq = new BobVmqPay();
                 $vmq->notify($request, $response, $args);
                 return;
-            case ('wolfpay'):
-                $wolfpay_notify = new wolfpay();
-                $wolfpay_notify->notify($request, $response, $args);
-                return;
-            case ('paytaro'):
-                $paytaro = new PayTaro(Config::get('paytaro_app_secret'));
-                if (!$paytaro->verify($request->getParams(), $request->getParam('sign'))) {
-                    die('FAIL');
-                }
-                $done = $this->postPayment($request->getParam('out_trade_no'), 'PayTaro');
-                die('SUCCESS');
-                return;
             case ('epay'):
                 $epay = new Epay();
                 $epay->notify($request, $response, $args);
@@ -661,14 +447,6 @@ class MetronPay extends AbstractPayment
             case ('pcexpay'):
                 $pcexpay = new PcexPay();
                 $pcexpay->notify($request, $response, $args);
-                return;
-            case ('mgate'):
-                $mgate = new MGate();
-                $mgate->notify($request, $response, $args);
-                return;
-            case ('theadpay'):
-                $notify = new THeadPay();
-                $notify->notify($request, $response, $args);
                 return;
             case ('bobpay'):
                 $tron = new BobTronPay();
