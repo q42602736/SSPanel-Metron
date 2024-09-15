@@ -121,9 +121,9 @@ class Job extends Command
         $bought_users = array();
         foreach ($boughts as $bought) {
             $user = User::where('id', $bought->userid)->first();
-            if ($user == null) {
+            if ($user == null || $user->class_expire < date('Y-m-d H:i:s', time())) {
+                echo "用户 [{$user->email}]已过期，删除Bought" . PHP_EOL;
                 $bought->delete();
-                continue;
             }
             $shop = Shop::where('id', $bought->shopid)->first();
             if ($shop == null) {
@@ -198,7 +198,7 @@ class Job extends Command
             }
         }
         echo '重置用户流量成功;' . PHP_EOL;
-        
+
         $stream_opts = [
             "ssl" => [
                 "verify_peer"=>false,
