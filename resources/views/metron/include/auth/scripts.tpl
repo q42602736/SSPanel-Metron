@@ -8,7 +8,8 @@
                 'base_url': "{$base_url}",
                 'switch': {
                     'geetest': {if $geetest_html != null}true{else}false{/if},
-                    'recaptcha': {if $recaptcha_sitekey != null}true{else}false{/if}
+                    'recaptcha': {if $recaptcha_sitekey != null}true{else}false{/if},
+                    'turnstile': {if $turnstile_site_key != null}true{else}false{/if}
                 },
                 'telegram': {
                     bot: "{$telegram_bot}",
@@ -47,10 +48,14 @@
             <script src="https://recaptcha.net/recaptcha/api.js" async defer></script>
         {/if}
 
+        {if $turnstile_site_key != null}
+            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+        {/if}
+
         <script src="{$metron['assets_url']}/plugins/global/plugins.bundle.js"></script>
         <script src="{$metron['assets_url']}/js/metron-plugin.js"></script>
         <script src="{$metron['assets_url']}/js/scripts.js"></script>
-        <script src="{$metron['assets_url']}/js/auth.js"></script>
+        <script src="/theme/metron/js/auth.js?v=1.1.2"></script>
 
         {if $metron['enable_cust_auth'] === true}
         {if $metron['enable_cust'] === 'crisp' && $metron['crisp_id'] != ''}

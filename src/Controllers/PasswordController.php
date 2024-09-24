@@ -22,10 +22,14 @@ class PasswordController extends BaseController
     {
         $GtSdk = null;
         $recaptcha_sitekey = null;
+        $turnstile_site_key = null;
         if ($_ENV['enable_login_captcha'] === true) {
             switch ($_ENV['captcha_provider']) {
                 case 'recaptcha':
                     $recaptcha_sitekey = $_ENV['recaptcha_sitekey'];
+                    break;
+                case 'turnstile':
+                    $turnstile_site_key = $_ENV['turnstile_site_key'];
                     break;
                 case 'geetest':
                     $uid = time() . random_int(1, 10000);
@@ -48,6 +52,7 @@ class PasswordController extends BaseController
             ->assign('base_url', $_ENV['baseUrl'])
             ->assign('telegram_bot', $_ENV['telegram_bot'])
             ->assign('recaptcha_sitekey', $recaptcha_sitekey)
+            ->assign('turnstile_site_key', $turnstile_site_key)
             ->assign('login_token', $login_token)
             ->assign('login_number', $login_number)
             ->display('password/reset.tpl');

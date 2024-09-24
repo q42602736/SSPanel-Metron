@@ -88,6 +88,13 @@
                                     <div class="g-recaptcha" data-sitekey="{$recaptcha_sitekey}"></div>
                                     </div>
                                 {/if}
+
+                                {if $turnstile_site_key != null}
+                                    <div class="form-group">
+                                        <div class="cf-turnstile" data-size="flexible" data-sitekey="{$turnstile_site_key}"></div>
+                                    </div>
+                                {/if}
+
                                 <div class="form-group d-flex flex-wrap justify-content-between align-items-center px-5">
                                     <label class="checkbox checkbox-outline checkbox-white text-white m-0">
                                         <input type="checkbox" id="agree" name="agree"/>注册即代表同意 <a class="text-white font-weight-bold" data-toggle="modal" data-target="#tos-modal"><strong>服务条款</strong></a>

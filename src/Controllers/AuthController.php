@@ -39,10 +39,14 @@ class AuthController extends BaseController
         }
         $GtSdk = null;
         $recaptcha_sitekey = null;
+        $turnstile_site_key = null;
         if ($_ENV['enable_login_captcha'] === true) {
             switch ($_ENV['captcha_provider']) {
                 case 'recaptcha':
                     $recaptcha_sitekey = $_ENV['recaptcha_sitekey'];
+                    break;
+                case 'turnstile':
+                    $turnstile_site_key = $_ENV['turnstile_site_key'];
                     break;
                 case 'geetest':
                     $uid = time() . random_int(1, 10000);
@@ -68,6 +72,7 @@ class AuthController extends BaseController
             ->assign('telegram_bot', $_ENV['telegram_bot'])
             ->assign('base_url', $_ENV['baseUrl'])
             ->assign('recaptcha_sitekey', $recaptcha_sitekey)
+            ->assign('turnstile_site_key', $turnstile_site_key)
             ->display('auth/login.tpl');
     }
 
@@ -112,6 +117,16 @@ class AuthController extends BaseController
                     } else {
                         $json = file_get_contents('https://recaptcha.net/recaptcha/api/siteverify?secret=' . $_ENV['recaptcha_secret'] . '&response=' . $recaptcha);
                         $ret = json_decode($json)->success;
+                    }
+                    break;
+                case 'turnstile':
+                    $turnstileResponse = $request->getParam('cf_turnstile_response');
+                    if ($turnstileResponse == '') {
+                        $ret = false;
+                    } else {
+                        $secretKey = $_ENV['turnstile_secret_key'];
+                        $result = Tools::requestTurnstile($secretKey, $turnstileResponse, $_SERVER['REMOTE_ADDR']);
+                        $ret = isset($result['success']) && $result['success'];
                     }
                     break;
                 case 'geetest':
@@ -232,10 +247,14 @@ class AuthController extends BaseController
 
         $GtSdk = null;
         $recaptcha_sitekey = null;
+        $turnstile_site_key = null;
         if ($_ENV['enable_reg_captcha'] === true) {
             switch ($_ENV['captcha_provider']) {
                 case 'recaptcha':
                     $recaptcha_sitekey = $_ENV['recaptcha_sitekey'];
+                    break;
+                case 'turnstile':
+                    $turnstile_site_key = $_ENV['turnstile_site_key'];
                     break;
                 case 'geetest':
                     $uid = time() . random_int(1, 10000);
@@ -259,6 +278,7 @@ class AuthController extends BaseController
             ->assign('enable_email_verify', Config::getconfig('Register.bool.Enable_email_verify'))
             ->assign('code', $code)
             ->assign('recaptcha_sitekey', $recaptcha_sitekey)
+            ->assign('turnstile_site_key', $turnstile_site_key)
             ->assign('telegram_bot', $_ENV['telegram_bot'])
             ->assign('base_url', $_ENV['baseUrl'])
             ->assign('login_token', $login_token)
@@ -539,6 +559,16 @@ class AuthController extends BaseController
                     } else {
                         $json = file_get_contents('https://recaptcha.net/recaptcha/api/siteverify?secret=' . $_ENV['recaptcha_secret'] . '&response=' . $recaptcha);
                         $ret = json_decode($json)->success;
+                    }
+                    break;
+                case 'turnstile':
+                    $turnstileResponse = $request->getParam('cf_turnstile_response');
+                    if ($turnstileResponse == '') {
+                        $ret = false;
+                    } else {
+                        $secretKey = $_ENV['turnstile_secret_key'];
+                        $result = Tools::requestTurnstile($secretKey, $turnstileResponse, $_SERVER['REMOTE_ADDR']);
+                        $ret = isset($result['success']) && $result['success'];
                     }
                     break;
                 case 'geetest':

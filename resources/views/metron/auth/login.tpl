@@ -33,6 +33,11 @@
                                     <div class="g-recaptcha" data-sitekey="{$recaptcha_sitekey}"></div>
                                     </div>
                                 {/if}
+                                {if $turnstile_site_key != null}
+                                    <div class="form-group">
+                                        <div class="cf-turnstile" data-size="flexible" data-sitekey="{$turnstile_site_key}"></div>
+                                    </div>
+                                {/if}
                                 <div class="form-group d-flex flex-wrap justify-content-between align-items-center px-8">
                                     <label class="checkbox checkbox-outline checkbox-white text-white m-0">
                                         <input type="checkbox" name="remember" id="remember-me" checked="checked"/>记住我

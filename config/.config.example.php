@@ -286,13 +286,16 @@ $_ENV['admin_contact3'] = '微信～123456';         //没有格式要求，想�
 
 
 //验证码设置------------------------------------------------------------------------------------------
-$_ENV['captcha_provider'] = 'recaptcha';        //取值 recaptcha | geetest(极验)
+$_ENV['captcha_provider'] = 'recaptcha';        //取值 recaptcha | geetest(极验) | turnstile
 
 $_ENV['recaptcha_sitekey'] = '';
 $_ENV['recaptcha_secret'] = '';
 
 $_ENV['geetest_id'] = '';
 $_ENV['geetest_key'] = '';
+
+$_ENV['turnstile_site_key'] = '';   // 站点密钥
+$_ENV['turnstile_secret_key'] = ''; // API 密钥
 
 $_ENV['enable_reg_captcha'] = false;        //启用注册验证码
 $_ENV['enable_login_captcha'] = false;        //启用登录验证码

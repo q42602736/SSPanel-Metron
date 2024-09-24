@@ -958,4 +958,21 @@ class Tools
 
         return (json_last_error() == JSON_ERROR_NONE);
     }
+
+    public static function requestTurnstile($secretKey, $turnstileResponse, $ip)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://challenges.cloudflare.com/turnstile/v0/siteverify');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, [
+            'secret' => $secretKey,
+            'response' => $turnstileResponse,
+            'remoteip' => $ip,
+        ]);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return json_decode($response, true);
+    }
 }
