@@ -76,6 +76,9 @@
                                             <p class="form-control-guide">
                                                 <i class="material-icons">info</i>落地IP或域名;落地端口;订阅下发地址;订阅下发端口
                                             </p>
+                                            <p class="form-control-guide">
+                                                <i class="material-icons">info</i>Reality 格式：example.com;443;0;tcp;;security=reality|publicKey=公钥|shortId=短ID|serverName=伪装域名|fp=chrome|flow=xtls-rprx-vision
+                                            </p>
                                         </div>
                                         <div class="form-group form-group-label">
                                             <label class="floating-label" for="server">节点IP</label>

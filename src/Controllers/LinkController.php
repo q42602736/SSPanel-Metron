@@ -506,6 +506,9 @@ class LinkController extends BaseController
             case 'vmess':
                 $return = AppURI::getV2RayNURI($item);
                 break;
+            case 'vless':
+                $return = AppURI::getV2RayNURI($item);
+                break;
             case 'trojan':
                 $return = AppURI::getTrojanURI($item);
                 break;
@@ -975,6 +978,8 @@ class LinkController extends BaseController
                 break;
             case 3: // V2
                 $Rule['type'] = 'vmess';
+                $return_url .= URL::get_NewAllUrl($user, $Rule);
+                $Rule['type'] = 'vless';
                 $return_url .= URL::get_NewAllUrl($user, $Rule);
                 $Rule['type'] = 'ss';
                 $return_url .= URL::get_NewAllUrl($user, $Rule);

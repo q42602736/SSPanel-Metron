@@ -525,7 +525,7 @@ class URL
      */
     public static function getAllVMessUrl(User $user, $arrout = false, $emoji = false)
     {
-        $nodes = self::getNodes($user, [11, 12]);
+        $nodes = self::getNodes($user, [11, 12, 15]);
         # 增加中转配置，后台目前配置user=0的话是自由门直接中转
         $tmp_nodes = array();
         foreach ($nodes as $node) {

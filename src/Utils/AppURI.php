@@ -77,13 +77,45 @@ class AppURI
                 } else {
                     $return = 'vless://' . $item['id'] . "@" . (string)$item['add'] . ":" . $item['port'] . "?encryption=none";
                     $return .= "&type=" . $item['net'];
-                    $return .= "&security=" . $item['tls'];
-                    if ($item['tls'] == "xtls") {
-                        $return .= "&flow=" . $item['flow'];
+                    
+                    // Reality 协议支持
+                    if (isset($item['security']) && $item['security'] == 'reality') {
+                        $return .= "&security=reality";
+                        // 支持 pbk/publicKey 两种参数名
+                        $publicKey = isset($item['publicKey']) ? $item['publicKey'] : (isset($item['pbk']) ? $item['pbk'] : '');
+                        if ($publicKey) {
+                            $return .= "&pbk=" . $publicKey;
+                        }
+                        // 支持 sid/shortId 两种参数名
+                        $shortId = isset($item['shortId']) ? $item['shortId'] : (isset($item['sid']) ? $item['sid'] : '');
+                        if ($shortId) {
+                            $return .= "&sid=" . $shortId;
+                        }
+                        // 支持 sni/serverName 两种参数名
+                        $serverName = isset($item['serverName']) ? $item['serverName'] : (isset($item['sni']) ? $item['sni'] : '');
+                        if ($serverName) {
+                            $return .= "&sni=" . $serverName;
+                        }
+                        if (isset($item['fp']) && $item['fp']) {
+                            $return .= "&fp=" . $item['fp'];
+                        }
+                        if (isset($item['spx']) && $item['spx']) {
+                            $return .= "&spx=" . rawurlencode($item['spx']);
+                        }
+                        if (isset($item['flow']) && $item['flow']) {
+                            $return .= "&flow=" . $item['flow'];
+                        }
+                    } else {
+                        // 原有的 TLS/XTLS 逻辑
+                        $return .= "&security=" . $item['tls'];
+                        if ($item['tls'] == "xtls") {
+                            $return .= "&flow=" . $item['flow'];
+                        }
+                        if ($item['host'] != "") $return = $return . "&host=" . rawurlencode($item['host']);
+                        if ($item['host'] != "") $return = $return . "&sni=" . $item['host'];
+                        if ($item['path'] != "") $return = $return . "&path=" . rawurlencode($item['path']);
                     }
-                    if ($item['host'] != "") $return = $return . "&host=" . rawurlencode($item['host']);
-                    if ($item['host'] != "") $return = $return . "&sni=" . $item['host'];
-                    if ($item['path'] != "") $return = $return . "&path=" . rawurlencode($item['path']);
+                    
                     if ($item['net'] == "grpc") {
                         if ($item['net'] == "grpc") $return = $return . "&mode=multi&serviceName=" . $item['servicename'];
                     } else {
@@ -95,18 +127,53 @@ class AppURI
             case 'vless':
                 $node = 'vless://' . $item['id'] . '@' . $item['add'] . ':' . $item['port']
                     . '?encryption=none&type=' . $item['net'] . '&headerType=none';
-                if (isset($item['host']) && $item['host']) {
-                    $node .= '&host=' . $item['host'];
+                
+                // Reality 协议支持
+                if (isset($item['security']) && $item['security'] == 'reality') {
+                    $node .= '&security=reality';
+                    // 支持 pbk/publicKey 两种参数名
+                    $publicKey = isset($item['publicKey']) ? $item['publicKey'] : (isset($item['pbk']) ? $item['pbk'] : '');
+                    if ($publicKey) {
+                        $node .= '&pbk=' . $publicKey;
+                    }
+                    // 支持 sid/shortId 两种参数名
+                    $shortId = isset($item['shortId']) ? $item['shortId'] : (isset($item['sid']) ? $item['sid'] : '');
+                    if ($shortId) {
+                        $node .= '&sid=' . $shortId;
+                    }
+                    // 支持 sni/serverName 两种参数名
+                    $serverName = isset($item['serverName']) ? $item['serverName'] : (isset($item['sni']) ? $item['sni'] : '');
+                    if ($serverName) {
+                        $node .= '&sni=' . $serverName;
+                    }
+                    // 浏览器指纹
+                    if (isset($item['fp']) && $item['fp']) {
+                        $node .= '&fp=' . $item['fp'];
+                    }
+                    // SpiderX 路径
+                    if (isset($item['spx']) && $item['spx']) {
+                        $node .= '&spx=' . rawurlencode($item['spx']);
+                    }
+                    // 流控
+                    if (isset($item['flow']) && $item['flow']) {
+                        $node .= '&flow=' . $item['flow'];
+                    }
+                } else {
+                    // 原有的 TLS/XTLS 逻辑
+                    if (isset($item['host']) && $item['host']) {
+                        $node .= '&host=' . $item['host'];
+                    }
+                    if (isset($item['path']) && $item['path']) {
+                        $node .= '&path=' . $item['path'];
+                    }
+                    if (isset($item['security']) && $item['security']) {
+                        $node .= '&security=' . $item['security'];
+                    }
+                    if (isset($item['flow']) && $item['flow']) {
+                        $node .= '&flow=' . $item['flow'];
+                    }
                 }
-                if (isset($item['path']) && $item['path']) {
-                    $node .= '&path=' . $item['path'];
-                }
-                if (isset($item['security']) && $item['security']) {
-                    $node .= '&security=' . $item['security'];
-                }
-                if (isset($item['flow']) && $item['flow']) {
-                    $node .= '&flow=' . $item['flow'];
-                }
+                
                 if ($item['net'] == "grpc") {
                     $node .= "&mode=multi&serviceName=" . $item['servicename'];
                 } else {
@@ -454,6 +521,68 @@ class AppURI
                 if ($item['net'] == 'grpc') {
                     $return['network'] = 'grpc';
                     $return['grpc-opts']['grpc-service-name'] = ($item['servicename'] != '' ? $item['servicename'] : "");
+                }
+                break;
+            case 'vless':
+                $return = [
+                    'name' => $item['remark'],
+                    'type' => 'vless',
+                    'server' => $item['add'],
+                    'port' => $item['port'],
+                    'uuid' => $item['id'],
+                    'udp' => true
+                ];
+                
+                // Reality 协议支持
+                if (isset($item['security']) && $item['security'] == 'reality') {
+                    $return['tls'] = true;
+                    $return['network'] = $item['net'];
+                    $return['reality-opts'] = [];
+                    
+                    // 支持 publicKey/pbk 两种参数名
+                    $publicKey = isset($item['publicKey']) ? $item['publicKey'] : (isset($item['pbk']) ? $item['pbk'] : '');
+                    if ($publicKey) {
+                        $return['reality-opts']['public-key'] = $publicKey;
+                    }
+                    
+                    // 支持 shortId/sid 两种参数名
+                    $shortId = isset($item['shortId']) ? $item['shortId'] : (isset($item['sid']) ? $item['sid'] : '');
+                    if ($shortId) {
+                        $return['reality-opts']['short-id'] = $shortId;
+                    }
+                    
+                    // 支持 serverName/sni 两种参数名
+                    $serverName = isset($item['serverName']) ? $item['serverName'] : (isset($item['sni']) ? $item['sni'] : '');
+                    if ($serverName) {
+                        $return['servername'] = $serverName;
+                    }
+                    
+                    // 客户端指纹
+                    if (isset($item['fp']) && $item['fp']) {
+                        $return['client-fingerprint'] = $item['fp'];
+                    }
+                } else {
+                    // 普通 VLESS（非 Reality）
+                    if ($item['net'] == 'ws') {
+                        $return['network'] = 'ws';
+                        $return['ws-opts']['path'] = $item['path'];
+                        $return['ws-opts']['headers']['Host'] = ($item['host'] != '' ? $item['host'] : $item['add']);
+                    }
+                    if ($item['net'] == 'grpc') {
+                        $return['network'] = 'grpc';
+                        $return['grpc-opts']['grpc-service-name'] = ($item['servicename'] != '' ? $item['servicename'] : "");
+                    }
+                    if (isset($item['tls']) && $item['tls'] == 'tls') {
+                        $return['tls'] = true;
+                        if (isset($item['sni']) && $item['sni']) {
+                            $return['servername'] = $item['sni'];
+                        }
+                    }
+                }
+                
+                // Flow 控制
+                if (isset($item['flow']) && $item['flow']) {
+                    $return['flow'] = $item['flow'];
                 }
                 break;
         }
