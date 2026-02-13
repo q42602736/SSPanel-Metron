@@ -409,6 +409,9 @@ class NodeController extends AdminController
                 case 17:
                     $sort = 'Hysteria2 节点';
                     break;
+                case 18:
+                    $sort = 'AnyTLS 节点';
+                    break;
                 default:
                     $sort = '系统保留';
             }
