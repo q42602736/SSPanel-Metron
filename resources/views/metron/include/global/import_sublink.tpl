@@ -18,6 +18,15 @@
             if (client == 'quantumult_v2') {
                 index.oneclickImport('quantumult_v2','{$subInfo["quantumult_v2"]}')
             };
+            if (client == 'quantumultx') {
+                var qxUrl = '{$subInfo["quantumultx"]|escape:"javascript"}';
+                var qxTag = '{$config["appName"]|escape:"javascript"}';
+                var qxResource = qxUrl + ', tag=' + qxTag + ', update-interval=172800, opt-parser=false, enabled=true';
+                var qxJson = JSON.stringify({
+                    "server_remote": [qxResource]
+                });
+                window.location.href = 'quantumult-x:///add-resource?remote-resource=' + encodeURIComponent(qxJson);
+            };
             if (client == 'stash') {
                 location.href = "stash://install-config?url=" + encodeURIComponent('{$subInfo["stash"]}') + "&name=" + '{$config["appName"]}'
             };

@@ -87,7 +87,12 @@
                                                         {if in_array('quantumultx',$metron['index_sub'])}
                                                         <!-- QuantumultX订阅 -->
                                                         <div class="btn-group mb-3 mr-3">
-                                                            <button type="button" class="btn btn-pill btn-quantumultx copy-text" data-clipboard-text="{$subInfo["quantumultx"]}"><i class="metron-quantumultx text-white"></i>&nbsp;&nbsp;复制 Quantumult X 订阅&nbsp;&nbsp;</button>
+                                                            <button type="button" class="btn btn-pill btn-quantumultx dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="metron-quantumultx text-white"></i>&nbsp;&nbsp;Quantumult X 订阅&nbsp;&nbsp;</button>
+                                                            <div class="dropdown-menu">
+                                                                <button type="button" class="dropdown-item copy-text" data-clipboard-text="{$subInfo["quantumultx"]}">复制 Quantumult X 订阅</button>
+                                                                <div class="dropdown-divider"></div>
+                                                                <button type="button" class="dropdown-item" href="##" onclick="importSublink('quantumultx')">一键导入 Quantumult X</button>
+                                                            </div>
                                                         </div>
                                                         {/if}
                                                         {if in_array('v2ray',$metron['index_sub'])}

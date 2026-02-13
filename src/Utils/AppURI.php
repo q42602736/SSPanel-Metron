@@ -370,6 +370,35 @@ class AppURI
                 $return .= ', over-tls=true, tls-verification=true';
                 $return .= (', tag=' . $item['remark']);
                 break;
+            case 'vless':
+                // ;vless=example.com:443, method=none, password=UUID, obfs=over-tls, obfs-host=example.com, tls-verification=true, fast-open=false, udp-relay=false, tag=vless-01
+                // VLESS 在 Quantumult X 1.5.5+ 中支持
+                $return = ('vless=' . $item['add'] . ':' . $item['port'] . ', method=none, password=' . $item['id']);
+                
+                // 传输协议
+                if ($item['net'] == 'ws') {
+                    $return .= ($item['tls'] == 'tls' ? ', obfs=wss' : ', obfs=ws');
+                    $return .= ', obfs-uri=' . $item['path'] . ', obfs-host=' . $item['host'];
+                } elseif ($item['net'] == 'tcp' && $item['tls'] == 'tls') {
+                    $return .= ', obfs=over-tls';
+                    if (isset($item['host']) && $item['host'] != '') {
+                        $return .= ', obfs-host=' . $item['host'];
+                    }
+                }
+                
+                // TLS 验证
+                if ($item['tls'] == 'tls') {
+                    $return .= ', tls-verification=' . ($item['verify_cert'] ? 'true' : 'false');
+                }
+                
+                $return .= (', tag=' . $item['remark']);
+                break;
+            case 'hysteria2':
+            case 'anytls':
+                // Quantumult X 不支持 Hysteria2、AnyTLS
+                // 返回 null，这些节点不会出现在订阅中
+                $return = null;
+                break;
         }
         return $return;
     }
