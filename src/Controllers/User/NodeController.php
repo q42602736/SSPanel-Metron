@@ -131,7 +131,7 @@ class NodeController extends UserController
                 if ($log['node_id'] != $node->id) {
                     continue;
                 }
-                if (in_array($node->sort, array(0, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17))) {
+                if (in_array($node->sort, array(0, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18))) {
                     $array_node['online_user'] = $log['online_user'];
                 } else {
                     $array_node['online_user'] = -1;
@@ -143,7 +143,7 @@ class NodeController extends UserController
             // 0: new node; -1: offline; 1: online
             $node_heartbeat = $node->node_heartbeat + 300;
             $array_node['online'] = -1;
-            if (!in_array($node->sort, array(0, 1, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17)) || $node_heartbeat == 300) {
+            if (!in_array($node->sort, array(0, 1, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18)) || $node_heartbeat == 300) {
                 $array_node['online'] = 0;
             } elseif ($node_heartbeat > time()) {
                 $array_node['online'] = 1;

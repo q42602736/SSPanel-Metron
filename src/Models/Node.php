@@ -141,7 +141,7 @@ class Node extends Model
         }
 
         // 支持在线状态检测的节点类型
-        $supportedSorts = [0, 10, 11, 12, 13, 14, 15, 16, 17];
+        $supportedSorts = [0, 10, 11, 12, 13, 14, 15, 16, 17, 18];
         if (!in_array($this->sort, $supportedSorts)) {
             return null;
         }
