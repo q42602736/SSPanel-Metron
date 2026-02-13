@@ -708,13 +708,22 @@
                     $('#nodeinfo-hy2-modal').modal('show');
                 } else if (data.sort == 18) {
                     // AnyTLS 节点
-                    $("#nodeinfo-anytls-modal-remark").text(data.info.remark)
-                    $("#nodeinfo-anytls-modal-address").text(data.info.address)
-                    $("#nodeinfo-anytls-modal-port").text(data.info.port)
-                    $("#nodeinfo-anytls-modal-password").text(data.info.password)
-                    $("#nodeinfo-anytls-modal-sni").text(data.info.server_name || data.info.address)
-                    $("#nodeinfo-anytls-modal-padding").text(data.info.padding_scheme ? JSON.stringify(data.info.padding_scheme) : '默认')
-                    $("#nodeinfo-anytls-modal-url").attr('data-clipboard-text', data.url)
+                    $("#nodeinfo-anytls-modal-remark").text(data.info.remark || '未知')
+                    $("#nodeinfo-anytls-modal-address").text(data.info.address || '未知')
+                    $("#nodeinfo-anytls-modal-port").text(data.info.port || '443')
+                    $("#nodeinfo-anytls-modal-password").text(data.info.password || '未知')
+                    $("#nodeinfo-anytls-modal-sni").text(data.info.server_name || data.info.address || '未知')
+                    
+                    // 处理 padding_scheme 显示
+                    let paddingText = '默认';
+                    if (data.info.padding_scheme && Array.isArray(data.info.padding_scheme)) {
+                        paddingText = data.info.padding_scheme.join(', ');
+                    } else if (data.info.padding_scheme) {
+                        paddingText = String(data.info.padding_scheme);
+                    }
+                    $("#nodeinfo-anytls-modal-padding").text(paddingText)
+                    
+                    $("#nodeinfo-anytls-modal-url").attr('data-clipboard-text', data.url || '')
                     $('#nodeinfo-anytls-modal').modal('show');
                 } else if (data.sort == 16) {
                     // Reality 节点
