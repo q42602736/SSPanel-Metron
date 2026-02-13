@@ -202,6 +202,22 @@ class AppURI
                 $return .= '?' . implode('&', $params);
                 $return .= '#' . rawurlencode($item['remark']);
                 break;
+            case 'anytls':
+                // AnyTLS 协议 URI 格式
+                // anytls://password@host:port?sni=xxx&insecure=0#remark
+                $return = 'anytls://' . $item['password'] . '@' . $item['address'] . ':' . $item['port'];
+                $params = [];
+                if (isset($item['server_name']) && $item['server_name'] != '') {
+                    $params[] = 'sni=' . $item['server_name'];
+                }
+                if (isset($item['insecure']) && $item['insecure']) {
+                    $params[] = 'insecure=1';
+                }
+                if (!empty($params)) {
+                    $return .= '?' . implode('&', $params);
+                }
+                $return .= '#' . rawurlencode($item['remark']);
+                break;
             case 'ss':
                 $return = self::getItemUrl($item, 2);
                 break;
@@ -622,6 +638,33 @@ class AppURI
                     }
                 }
                 break;
+            case 'anytls':
+                $return = [
+                    'name'     => $item['remark'],
+                    'type'     => 'anytls',
+                    'server'   => $item['address'],
+                    'port'     => $item['port'],
+                    'password' => $item['password'],
+                    'client-fingerprint' => 'chrome',
+                    'udp'      => true,
+                    'alpn'     => ['h2', 'http/1.1']
+                ];
+                
+                // SNI 配置
+                if (isset($item['server_name']) && $item['server_name'] != '') {
+                    $return['sni'] = $item['server_name'];
+                }
+                
+                // 跳过证书验证
+                if (isset($item['insecure']) && $item['insecure']) {
+                    $return['skip-cert-verify'] = true;
+                }
+                
+                // 填充方案（如果存在）
+                if (isset($item['padding_scheme']) && !empty($item['padding_scheme'])) {
+                    $return['padding-scheme'] = $item['padding_scheme'];
+                }
+                break;
         }
         return $return;
     }
@@ -979,6 +1022,35 @@ class AppURI
                         $return['transport']['headers'] = ['Host' => [($item['host'] != '' ? $item['host'] : $item['add'])]];
                         $return['transport']['early_data_header_name'] = 'Sec-WebSocket-Protocol';
                     }
+                }
+                break;
+            case 'anytls':
+                $return = [
+                    'tag' => $item['remark'],
+                    'type' => 'anytls',
+                    'server' => $item['address'],
+                    'server_port' => $item['port'],
+                    'password' => $item['password'],
+                    'domain_resolver' => 'local'
+                ];
+                
+                // TLS 配置
+                $tlsConfig = [
+                    'enabled' => true,
+                    'insecure' => isset($item['insecure']) ? (bool)$item['insecure'] : false,
+                    'alpn' => ['h2', 'http/1.1']
+                ];
+                
+                // SNI 配置
+                if (isset($item['server_name']) && $item['server_name'] != '') {
+                    $tlsConfig['server_name'] = $item['server_name'];
+                }
+                
+                $return['tls'] = $tlsConfig;
+                
+                // 填充方案（如果存在）
+                if (isset($item['padding_scheme']) && !empty($item['padding_scheme'])) {
+                    $return['padding_scheme'] = $item['padding_scheme'];
                 }
                 break;
         }

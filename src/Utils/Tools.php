@@ -586,6 +586,48 @@ class Tools
         return !($server['tls'] == 'tls' && self::is_ip($server['add']));
     }
 
+    public static function anyTlsArray($node)
+    {
+        $server = explode(';', $node);
+        $item = [
+            'host' => '',
+            'port' => 443,
+            'server_name' => '',
+            'insecure' => 0,
+            'padding_scheme' => []
+        ];
+        
+        // 第一段是主机地址
+        $item['host'] = $server[0];
+        
+        // 第二段是参数（如果存在）
+        if (count($server) >= 2 && $server[1] != '') {
+            $params = URL::parse_args($server[1]);
+            
+            if (isset($params['port'])) {
+                $item['port'] = (int)$params['port'];
+            }
+            
+            if (isset($params['server_name'])) {
+                $item['server_name'] = $params['server_name'];
+            }
+            
+            if (isset($params['insecure'])) {
+                $item['insecure'] = (int)$params['insecure'];
+            }
+            
+            if (isset($params['padding_scheme'])) {
+                // 解析填充方案（JSON 格式）
+                $paddingScheme = json_decode($params['padding_scheme'], true);
+                if (is_array($paddingScheme)) {
+                    $item['padding_scheme'] = $paddingScheme;
+                }
+            }
+        }
+        
+        return $item;
+    }
+
     public static function ssv2Array($node)
     {
         $server = explode(';', $node);

@@ -527,6 +527,9 @@ class LinkController extends BaseController
             case 'stash':
                 $return = AppURI::getClashURI($item);
                 break;
+            case 'anytls':
+                $return = AppURI::getV2RayNURI($item);
+                break;
         }
         return $return;
     }
@@ -986,6 +989,8 @@ class LinkController extends BaseController
                 $Rule['type'] = 'trojan';
                 $return_url .= URL::get_NewAllUrl($user, $Rule);
                 $Rule['type'] = 'hysteria2';
+                $return_url .= URL::get_NewAllUrl($user, $Rule);
+                $Rule['type'] = 'anytls';
                 $return_url .= URL::get_NewAllUrl($user, $Rule);
                 $getListExtend = $Rule['extend'] ? self::getListExtend($user, 'v2rayn') : [];
                 break;

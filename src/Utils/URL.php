@@ -248,12 +248,15 @@ class URL
             case 'hysteria2':
                 $sort = [17];
                 break;
+            case 'anytls':
+                $sort = [18];
+                break;
             case 'trojan':
                 $sort = [14];
                 break;
             default:
                 $Rule['type'] = 'all';
-                $sort = [0, 1, 10, 11, 12, 13, 14, 15, 16, 17];
+                $sort = [0, 1, 10, 11, 12, 13, 14, 15, 16, 17, 18];
                 $is_ss = [0, 1];
                 break;
         }
@@ -302,7 +305,7 @@ class URL
             // 筛选 End
 
             // 其他类型单端口节点
-            if (in_array($node->sort, [1, 11, 12, 13, 14, 15, 16, 17])) {
+            if (in_array($node->sort, [1, 11, 12, 13, 14, 15, 16, 17, 18])) {
                 $node_class = [
                     1 => 'getSS2022Item',          // Shadowsocks 2022
                     11 => 'getV2RayItem',           // V2Ray
@@ -312,6 +315,7 @@ class URL
                     15 => 'getV2RayItem',          // V2Ray-VLESS
                     16 => 'getV2RayItem',          // V2Ray-VLESS-Reality
                     17 => 'getHy2Item',            // Hysteria2
+                    18 => 'getAnyTlsItem',         // AnyTLS
                 ];
                 $class = $node_class[$node->sort];
                 $item = $node->$class($user, 0, 0, 0, $emoji);
@@ -404,7 +408,7 @@ class URL
 
         $items = URL::getNew_AllItems($user, $Rule);
         foreach ($items as $item) {
-            if ($item['type'] == 'hysteria2') {
+            if ($item['type'] == 'hysteria2' || $item['type'] == 'anytls') {
                 $out = AppURI::getV2RayNURI($item);
             } else {
                 $out = LinkController::getListItem($item, $Rule['type']);

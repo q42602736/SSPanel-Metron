@@ -72,15 +72,33 @@
                                             <label class="floating-label" for="server">节点地址</label>
                                             <input class="form-control maxwidth-edit" id="server" name="server" type="text"
                                                    value="{$node->server}">
-                                            <p class="form-control-guide">
-                                                <i class="material-icons">info</i>Shadowsocks2022 格式：8.8.8.8;10086;in.nodeserver.com;443
-                                            </p>
-                                            <p class="form-control-guide">
-                                                <i class="material-icons">info</i>落地IP或域名;落地端口;订阅下发地址;订阅下发端口
-                                            </p>
-                                            <p class="form-control-guide">
-                                                <i class="material-icons">info</i>Reality 格式：example.com;443;0;tcp;;security=reality|publicKey=公钥|shortId=短ID|serverName=伪装域名|fp=chrome|flow=xtls-rprx-vision
-                                            </p>
+                                            
+                                            <!-- Shadowsocks2022 提示 -->
+                                            <div id="server_hint_ss2022" style="display: none;">
+                                                <p class="form-control-guide">
+                                                    <i class="material-icons">info</i>格式：8.8.8.8;10086;in.nodeserver.com;443
+                                                </p>
+                                                <p class="form-control-guide">
+                                                    <i class="material-icons">info</i>落地IP或域名;落地端口;订阅下发地址;订阅下发端口
+                                                </p>
+                                            </div>
+                                            
+                                            <!-- Reality 提示 -->
+                                            <div id="server_hint_reality" style="display: none;">
+                                                <p class="form-control-guide">
+                                                    <i class="material-icons">info</i>格式：example.com;443;0;tcp;;security=reality|publicKey=公钥|shortId=短ID|serverName=伪装域名|fp=chrome|flow=xtls-rprx-vision
+                                                </p>
+                                            </div>
+                                            
+                                            <!-- AnyTLS 提示 -->
+                                            <div id="server_hint_anytls" style="display: none;">
+                                                <p class="form-control-guide">
+                                                    <i class="material-icons">info</i>格式：example.com;port=443&server_name=example.com&insecure=0
+                                                </p>
+                                                <p class="form-control-guide">
+                                                    <i class="material-icons">info</i>填充方案将自动添加到配置中
+                                                </p>
+                                            </div>
                                         </div>
 
                                         <div class="form-group form-group-label">
@@ -216,8 +234,36 @@
                                                     <option value="15" {if $node->sort==15}selected{/if}>V2Ray-VLESS</option>
                                                     <option value="16" {if $node->sort==16}selected{/if}>V2Ray-VLESS-Reality</option>
                                                     <option value="17" {if $node->sort==17}selected{/if}>Hysteria2</option>
+                                                    <option value="18" {if $node->sort==18}selected{/if}>AnyTLS</option>
                                                 </select>
                                             </div>
+                                        </div>
+
+                                        <!-- AnyTLS 填充方案选择 -->
+                                        <div class="form-group form-group-label" id="anytls_padding_select" style="display: none;">
+                                            <label class="floating-label" for="padding_preset">填充方案</label>
+                                            <select id="padding_preset" class="form-control maxwidth-edit" name="padding_preset">
+                                                <option value="">不填充（使用默认）</option>
+                                                <option value="light">轻量级 - 低带宽开销（~400字节）</option>
+                                                <option value="standard">标准 - 平衡性能和安全（~4KB，推荐）</option>
+                                                <option value="aggressive">激进 - 高安全性（~12KB）</option>
+                                                <option value="custom">自定义</option>
+                                            </select>
+                                            <p class="form-control-guide">
+                                                <i class="material-icons">info</i>填充方案用于对抗流量指纹识别，提高连接安全性
+                                            </p>
+                                        </div>
+
+                                        <!-- 自定义填充方案输入 -->
+                                        <div class="form-group" id="custom_padding_input" style="display: none;">
+                                            <label for="custom_padding_scheme">自定义填充方案</label>
+                                            <textarea class="form-control maxwidth-edit" id="custom_padding_scheme" rows="6" placeholder='["stop=8","0=30-30","1=100-400","2=500-1000"]' style="opacity: 1 !important; color: #000 !important; border-radius: 2px !important;"></textarea>
+                                            <p class="form-control-guide">
+                                                <i class="material-icons">info</i>格式：JSON 数组，例如 ["stop=8","0=30-30","1=100-400"]
+                                            </p>
+                                            <p class="form-control-guide">
+                                                <i class="material-icons">info</i>规则说明：stop=8 表示在第8个包后停止，0=30-30 表示第1个包填充30字节
+                                            </p>
                                         </div>
 
                                         <div class="form-group form-group-label">
@@ -274,6 +320,10 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- 隐藏字段存储最终的填充方案 -->
+                    <input type="hidden" id="padding_scheme_value" name="padding_scheme">
+                    
                     <div class="card">
                         <div class="card-main">
                             <div class="card-inner">
@@ -300,9 +350,174 @@
 
 {include file='admin/footer.tpl'}
 
-
 {literal}
 <script>
+    
+    // 预设方案定义
+    const paddingPresets = {
+        light: [
+            "stop=4",
+            "0=10-50",
+            "1=50-100",
+            "2=100-200",
+            "3=100-200"
+        ],
+        standard: [
+            "stop=8",
+            "0=30-30",
+            "1=100-400",
+            "2=400-500,c,500-1000,c,500-1000,c,500-1000,c,500-1000",
+            "3=9-9,500-1000",
+            "4=500-1000",
+            "5=500-1000",
+            "6=500-1000",
+            "7=500-1000"
+        ],
+        aggressive: [
+            "stop=16",
+            "0=50-100",
+            "1=200-500",
+            "2=500-1500,c,1000-2000,c,1000-2000",
+            "3=100-500,c,500-1000",
+            "4=500-1000",
+            "5=500-1000",
+            "6=500-1000",
+            "7=500-1000",
+            "8=300-800",
+            "9=300-800",
+            "10=300-800",
+            "11=300-800",
+            "12=300-800",
+            "13=300-800",
+            "14=300-800",
+            "15=300-800"
+        ]
+    };
+    
+    // 监听节点类型变化
+    $('#sort').on('change', function() {
+        const sortValue = $(this).val();
+        
+        // 隐藏所有提示
+        $('#server_hint_ss2022, #server_hint_reality, #server_hint_anytls').hide();
+        
+        // 显示/隐藏 AnyTLS 填充方案选择
+        if (sortValue === '18') {
+            $('#anytls_padding_select').slideDown();
+            $('#server_hint_anytls').show();
+        } else {
+            $('#anytls_padding_select').slideUp();
+            $('#padding_scheme_value').val('');
+            
+            // 显示对应的提示
+            if (sortValue === '1') {
+                $('#server_hint_ss2022').show();
+            } else if (sortValue === '16') {
+                $('#server_hint_reality').show();
+            }
+        }
+    });
+    
+    // 监听填充方案选择变化
+    $('#padding_preset').on('change', function() {
+        const preset = $(this).val();
+        
+        if (preset === 'custom') {
+            // 显示自定义输入框
+            $('#custom_padding_input').slideDown();
+            $('#padding_scheme_value').val('');
+        } else {
+            // 隐藏自定义输入框
+            $('#custom_padding_input').slideUp();
+            
+            if (preset === '') {
+                // 不填充
+                $('#padding_scheme_value').val('');
+            } else {
+                // 使用预设方案
+                const scheme = paddingPresets[preset];
+                $('#padding_scheme_value').val(JSON.stringify(scheme));
+            }
+        }
+    });
+    
+    // 监听自定义填充方案输入
+    $('#custom_padding_scheme').on('input', function() {
+        const customValue = $(this).val().trim();
+        
+        if (customValue) {
+            try {
+                // 验证 JSON 格式
+                const parsed = JSON.parse(customValue);
+                if (Array.isArray(parsed)) {
+                    $('#padding_scheme_value').val(customValue);
+                    // 移除错误提示
+                    $(this).removeClass('is-invalid');
+                } else {
+                    $(this).addClass('is-invalid');
+                }
+            } catch (e) {
+                // JSON 格式错误
+                $(this).addClass('is-invalid');
+            }
+        } else {
+            $('#padding_scheme_value').val('');
+            $(this).removeClass('is-invalid');
+        }
+    });
+    
+    // 页面加载时初始化
+    $(document).ready(function() {
+        const currentSort = $('#sort').val();
+        
+        if (currentSort === '18') {
+            $('#anytls_padding_select').show();
+            $('#server_hint_anytls').show();
+            
+            // 尝试从 server 字段解析现有的填充方案
+            const serverValue = $('#server').val();
+            
+            if (serverValue && serverValue.indexOf('padding_scheme=') !== -1) {
+                const match = serverValue.match(/padding_scheme=([^&;]+)/);
+                
+                if (match) {
+                    try {
+                        const paddingSchemeEncoded = match[1];
+                        const paddingScheme = decodeURIComponent(paddingSchemeEncoded);
+                        
+                        $('#padding_scheme_value').val(paddingScheme);
+                        
+                        // 尝试匹配预设方案
+                        const scheme = JSON.parse(paddingScheme);
+                        const schemeStr = JSON.stringify(scheme);
+                        
+                        let matched = false;
+                        if (schemeStr === JSON.stringify(paddingPresets.light)) {
+                            $('#padding_preset').val('light');
+                            matched = true;
+                        } else if (schemeStr === JSON.stringify(paddingPresets.standard)) {
+                            $('#padding_preset').val('standard');
+                            matched = true;
+                        } else if (schemeStr === JSON.stringify(paddingPresets.aggressive)) {
+                            $('#padding_preset').val('aggressive');
+                            matched = true;
+                        }
+                        
+                        // 如果不匹配预设方案，显示为自定义
+                        if (!matched) {
+                            $('#padding_preset').val('custom');
+                            $('#custom_padding_input').show();
+                            
+                            const formattedScheme = JSON.stringify(scheme, null, 2);
+                            $('#custom_padding_scheme').val(formattedScheme);
+                        }
+                    } catch (e) {
+                        console.error('解析填充方案失败:', e);
+                    }
+                }
+            }
+        }
+    });
 
     $('#main_form').validate({
         rules: {
@@ -338,6 +553,37 @@
             } else {
                 var custom_rss = 0;
             }
+            
+            // 处理 AnyTLS 填充方案
+            let serverValue = $$getValue('server');
+            const sortValue = $$getValue('sort');
+            const paddingScheme = $('#padding_scheme_value').val();
+            
+            // 如果是 AnyTLS
+            if (sortValue === '18') {
+                // 先移除旧的 padding_scheme 参数
+                serverValue = serverValue.replace(/[&;]?padding_scheme=[^&;]*/g, '');
+                
+                // 如果有新的填充方案，添加到 server 字段
+                if (paddingScheme) {
+                    const serverParts = serverValue.split(';');
+                    const host = serverParts[0];
+                    let params = '';
+                    
+                    if (serverParts.length > 1) {
+                        params = serverParts[1];
+                    }
+                    
+                    // 添加 padding_scheme 参数
+                    if (params) {
+                        params += '&padding_scheme=' + encodeURIComponent(paddingScheme);
+                    } else {
+                        params = 'padding_scheme=' + encodeURIComponent(paddingScheme);
+                    }
+                    
+                    serverValue = host + ';' + params;
+                }
+            }
 
             $.ajax({
 
@@ -347,7 +593,7 @@
                 {literal}
                 data: {
                     name: $$getValue('name'),
-                    server: $$getValue('server'),
+                    server: serverValue,
                     node_ip: $$getValue('node_ip'),
                     method: $$getValue('method'),
                     port: $$getValue("port"),

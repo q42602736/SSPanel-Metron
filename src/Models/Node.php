@@ -445,4 +445,30 @@ class Node extends Model
         $item['group']    = Config::get('appName');
         return $item;
     }
+
+    /**
+     * AnyTLS 节点
+     */
+    public function getAnyTlsItem(User $user, int $mu_port = 0, int $relay_rule_id = 0, int $is_ss = 0, bool $emoji = false): array
+    {
+        $server = Tools::anyTlsArray($this->server);
+        
+        $item['remark']   = ($emoji ? Tools::addEmoji($this->name) : $this->name);
+        $item['type']     = 'anytls';
+        $item['address']  = $server['host'];
+        $item['port']     = $server['port'];
+        $item['password'] = $user->getUuid();
+        $item['server_name'] = $server['server_name'] ?: $server['host'];
+        $item['insecure'] = (bool) $server['insecure'];
+        
+        // 添加填充方案（如果存在）
+        if (!empty($server['padding_scheme'])) {
+            $item['padding_scheme'] = $server['padding_scheme'];
+        }
+        
+        $item['class']    = $this->node_class;
+        $item['group']    = Config::get('appName');
+        
+        return $item;
+    }
 }
