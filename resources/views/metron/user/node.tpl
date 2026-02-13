@@ -81,8 +81,8 @@
                             {/if}
                             <div class="col-sm-12 col-xl-6 mb-8">
                                 <div class="card card-custom cursor_onclick {$metron['style_shadow']}"
-                                        {if $user->class >= $node['class'] && !in_array($node['sort'], [15, 16, 17]) } onclick="node.NodeInfo({$node['id']})"
-                                        {elseif $user->class >= $node['class'] && in_array($node['sort'], [15, 16, 17]) } onclick="showVless({$node['id']})"
+                                        {if $user->class >= $node['class'] && !in_array($node['sort'], [15, 16, 17, 18]) } onclick="node.NodeInfo({$node['id']})"
+                                        {elseif $user->class >= $node['class'] && in_array($node['sort'], [15, 16, 17, 18]) } onclick="showVless({$node['id']})"
                                         {else} onclick="node.Classinsufficient()" {/if}>
                                     <div class="card-body pt-6 pl-4 pb-5">
                                         <ul class="list-unstyled user-details list-unstyled-border list-unstyled-noborder">
