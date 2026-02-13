@@ -204,7 +204,7 @@ class AppURI
                 break;
             case 'anytls':
                 // AnyTLS 协议 URI 格式
-                // anytls://password@host:port?sni=xxx&insecure=0#remark
+                // anytls://password@host:port?sni=xxx&insecure=1#remark
                 $return = 'anytls://' . $item['password'] . '@' . $item['address'] . ':' . $item['port'];
                 $params = [];
                 if (isset($item['server_name']) && $item['server_name'] != '') {

@@ -602,7 +602,14 @@ class Tools
         
         // 第二段是参数（如果存在）
         if (count($server) >= 2 && $server[1] != '') {
-            $params = URL::parse_args($server[1]);
+            // 兼容两种分隔符：& 和 |
+            if (strpos($server[1], '&') !== false) {
+                // 使用 & 分隔符（标准 URL 参数格式）
+                parse_str($server[1], $params);
+            } else {
+                // 使用 | 分隔符（旧格式）
+                $params = URL::parse_args($server[1]);
+            }
             
             if (isset($params['port'])) {
                 $item['port'] = (int)$params['port'];
