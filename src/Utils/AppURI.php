@@ -739,9 +739,21 @@ class AppURI
                 }
                 $return = ('vmess://' . Tools::base64_url_encode('chacha20-poly1305:' . $item['id'] . '@' . $item['add'] . ':' . $item['port']) . '?remarks=' . rawurlencode($item['remark']) . $obfs . $tls . '&alterId=' . $item['aid']);
                 break;
+            case 'vless':
+                // VLESS 使用标准 URI 格式
+                $return = self::getV2RayNURI($item);
+                break;
             case 'trojan':
                 $return = ('trojan://' . $item['passwd'] . '@' . $item['address'] . ':' . $item['port']);
                 $return .= ('?peer=' . $item['host'] . '#' . rawurlencode($item['remark']));
+                break;
+            case 'hysteria2':
+                // Hysteria2 使用标准 URI 格式
+                $return = self::getV2RayNURI($item);
+                break;
+            case 'anytls':
+                // AnyTLS 使用标准 URI 格式
+                $return = self::getV2RayNURI($item);
                 break;
         }
         return $return;
