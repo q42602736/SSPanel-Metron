@@ -456,7 +456,6 @@
                         <p>端口：<code id="nodeinfo-anytls-modal-port"></code></p>
                         <p>密码：<code id="nodeinfo-anytls-modal-password"></code></p>
                         <p>Server Name：<code id="nodeinfo-anytls-modal-sni"></code></p>
-                        <p>Padding Scheme：<code id="nodeinfo-anytls-modal-padding"></code></p>
                         <p>AnyTLS 链接：<code class="cursor_onclick copy-modal" id="nodeinfo-anytls-modal-url"
                                           data-clipboard-text="#">点击复制</code></p>
                     </div>
@@ -713,16 +712,6 @@
                     $("#nodeinfo-anytls-modal-port").text(data.info.port || '443')
                     $("#nodeinfo-anytls-modal-password").text(data.info.password || '未知')
                     $("#nodeinfo-anytls-modal-sni").text(data.info.server_name || data.info.address || '未知')
-                    
-                    // 处理 padding_scheme 显示
-                    let paddingText = '默认';
-                    if (data.info.padding_scheme && Array.isArray(data.info.padding_scheme)) {
-                        paddingText = data.info.padding_scheme.join(', ');
-                    } else if (data.info.padding_scheme) {
-                        paddingText = String(data.info.padding_scheme);
-                    }
-                    $("#nodeinfo-anytls-modal-padding").text(paddingText)
-                    
                     $("#nodeinfo-anytls-modal-url").attr('data-clipboard-text', data.url || '')
                     $('#nodeinfo-anytls-modal').modal('show');
                 } else if (data.sort == 16) {
