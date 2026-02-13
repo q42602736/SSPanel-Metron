@@ -304,6 +304,23 @@ class NodeController extends UserController
                     return $response->getBody()->write(json_encode($json_data));
                 }
                 break;
+            case 18:
+                if ((($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin) && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
+                    $item = $node->getAnyTlsItem($user, $mu, $relay_rule_id);
+                    if (!isset($item['security'])) {
+                        $item['security'] = 'tls';
+                    }
+                    if (!isset($item['flow'])) {
+                        $item['flow'] = '';
+                    }
+                    $json_data = [
+                        'sort' => 18,
+                        'info' => $item,
+                        'url' => URL::getItemUrl($item, 0)
+                    ];
+                    return $response->getBody()->write(json_encode($json_data));
+                }
+                break;
             default:
                 echo '微笑';
         }
