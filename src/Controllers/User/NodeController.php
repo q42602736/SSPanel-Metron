@@ -268,6 +268,42 @@ class NodeController extends UserController
                     return $this->view()->assign('node', $node)->assign('user', $user)->assign('mu', $mu)->assign('relay_rule_id', $relay_rule_id)->registerClass('URL', URL::class)->display('user/nodeinfo.tpl');
                 }
                 break;
+            case 16:
+                if ((($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin) && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
+                    $item = $node->getV2RayItem($user, $mu, $relay_rule_id);
+                    if (!isset($item['security'])) {
+                        $item['security'] = $item['tls'] ?? '';
+                    }
+                    if (!isset($item['flow'])) {
+                        $item['flow'] = '';
+                    }
+                    // 移除服务端私钥，不能暴露给前端
+                    unset($item['privateKey']);
+                    $json_data = [
+                        'sort' => 16,
+                        'info' => $item,
+                        'url' => URL::getItemUrl($item, 0)
+                    ];
+                    return $response->getBody()->write(json_encode($json_data));
+                }
+                break;
+            case 17:
+                if ((($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin) && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
+                    $item = $node->getHy2Item($user, $mu, $relay_rule_id);
+                    if (!isset($item['security'])) {
+                        $item['security'] = '';
+                    }
+                    if (!isset($item['flow'])) {
+                        $item['flow'] = '';
+                    }
+                    $json_data = [
+                        'sort' => 17,
+                        'info' => $item,
+                        'url' => URL::getItemUrl($item, 0)
+                    ];
+                    return $response->getBody()->write(json_encode($json_data));
+                }
+                break;
             default:
                 echo '微笑';
         }

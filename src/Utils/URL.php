@@ -517,6 +517,30 @@ class URL
         if (isset($item['flow']) && $item['flow']){
             $node .= '&flow='.$item['flow'];
         }
+        // Reality 参数
+        if (isset($item['sni']) && $item['sni']){
+            $node .= '&sni='.$item['sni'];
+        } elseif (isset($item['serverName']) && $item['serverName']){
+            $node .= '&sni='.$item['serverName'];
+        }
+        if (isset($item['fp']) && $item['fp']){
+            $node .= '&fp='.$item['fp'];
+        }
+        if (isset($item['pbk']) && $item['pbk']){
+            $node .= '&pbk='.$item['pbk'];
+        }
+        if (isset($item['publicKey']) && $item['publicKey']){
+            $node .= '&pbk='.$item['publicKey'];
+        }
+        if (isset($item['sid']) && $item['sid']){
+            $node .= '&sid='.$item['sid'];
+        }
+        if (isset($item['shortId']) && $item['shortId']){
+            $node .= '&sid='.$item['shortId'];
+        }
+        if (isset($item['spx']) && $item['spx']){
+            $node .= '&spx='.$item['spx'];
+        }
         $node .= '#' . $item['remark'];
         if (!$arrout) {
             return $node;

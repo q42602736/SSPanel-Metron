@@ -41,6 +41,7 @@ use App\Utils\{GA,
     Cookie,
     Geetest,
     Telegram,
+    AppURI,
     ClientProfiles,
     DatatablesHelper,
     TelegramSessionManager
@@ -557,6 +558,36 @@ class MetronController extends BaseController
                     'sort' => 15,
                     'info' => $info,
                     'url' => URL::getV2UrlVLESS($user, $node),
+                ];
+                break;
+            case '16':
+                $info = $node->getV2RayItem($user);
+                if (!isset($info['security'])) {
+                    $info['security'] = $info['tls'] ?? '';
+                }
+                if (!isset($info['flow'])) {
+                    $info['flow'] = '';
+                }
+                if (!isset($info['aid'])) {
+                    $info['aid'] = 0;
+                }
+                // 移除服务端私钥，不能暴露给前端
+                unset($info['privateKey']);
+                $url = URL::getV2UrlVLESS($user, $node);
+                $res = [
+                    'ret' => 1,
+                    'sort' => 16,
+                    'info' => $info,
+                    'url' => $url,
+                ];
+                break;
+            case '17':
+                $info = $node->getHy2Item($user);
+                $res = [
+                    'ret' => 1,
+                    'sort' => 17,
+                    'info' => $info,
+                    'url' => AppURI::getV2RayNURI($info),
                 ];
                 break;
             default:

@@ -81,8 +81,8 @@
                             {/if}
                             <div class="col-sm-12 col-xl-6 mb-8">
                                 <div class="card card-custom cursor_onclick {$metron['style_shadow']}"
-                                        {if $user->class >= $node['class'] && $node['sort'] != 15 } onclick="node.NodeInfo({$node['id']})"
-                                        {elseif $user->class >= $node['class'] && $node['sort'] == 15 } onclick="showVless({$node['id']})"
+                                        {if $user->class >= $node['class'] && !in_array($node['sort'], [15, 16, 17]) } onclick="node.NodeInfo({$node['id']})"
+                                        {elseif $user->class >= $node['class'] && in_array($node['sort'], [15, 16, 17]) } onclick="showVless({$node['id']})"
                                         {else} onclick="node.Classinsufficient()" {/if}>
                                     <div class="card-body pt-6 pl-4 pb-5">
                                         <ul class="list-unstyled user-details list-unstyled-border list-unstyled-noborder">
@@ -379,6 +379,68 @@
             </div>
         </div>
     </div>
+    <!-- V2ray-VLESS Reality 节点 -->
+    <div class="modal fade" id="nodeinfo-v2ray-reality-modal" data-backdrop="static" tabindex="-1" role="dialog"
+         aria-labelledby="nodeinfo-v2ray-reality-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header">
+                    <h4 class="modal-title {$style[$theme_style]['modal']['text_title']}"><strong
+                                id="nodeinfo-v2ray-reality-modal-remark">节点名称</strong></h4>
+                </div>
+                <div class="modal-body" id="nodeinfo-v2ray-reality-modal-body">
+                    <div class="pt-4 pl-10">
+                        <p>地址：<code id="nodeinfo-v2ray-reality-modal-add"></code></p>
+                        <p>端口：<code id="nodeinfo-v2ray-reality-modal-port"></code></p>
+                        <p>用户 UUID：<code id="nodeinfo-v2ray-reality-modal-id"></code></p>
+                        <p>传输协议：<code id="nodeinfo-v2ray-reality-modal-net"></code></p>
+                        <p>流控(flow)：<code id="nodeinfo-v2ray-reality-modal-flow"></code></p>
+                        <p>SNI：<code id="nodeinfo-v2ray-reality-modal-sni"></code></p>
+                        <p>指纹(fp)：<code id="nodeinfo-v2ray-reality-modal-fp"></code></p>
+                        <p>公钥(pbk)：<code id="nodeinfo-v2ray-reality-modal-pbk"></code></p>
+                        <p>短ID(sid)：<code id="nodeinfo-v2ray-reality-modal-sid"></code></p>
+                        <p>VLESS 链接：<code class="cursor_onclick copy-modal" id="nodeinfo-v2ray-reality-modal-url"
+                                          data-clipboard-text="#">点击复制</code></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn {$style[$theme_style]['modal']['btn_close']} font-weight-bold"
+                            data-dismiss="modal">关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Hysteria2 节点 -->
+    <div class="modal fade" id="nodeinfo-hy2-modal" data-backdrop="static" tabindex="-1" role="dialog"
+         aria-labelledby="nodeinfo-hy2-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header">
+                    <h4 class="modal-title {$style[$theme_style]['modal']['text_title']}"><strong
+                                id="nodeinfo-hy2-modal-remark">节点名称</strong></h4>
+                </div>
+                <div class="modal-body" id="nodeinfo-hy2-modal-body">
+                    <div class="pt-4 pl-10">
+                        <p>地址：<code id="nodeinfo-hy2-modal-address"></code></p>
+                        <p>端口：<code id="nodeinfo-hy2-modal-port"></code></p>
+                        <p>密码：<code id="nodeinfo-hy2-modal-password"></code></p>
+                        <p>混淆类型：<code id="nodeinfo-hy2-modal-obfs"></code></p>
+                        <p>混淆密码：<code id="nodeinfo-hy2-modal-obfs-password"></code></p>
+                        <p>上行速率：<code id="nodeinfo-hy2-modal-up"></code></p>
+                        <p>下行速率：<code id="nodeinfo-hy2-modal-down"></code></p>
+                        <p>Hysteria2 链接：<code class="cursor_onclick copy-modal" id="nodeinfo-hy2-modal-url"
+                                          data-clipboard-text="#">点击复制</code></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn {$style[$theme_style]['modal']['btn_close']} font-weight-bold"
+                            data-dismiss="modal">关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- 订阅筛选 -->
     {if $metron['nodes_filter'] === true}
         <div class="modal fade" id="nodes-filter-modal" data-backdrop="static" tabindex="-1" role="dialog"
@@ -602,19 +664,49 @@
         function showVless(id) {
             $.get('/user/nodeinfo/' + id, function (res) {
                 let data = JSON.parse(res)
-                $("#nodeinfo-v2ray-vless-modal-remark").text(data.info.remark)
-                $("#nodeinfo-v2ray-vless-modal-add").text(data.info.add)
-                $("#nodeinfo-v2ray-vless-modal-port").text(data.info.port)
-                $("#nodeinfo-v2ray-vless-modal-aid").text(data.info.aid)
-                $("#nodeinfo-v2ray-vless-modal-id").text(data.info.id)
-                $("#nodeinfo-v2ray-vless-modal-net").text(data.info.net)
-                $("#nodeinfo-v2ray-vless-modal-path").text(data.info.path)
-                $("#nodeinfo-v2ray-vless-modal-tls").text(data.info.security)
-                $("#nodeinfo-v2ray-vless-modal-flow").text(data.info.flow)
-                $("#nodeinfo-v2ray-vless-modal-url").attr('data-clipboard-text', data.url)
+                
+                // 根据节点类型显示不同的模态框
+                if (data.sort == 17) {
+                    // HY2 节点
+                    $("#nodeinfo-hy2-modal-remark").text(data.info.remark)
+                    $("#nodeinfo-hy2-modal-address").text(data.info.address)
+                    $("#nodeinfo-hy2-modal-port").text(data.info.port)
+                    $("#nodeinfo-hy2-modal-password").text(data.info.password)
+                    $("#nodeinfo-hy2-modal-obfs").text(data.info.obfs_type || '无')
+                    $("#nodeinfo-hy2-modal-obfs-password").text(data.info.obfs_password || '无')
+                    $("#nodeinfo-hy2-modal-up").text(data.info.up_mbps + ' Mbps')
+                    $("#nodeinfo-hy2-modal-down").text(data.info.down_mbps + ' Mbps')
+                    $("#nodeinfo-hy2-modal-url").attr('data-clipboard-text', data.url)
+                    $('#nodeinfo-hy2-modal').modal('show');
+                } else if (data.sort == 16) {
+                    // Reality 节点
+                    $("#nodeinfo-v2ray-reality-modal-remark").text(data.info.remark)
+                    $("#nodeinfo-v2ray-reality-modal-add").text(data.info.add)
+                    $("#nodeinfo-v2ray-reality-modal-port").text(data.info.port)
+                    $("#nodeinfo-v2ray-reality-modal-id").text(data.info.id)
+                    $("#nodeinfo-v2ray-reality-modal-net").text(data.info.net)
+                    $("#nodeinfo-v2ray-reality-modal-flow").text(data.info.flow || '')
+                    $("#nodeinfo-v2ray-reality-modal-sni").text(data.info.serverName || data.info.sni || '')
+                    $("#nodeinfo-v2ray-reality-modal-fp").text(data.info.fp || '')
+                    $("#nodeinfo-v2ray-reality-modal-pbk").text(data.info.publicKey || data.info.pbk || '')
+                    $("#nodeinfo-v2ray-reality-modal-sid").text(data.info.shortId || data.info.sid || '')
+                    $("#nodeinfo-v2ray-reality-modal-url").attr('data-clipboard-text', data.url)
+                    $('#nodeinfo-v2ray-reality-modal').modal('show');
+                } else {
+                    // 普通 VLESS 节点 (sort=15)
+                    $("#nodeinfo-v2ray-vless-modal-remark").text(data.info.remark)
+                    $("#nodeinfo-v2ray-vless-modal-add").text(data.info.add)
+                    $("#nodeinfo-v2ray-vless-modal-port").text(data.info.port)
+                    $("#nodeinfo-v2ray-vless-modal-aid").text(data.info.aid)
+                    $("#nodeinfo-v2ray-vless-modal-id").text(data.info.id)
+                    $("#nodeinfo-v2ray-vless-modal-net").text(data.info.net)
+                    $("#nodeinfo-v2ray-vless-modal-path").text(data.info.path)
+                    $("#nodeinfo-v2ray-vless-modal-tls").text(data.info.security)
+                    $("#nodeinfo-v2ray-vless-modal-flow").text(data.info.flow)
+                    $("#nodeinfo-v2ray-vless-modal-url").attr('data-clipboard-text', data.url)
+                    $('#nodeinfo-v2ray-vless-modal').modal('show');
+                }
             });
-
-            $('#nodeinfo-v2ray-vless-modal').modal('show');
         }
     </script>
 </html>
