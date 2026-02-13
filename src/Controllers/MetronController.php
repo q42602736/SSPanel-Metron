@@ -590,6 +590,15 @@ class MetronController extends BaseController
                     'url' => AppURI::getV2RayNURI($info),
                 ];
                 break;
+            case '18':
+                $info = $node->getAnyTlsItem($user);
+                $res = [
+                    'ret' => 1,
+                    'sort' => 18,
+                    'info' => $info,
+                    'url' => AppURI::getV2RayNURI($info),
+                ];
+                break;
             default:
                 $res = [
                     'ret' => 0,
