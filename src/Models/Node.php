@@ -140,8 +140,9 @@ class Node extends Model
             return false;
         }
 
-        $nodeSort = [1, 2, 5, 9, 999];
-        if (in_array($this->sort, $nodeSort)) {
+        // 支持在线状态检测的节点类型
+        $supportedSorts = [0, 10, 11, 12, 13, 14, 15, 16, 17];
+        if (!in_array($this->sort, $supportedSorts)) {
             return null;
         }
 
