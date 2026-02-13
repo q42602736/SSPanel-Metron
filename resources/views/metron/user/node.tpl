@@ -441,6 +441,34 @@
             </div>
         </div>
     </div>
+    <!-- AnyTLS 节点 -->
+    <div class="modal fade" id="nodeinfo-anytls-modal" data-backdrop="static" tabindex="-1" role="dialog"
+         aria-labelledby="nodeinfo-anytls-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header">
+                    <h4 class="modal-title {$style[$theme_style]['modal']['text_title']}"><strong
+                                id="nodeinfo-anytls-modal-remark">节点名称</strong></h4>
+                </div>
+                <div class="modal-body" id="nodeinfo-anytls-modal-body">
+                    <div class="pt-4 pl-10">
+                        <p>地址：<code id="nodeinfo-anytls-modal-address"></code></p>
+                        <p>端口：<code id="nodeinfo-anytls-modal-port"></code></p>
+                        <p>密码：<code id="nodeinfo-anytls-modal-password"></code></p>
+                        <p>Server Name：<code id="nodeinfo-anytls-modal-sni"></code></p>
+                        <p>Padding Scheme：<code id="nodeinfo-anytls-modal-padding"></code></p>
+                        <p>AnyTLS 链接：<code class="cursor_onclick copy-modal" id="nodeinfo-anytls-modal-url"
+                                          data-clipboard-text="#">点击复制</code></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn {$style[$theme_style]['modal']['btn_close']} font-weight-bold"
+                            data-dismiss="modal">关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- 订阅筛选 -->
     {if $metron['nodes_filter'] === true}
         <div class="modal fade" id="nodes-filter-modal" data-backdrop="static" tabindex="-1" role="dialog"
@@ -678,6 +706,16 @@
                     $("#nodeinfo-hy2-modal-down").text(data.info.down_mbps + ' Mbps')
                     $("#nodeinfo-hy2-modal-url").attr('data-clipboard-text', data.url)
                     $('#nodeinfo-hy2-modal').modal('show');
+                } else if (data.sort == 18) {
+                    // AnyTLS 节点
+                    $("#nodeinfo-anytls-modal-remark").text(data.info.remark)
+                    $("#nodeinfo-anytls-modal-address").text(data.info.address)
+                    $("#nodeinfo-anytls-modal-port").text(data.info.port)
+                    $("#nodeinfo-anytls-modal-password").text(data.info.password)
+                    $("#nodeinfo-anytls-modal-sni").text(data.info.server_name || data.info.address)
+                    $("#nodeinfo-anytls-modal-padding").text(data.info.padding_scheme ? JSON.stringify(data.info.padding_scheme) : '默认')
+                    $("#nodeinfo-anytls-modal-url").attr('data-clipboard-text', data.url)
+                    $('#nodeinfo-anytls-modal').modal('show');
                 } else if (data.sort == 16) {
                     // Reality 节点
                     $("#nodeinfo-v2ray-reality-modal-remark").text(data.info.remark)
