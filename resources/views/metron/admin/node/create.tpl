@@ -209,6 +209,7 @@
                                                     <option value="11">V2Ray</option>
                                                     <option value="14">Trojan</option>
                                                     <option value="15">V2Ray-VLESS</option>
+                                                    <option value="16">V2Ray-VLESS-Reality</option>
                                                 </select>
                                             </div>
                                         </div>

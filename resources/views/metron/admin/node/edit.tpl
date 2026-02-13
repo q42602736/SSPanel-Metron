@@ -214,6 +214,7 @@
                                                     <option value="11" {if $node->sort==11}selected{/if}>V2Ray</option>
                                                     <option value="14" {if $node->sort==14}selected{/if}>Trojan</option>
                                                     <option value="15" {if $node->sort==15}selected{/if}>V2Ray-VLESS</option>
+                                                    <option value="16" {if $node->sort==16}selected{/if}>V2Ray-VLESS-Reality</option>
                                                 </select>
                                             </div>
                                         </div>

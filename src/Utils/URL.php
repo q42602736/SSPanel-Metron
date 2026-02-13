@@ -243,14 +243,14 @@ class URL
                 $sort = [1, 11, 12, 14];
                 break;
             case 'vless':
-                $sort = [15];
+                $sort = [15, 16];
                 break;
             case 'trojan':
                 $sort = [14];
                 break;
             default:
                 $Rule['type'] = 'all';
-                $sort = [0, 1, 10, 11, 12, 13, 14, 15];
+                $sort = [0, 1, 10, 11, 12, 13, 14, 15, 16];
                 $is_ss = [0, 1];
                 break;
         }
@@ -299,7 +299,7 @@ class URL
             // 筛选 End
 
             // 其他类型单端口节点
-            if (in_array($node->sort, [1, 11, 12, 13, 14, 15])) {
+            if (in_array($node->sort, [1, 11, 12, 13, 14, 15, 16])) {
                 $node_class = [
                     1 => 'getSS2022Item',          // Shadowsocks 2022
                     11 => 'getV2RayItem',           // V2Ray
@@ -307,6 +307,7 @@ class URL
                     13 => 'getV2RayPluginItem',     // Rico SS (V2RayPlugin && obfs)
                     14 => 'getTrojanItem',          // Trojan
                     15 => 'getV2RayItem',          // V2Ray-VLESS
+                    16 => 'getV2RayItem',          // V2Ray-VLESS-Reality
                 ];
                 $class = $node_class[$node->sort];
                 $item = $node->$class($user, 0, 0, 0, $emoji);
@@ -525,7 +526,7 @@ class URL
      */
     public static function getAllVMessUrl(User $user, $arrout = false, $emoji = false)
     {
-        $nodes = self::getNodes($user, [11, 12, 15]);
+        $nodes = self::getNodes($user, [11, 12, 15, 16]);
         # 增加中转配置，后台目前配置user=0的话是自由门直接中转
         $tmp_nodes = array();
         foreach ($nodes as $node) {

@@ -313,7 +313,7 @@ class Node extends Model
     public function getV2RayItem(User $user, int $mu_port = 0, int $relay_rule_id = 0, int $is_ss = 0, bool $emoji = false): array
     {
         $item           = Tools::v2Array($this->server);
-        $item['type']   = $this->sort == 15 ? 'vless' : 'vmess';
+        $item['type']   = ($this->sort == 15 || $this->sort == 16) ? 'vless' : 'vmess';
         $item['remark'] = ($emoji ? Tools::addEmoji($this->name) : $this->name);
         $item['id']     = $user->getUuid();
         $item['class']  = $this->node_class;

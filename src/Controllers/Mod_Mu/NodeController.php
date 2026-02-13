@@ -55,6 +55,24 @@ class NodeController extends BaseController
         if (in_array($node->sort, [0, 10])) {
             $node_explode = explode(';', $node->server);
             $node_server = $node_explode[0];
+        } elseif ($node->sort == 16) {
+            // VLESS Reality: 将6段格式转换为V2BX期望的2段格式
+            // 面板格式: host;port;aid;net;;security=reality|privateKey=xxx|...
+            // V2BX格式: host;port=443&security=reality&privateKey=xxx&...
+            $parts = explode(';', $node->server);
+            $host = $parts[0];
+            $port = isset($parts[1]) ? $parts[1] : '443';
+            $extraParams = isset($parts[5]) ? $parts[5] : '';
+            $v2bxParams = ['port=' . $port];
+            if ($extraParams != '') {
+                $args = explode('|', $extraParams);
+                foreach ($args as $arg) {
+                    if (strpos($arg, '=') !== false) {
+                        $v2bxParams[] = $arg;
+                    }
+                }
+            }
+            $node_server = $host . ';' . implode('&', $v2bxParams);
         } else {
             $node_server = $node->server;
         }
