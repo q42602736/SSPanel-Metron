@@ -406,6 +406,9 @@ class NodeController extends AdminController
                 case 16:
                     $sort = 'V2ray VLESS Reality 节点';
                     break;
+                case 17:
+                    $sort = 'Hysteria2 节点';
+                    break;
                 default:
                     $sort = '系统保留';
             }

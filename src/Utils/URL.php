@@ -245,12 +245,15 @@ class URL
             case 'vless':
                 $sort = [15, 16];
                 break;
+            case 'hysteria2':
+                $sort = [17];
+                break;
             case 'trojan':
                 $sort = [14];
                 break;
             default:
                 $Rule['type'] = 'all';
-                $sort = [0, 1, 10, 11, 12, 13, 14, 15, 16];
+                $sort = [0, 1, 10, 11, 12, 13, 14, 15, 16, 17];
                 $is_ss = [0, 1];
                 break;
         }
@@ -299,7 +302,7 @@ class URL
             // 筛选 End
 
             // 其他类型单端口节点
-            if (in_array($node->sort, [1, 11, 12, 13, 14, 15, 16])) {
+            if (in_array($node->sort, [1, 11, 12, 13, 14, 15, 16, 17])) {
                 $node_class = [
                     1 => 'getSS2022Item',          // Shadowsocks 2022
                     11 => 'getV2RayItem',           // V2Ray
@@ -308,6 +311,7 @@ class URL
                     14 => 'getTrojanItem',          // Trojan
                     15 => 'getV2RayItem',          // V2Ray-VLESS
                     16 => 'getV2RayItem',          // V2Ray-VLESS-Reality
+                    17 => 'getHy2Item',            // Hysteria2
                 ];
                 $class = $node_class[$node->sort];
                 $item = $node->$class($user, 0, 0, 0, $emoji);
@@ -400,7 +404,11 @@ class URL
 
         $items = URL::getNew_AllItems($user, $Rule);
         foreach ($items as $item) {
-            $out = LinkController::getListItem($item, $Rule['type']);
+            if ($item['type'] == 'hysteria2') {
+                $out = AppURI::getV2RayNURI($item);
+            } else {
+                $out = LinkController::getListItem($item, $Rule['type']);
+            }
             if ($out !== null) {
                 $return_url .= $out . PHP_EOL;
             }
@@ -583,6 +591,25 @@ class URL
             }
         }
 
+        return $return_array;
+    }
+
+    /**
+     * 获取全部 Hysteria2 节点
+     */
+    public static function getAllHy2($user, $emoji = false)
+    {
+        $return_array = array();
+        $nodes = Node::whereIn('sort', [17])
+            ->where('type', '1')
+            ->orderBy('name')
+            ->get();
+        foreach ($nodes as $node) {
+            $item = $node->getHy2Item($user, 0, 0, 0, $emoji);
+            if ($item != null) {
+                $return_array[] = $item;
+            }
+        }
         return $return_array;
     }
 

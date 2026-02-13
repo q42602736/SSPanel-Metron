@@ -418,4 +418,30 @@ class Node extends Model
         }
         return $item;
     }
+
+    /**
+     * Hysteria2 节点
+     */
+    public function getHy2Item(User $user, int $mu_port = 0, int $relay_rule_id = 0, int $is_ss = 0, bool $emoji = false): array
+    {
+        $server = explode(';', $this->server);
+        $opt = [];
+        if (isset($server[1])) {
+            parse_str($server[1], $opt);
+        }
+        $item['remark']   = ($emoji ? Tools::addEmoji($this->name) : $this->name);
+        $item['type']     = 'hysteria2';
+        $item['address']  = $server[0];
+        $item['port']     = (isset($opt['port']) ? (int) $opt['port'] : 443);
+        $item['password'] = $user->getUuid();
+        $item['up_mbps']  = (isset($opt['up_mbps']) ? (int) $opt['up_mbps'] : 100);
+        $item['down_mbps'] = (isset($opt['down_mbps']) ? (int) $opt['down_mbps'] : 100);
+        $item['obfs_type'] = (isset($opt['obfs']) ? $opt['obfs'] : '');
+        $item['obfs_password'] = (isset($opt['obfs_password']) ? $opt['obfs_password'] : '');
+        $item['ignore_client_bandwidth'] = (isset($opt['ignore_client_bandwidth']) ? (bool) $opt['ignore_client_bandwidth'] : false);
+        $item['allow_insecure'] = (isset($opt['allow_insecure']) ? (bool) $opt['allow_insecure'] : false);
+        $item['class']    = $this->node_class;
+        $item['group']    = Config::get('appName');
+        return $item;
+    }
 }

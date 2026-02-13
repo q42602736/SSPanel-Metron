@@ -184,6 +184,24 @@ class AppURI
             case 'trojan':
                 $return = 'trojan://' . $item['passwd'] . '@' . $item['address'] . ':' . $item['port'] . '?sni=' . $item['host'] . '#' . $item['remark'];
                 break;
+            case 'hysteria2':
+                $return = 'hysteria2://' . $item['password'] . '@' . $item['address'] . ':' . $item['port'];
+                $params = [];
+                $params[] = 'up=' . $item['up_mbps'];
+                $params[] = 'down=' . $item['down_mbps'];
+                if ($item['obfs_type'] != '' && $item['obfs_type'] != 'plain') {
+                    $params[] = 'obfs=' . $item['obfs_type'];
+                    if ($item['obfs_password'] != '') {
+                        $params[] = 'obfs-password=' . $item['obfs_password'];
+                    }
+                }
+                if ($item['allow_insecure']) {
+                    $params[] = 'insecure=1';
+                }
+                $params[] = 'sni=' . $item['address'];
+                $return .= '?' . implode('&', $params);
+                $return .= '#' . rawurlencode($item['remark']);
+                break;
             case 'ss':
                 $return = self::getItemUrl($item, 2);
                 break;
@@ -583,6 +601,25 @@ class AppURI
                 // Flow 控制
                 if (isset($item['flow']) && $item['flow']) {
                     $return['flow'] = $item['flow'];
+                }
+                break;
+            case 'hysteria2':
+                $return = [
+                    'name'     => $item['remark'],
+                    'type'     => 'hysteria2',
+                    'server'   => $item['address'],
+                    'port'     => $item['port'],
+                    'password' => $item['password'],
+                    'up'       => $item['up_mbps'] . ' Mbps',
+                    'down'     => $item['down_mbps'] . ' Mbps',
+                    'sni'      => $item['address'],
+                    'skip-cert-verify' => $item['allow_insecure']
+                ];
+                if ($item['obfs_type'] != '' && $item['obfs_type'] != 'plain') {
+                    $return['obfs'] = $item['obfs_type'];
+                    if ($item['obfs_password'] != '') {
+                        $return['obfs-password'] = $item['obfs_password'];
+                    }
                 }
                 break;
         }

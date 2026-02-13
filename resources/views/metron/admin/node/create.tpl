@@ -210,6 +210,7 @@
                                                     <option value="14">Trojan</option>
                                                     <option value="15">V2Ray-VLESS</option>
                                                     <option value="16">V2Ray-VLESS-Reality</option>
+                                                    <option value="17">Hysteria2</option>
                                                 </select>
                                             </div>
                                         </div>
