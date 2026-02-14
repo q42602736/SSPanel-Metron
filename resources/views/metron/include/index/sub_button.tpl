@@ -26,7 +26,15 @@
                                                         <!-- SingBox订阅 -->
                                                         <div class="btn-group mb-3 mr-3">
                                                             <button type="button" class="btn btn-pill btn-clash dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <i class="metron-surfboard text-white"></i>&nbsp;&nbsp;SingBox 订阅&nbsp;&nbsp;</button>
+                                                                <svg width="16" height="17" viewBox="0 0 1027 1109" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-top: -2px;">
+                                                                    <g transform="translate(-692, -855)">
+                                                                        <path d="M692 1191 692 1575.69C692 1640.41 731.499 1651.19 731.499 1651.19L1148.03 1931.62C1212.66 1974.77 1194.71 1881.29 1194.71 1881.29L1194.71 1528.96 692 1191Z" fill="#B0BEC5"/>
+                                                                        <path d="M1698 1191 1698 1575.69C1698 1640.41 1658.5 1651.19 1658.5 1651.19 1658.5 1651.19 1306.6 1888.48 1241.97 1931.62 1177.34 1974.77 1195.29 1881.29 1195.29 1881.29L1195.29 1528.96 1698 1191Z" fill="#90A4AE"/>
+                                                                        <path d="M1241.71 868.473C1212.96 850.509 1169.85 850.509 1144.7 868.473L713.557 1163.07C684.814 1181.04 684.814 1213.37 713.557 1231.33L1144.7 1529.53C1173.44 1547.49 1216.56 1547.49 1241.71 1529.53L1676.44 1227.74C1705.19 1209.78 1705.19 1177.44 1676.44 1159.48L1241.71 868.473Z" fill="#CFD8DC"/>
+                                                                        <path d="M1553.92 1435.92C1553.92 1471.89 1557.5 1486.27 1518.03 1511.45L1428.32 1568.99C1388.85 1594.17 1374.5 1572.59 1374.5 1540.22L1374.5 1446.71C1374.5 1439.52 1374.5 1435.92 1363.73 1428.73 1270.43 1363.99 911.591 1115.84 847 1069.09L1012.07 954C1058.72 982.772 1399.61 1209.35 1539.56 1306.45 1546.74 1310.05 1550.33 1317.24 1550.33 1320.84L1550.33 1435.92Z" fill="#ECEFF1"/>
+                                                                        <path d="M1543.41 1310.21C1399.82 1213.17 1058.79 986.752 1015.72 958L951.103 997.534 847 1069.41C911.615 1116.14 1270.59 1360.53 1363.92 1425.22 1371.1 1428.81 1371.1 1432.41 1371.1 1436L1547 1313.8C1547 1313.8 1547 1310.21 1543.41 1310.21Z" fill="#FFFFFF"/>
+                                                                    </g>
+                                                                </svg>&nbsp;&nbsp;SingBox 订阅&nbsp;&nbsp;</button>
                                                             <div class="dropdown-menu">
                                                                 <button type="button" class="dropdown-item copy-text" data-clipboard-text="{$subInfo["singbox"]}">复制 SingBox 订阅</button>
                                                                 <div class="dropdown-divider">
@@ -63,7 +71,7 @@
                                                             <!-- Stash -->
                                                             <div class="btn-group mb-3 mr-3">
                                                                 <button type="button" class="btn btn-pill btn-surfboard dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                    <i class="text-white"></i>&nbsp;&nbsp;Stash 订阅&nbsp;&nbsp;</button>
+                                                                    <img src="https://stash.wiki/favicon-96x96.png" width="16" height="16" style="display: inline-block; vertical-align: middle; margin-top: -2px;">&nbsp;&nbsp;Stash 订阅&nbsp;&nbsp;</button>
                                                                 <div class="dropdown-menu">
                                                                     <button type="button" class="dropdown-item copy-text" data-clipboard-text="{$subInfo["stash"]}">复制 Stash 订阅</button>
                                                                     <div class="dropdown-divider"></div>
