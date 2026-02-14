@@ -8,7 +8,7 @@ Telegram: [@fluentboard666](https://t.me/fluentboard666)
 
 ### ✨ 主要特性
 
-- 支持多种代理协议（Shadowsocks、V2Ray、Trojan、Hysteria2、VLESS Reality 等）
+- 支持多种代理协议（Shadowsocks、V2Ray、Trojan、Hysteria2、VLESS Reality、AnyTLS 等）
 - 现代化的 Metron 主题界面
 - 完善的订阅功能（支持多种客户端）
 - IP 归属地查询（支持 IPv4/IPv6）
