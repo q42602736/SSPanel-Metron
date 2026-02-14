@@ -1,6 +1,21 @@
-## SSPanel-Metron主题，目前由@BobS9维护开发中。
+## SSPanel-Metron 主题
 
-交流群：[https://t.me/BobShareGroup](https://t.me/BobShareGroup)
+本项目基于 SSPanel-Metron 主题，目前由 [@q42602736](https://github.com/q42602736) 维护开发。
+
+### 📢 交流群
+
+Telegram: [@fluentboard666](https://t.me/fluentboard666)
+
+### ✨ 主要特性
+
+- 支持多种代理协议（Shadowsocks、V2Ray、Trojan、Hysteria2、VLESS Reality 等）
+- 现代化的 Metron 主题界面
+- 完善的订阅功能（支持多种客户端）
+- IP 归属地查询（支持 IPv4/IPv6）
+- 自动化任务管理
+- 多种支付方式集成
+
+---
 
 #### 1.连接 SSH 安装宝塔面板
 
