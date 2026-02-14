@@ -58,10 +58,13 @@ class QQWry
                 $country_parts[] = $result['district_name'];
             }
 
-            $location['country'] = !empty($country_parts) ? implode(' ', $country_parts) : '未知';
+            $country = !empty($country_parts) ? implode(' ', $country_parts) : '未知';
+            $area = !empty($result['isp_domain']) ? $result['isp_domain'] : '';
 
-            // 运营商信息
-            $location['area'] = !empty($result['isp_domain']) ? $result['isp_domain'] : '';
+            // IPDB 格式返回 UTF-8，为了兼容旧代码中的 iconv('gbk', 'utf-8')
+            // 我们将 UTF-8 转换为 GBK，这样旧代码的 iconv 转换就能正常工作
+            $location['country'] = mb_convert_encoding($country, 'GBK', 'UTF-8');
+            $location['area'] = mb_convert_encoding($area, 'GBK', 'UTF-8');
 
             // 保留原有字段以兼容旧代码
             $location['beginip'] = '';
