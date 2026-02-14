@@ -48,6 +48,8 @@ class QQWry
 
             // 组合地理位置信息
             $country_parts = [];
+            
+            // 优先使用详细地址（省市区）
             if (!empty($result['region_name'])) {
                 $country_parts[] = $result['region_name'];
             }
@@ -57,14 +59,19 @@ class QQWry
             if (!empty($result['district_name'])) {
                 $country_parts[] = $result['district_name'];
             }
+            
+            // 如果没有详细地址，使用国家名
+            if (empty($country_parts) && !empty($result['country_name'])) {
+                $country_parts[] = $result['country_name'];
+            }
 
             $country = !empty($country_parts) ? implode(' ', $country_parts) : '未知';
             $area = !empty($result['isp_domain']) ? $result['isp_domain'] : '';
 
             // IPDB 格式返回 UTF-8，为了兼容旧代码中的 iconv('gbk', 'utf-8')
             // 我们将 UTF-8 转换为 GBK，这样旧代码的 iconv 转换就能正常工作
-            $location['country'] = mb_convert_encoding($country, 'GBK', 'UTF-8');
-            $location['area'] = mb_convert_encoding($area, 'GBK', 'UTF-8');
+            $location['country'] = @mb_convert_encoding($country, 'GBK', 'UTF-8');
+            $location['area'] = @mb_convert_encoding($area, 'GBK', 'UTF-8');
 
             // 保留原有字段以兼容旧代码
             $location['beginip'] = '';
