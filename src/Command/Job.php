@@ -206,7 +206,23 @@ class Job extends Command
                 "verify_peer_name"=>false,
             ]
         ];
-        $qqwry = file_get_contents('https://raw.gitmirror.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb', false, stream_context_create($stream_opts));
+        
+        // 多个下载源，按顺序尝试
+        $urls = [
+            'https://raw.githubusercontent.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb',
+            'https://raw.gitmirror.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb',
+            'https://ghproxy.com/https://raw.githubusercontent.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb',
+            'https://mirror.ghproxy.com/https://raw.githubusercontent.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb'
+        ];
+        
+        $qqwry = '';
+        foreach ($urls as $url) {
+            $qqwry = @file_get_contents($url, false, stream_context_create($stream_opts));
+            if ($qqwry != '') {
+                break;
+            }
+        }
+        
         if ($qqwry != '') {
             $backup_file = BASE_PATH . '/storage/qqwry.ipdb.bak';
             $target_file = BASE_PATH . '/storage/qqwry.ipdb';
@@ -241,6 +257,8 @@ class Job extends Command
                     echo '纯真 IP 数据库更新成功;' . PHP_EOL;
                 }
             }
+        } else {
+            echo '纯真 IP 数据库更新失败，所有下载源均不可用;' . PHP_EOL;
         }
 
         // $this->updatedownload();
