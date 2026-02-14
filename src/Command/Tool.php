@@ -72,18 +72,38 @@ class Tool extends Command
     public function initQQWry()
     {
         echo ('开始下载纯真 IP 数据库（IPDB 格式，支持 IPv4/IPv6）....' . PHP_EOL);
-        $qqwry = file_get_contents('https://raw.gitmirror.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb');
+        
+        // 多个下载源，按顺序尝试
+        $urls = [
+            'https://raw.githubusercontent.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb',
+            'https://raw.gitmirror.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb',
+            'https://ghproxy.com/https://raw.githubusercontent.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb',
+            'https://mirror.ghproxy.com/https://raw.githubusercontent.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb'
+        ];
+        
+        $qqwry = '';
+        foreach ($urls as $url) {
+            echo ('尝试从 ' . $url . ' 下载...' . PHP_EOL);
+            $qqwry = @file_get_contents($url);
+            if ($qqwry != '') {
+                echo ('下载成功！' . PHP_EOL);
+                break;
+            }
+        }
+        
         if ($qqwry != '') {
             $fp = fopen(BASE_PATH . '/storage/qqwry.ipdb', 'wb');
             if ($fp) {
                 fwrite($fp, $qqwry);
                 fclose($fp);
-                echo ('纯真 IP 数据库下载成功！' . PHP_EOL);
+                echo ('纯真 IP 数据库保存成功！' . PHP_EOL);
             } else {
                 echo ('纯真 IP 数据库保存失败！' . PHP_EOL);
             }
         } else {
-            echo ('下载失败！请重试，或在 https://github.com/nmgliangwei/qqwry.ipdb/issues/new 反馈！' . PHP_EOL);
+            echo ('所有下载源均失败！请检查网络连接，或手动下载：' . PHP_EOL);
+            echo ('https://github.com/nmgliangwei/qqwry.ipdb/raw/main/qqwry.ipdb' . PHP_EOL);
+            echo ('下载后放置到 storage/qqwry.ipdb' . PHP_EOL);
         }
     }
 
