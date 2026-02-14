@@ -21,6 +21,47 @@ Telegram: [@fluentboard666](https://t.me/fluentboard666)
 
 **V2BX-malio**: [https://github.com/q42602736/V2BX-malio](https://github.com/q42602736/V2BX-malio)
 
+### 📝 新协议配置示例
+
+#### Hysteria2 (Sort=17)
+```json
+{
+  "server": "example.com:443",
+  "password": "your_password",
+  "obfs": "salamander",
+  "obfs-password": "obfs_password",
+  "sni": "example.com"
+}
+```
+
+#### VLESS Reality (Sort=16)
+```json
+{
+  "server": "example.com",
+  "port": 443,
+  "uuid": "your-uuid-here",
+  "flow": "xtls-rprx-vision",
+  "security": "reality",
+  "sni": "www.microsoft.com",
+  "fp": "chrome",
+  "pbk": "public_key_here",
+  "sid": "short_id_here"
+}
+```
+
+#### AnyTLS (Sort=18)
+```json
+{
+  "server": "example.com",
+  "port": 443,
+  "password": "your_password",
+  "sni": "example.com",
+  "alpn": ["h2", "http/1.1"]
+}
+```
+
+详细配置说明请查看：[新协议配置指南](docs/NEW_PROTOCOLS.md)
+
 ---
 
 #### 1.连接 SSH 安装宝塔面板
