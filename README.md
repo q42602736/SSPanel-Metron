@@ -15,6 +15,12 @@ Telegram: [@fluentboard666](https://t.me/fluentboard666)
 - 自动化任务管理
 - 多种支付方式集成
 
+### 🔌 后端对接
+
+使用新协议（Hysteria2、VLESS Reality、AnyTLS）需要配合专用后端：
+
+**V2BX-malio**: [https://github.com/q42602736/V2BX-malio](https://github.com/q42602736/V2BX-malio)
+
 ---
 
 #### 1.连接 SSH 安装宝塔面板
