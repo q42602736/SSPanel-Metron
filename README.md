@@ -21,43 +21,23 @@ Telegram: [@fluentboard666](https://t.me/fluentboard666)
 
 **V2BX-malio**: [https://github.com/q42602736/V2BX-malio](https://github.com/q42602736/V2BX-malio)
 
-### 📝 新协议配置示例
+### 📝 新协议节点配置示例
+
+在面板后台添加节点时，`节点地址` 字段填写格式如下：
 
 #### Hysteria2 (Sort=17)
-```json
-{
-  "server": "example.com:443",
-  "password": "your_password",
-  "obfs": "salamander",
-  "obfs-password": "obfs_password",
-  "sni": "example.com"
-}
+```
+example.com;port=443&up_mbps=100&down_mbps=100&obfs=salamander&obfs_password=yourpassword&allow_insecure=1
 ```
 
 #### VLESS Reality (Sort=16)
-```json
-{
-  "server": "example.com",
-  "port": 443,
-  "uuid": "your-uuid-here",
-  "flow": "xtls-rprx-vision",
-  "security": "reality",
-  "sni": "www.microsoft.com",
-  "fp": "chrome",
-  "pbk": "public_key_here",
-  "sid": "short_id_here"
-}
+```
+example.com;port=443&flow=xtls-rprx-vision&sni=www.microsoft.com&fp=chrome&pbk=your_public_key&sid=your_short_id&spx=/path
 ```
 
 #### AnyTLS (Sort=18)
-```json
-{
-  "server": "example.com",
-  "port": 443,
-  "password": "your_password",
-  "sni": "example.com",
-  "alpn": ["h2", "http/1.1"]
-}
+```
+example.com;port=443&sni=example.com&allow_insecure=0&alpn=h2,http/1.1
 ```
 
 详细配置说明请查看：[新协议配置指南](docs/NEW_PROTOCOLS.md)
