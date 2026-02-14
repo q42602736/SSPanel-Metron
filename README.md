@@ -32,12 +32,12 @@ example.com;port=443&up_mbps=100&down_mbps=100&obfs=salamander&obfs_password=you
 
 #### VLESS Reality (Sort=16)
 ```
-example.com;port=443&flow=xtls-rprx-vision&sni=www.microsoft.com&fp=chrome&pbk=your_public_key&sid=your_short_id&spx=/path
+example.com;443;0;tcp;;security=reality|privateKey=your_private_key|publicKey=your_public_key|shortId=0123456789abcdef|serverName=www.amazon.com|fp=chrome|flow=xtls-rprx-vision
 ```
 
 #### AnyTLS (Sort=18)
 ```
-example.com;port=443&sni=example.com&allow_insecure=0&alpn=h2,http/1.1
+example.com;port=443&server_name=example.com&insecure=1&padding_scheme=%5B%22stop%3D12%22%2C%220%3D50-100%22%2C%221%3D200-500%22%2C%222%3D500-800%2Cc%2C800-1200%2Cc%2C800-1200%2Cc%2C800-1200%22%2C%223%3D20-50%2C800-1200%22%2C%224%3D800-1200%22%2C%225%3D800-1200%22%2C%226%3D800-1200%22%2C%227%3D800-1200%22%2C%228%3D800-1200%22%2C%229%3D800-1200%22%2C%2210%3D800-1200%22%2C%2211%3D800-1200%22%5D
 ```
 
 详细配置说明请查看：[新协议配置指南](docs/NEW_PROTOCOLS.md)
