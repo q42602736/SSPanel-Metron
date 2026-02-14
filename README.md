@@ -1,6 +1,6 @@
 ## SSPanel-Metron 主题
 
-本项目基于 SSPanel-Metron 主题，目前由 [@q42602736](https://github.com/q42602736) 维护开发。
+本项目基于 [BobCoderS9/SSPanel-Metron](https://github.com/BobCoderS9/SSPanel-Metron) 开发而来，目前由 [@q42602736](https://github.com/q42602736) 维护开发。
 
 ### 📢 交流群
 
