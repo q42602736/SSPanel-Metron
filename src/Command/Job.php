@@ -199,28 +199,48 @@ class Job extends Command
         }
         echo '重置用户流量成功;' . PHP_EOL;
 
+        // 自动更新纯真 IP 数据库（IPDB 格式）
         $stream_opts = [
             "ssl" => [
                 "verify_peer"=>false,
                 "verify_peer_name"=>false,
             ]
         ];
-        $qqwry = file_get_contents('http://qqwry.mirror.noc.one/QQWry.Dat?from=sspanel_uim', false, stream_context_create($stream_opts));
+        $qqwry = file_get_contents('https://raw.gitmirror.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb', false, stream_context_create($stream_opts));
         if ($qqwry != '') {
-            rename(BASE_PATH . '/storage/qqwry.dat', BASE_PATH . '/storage/qqwry.dat.bak');
-            $fp = fopen(BASE_PATH . '/storage/qqwry.dat', 'wb');
+            $backup_file = BASE_PATH . '/storage/qqwry.ipdb.bak';
+            $target_file = BASE_PATH . '/storage/qqwry.ipdb';
+            
+            // 备份旧文件
+            if (file_exists($target_file)) {
+                rename($target_file, $backup_file);
+            }
+            
+            // 写入新文件
+            $fp = fopen($target_file, 'wb');
             if ($fp) {
                 fwrite($fp, $qqwry);
                 fclose($fp);
+                
+                // 验证新文件是否有效
+                $iplocation = new QQWry();
+                $location = $iplocation->getlocation('8.8.8.8');
+                
+                if ($location === null || empty($location['country'])) {
+                    // 新文件无效，恢复备份
+                    if (file_exists($backup_file)) {
+                        unlink($target_file);
+                        rename($backup_file, $target_file);
+                        echo '纯真 IP 数据库更新失败，已恢复备份;' . PHP_EOL;
+                    }
+                } else {
+                    // 新文件有效，删除备份
+                    if (file_exists($backup_file)) {
+                        unlink($backup_file);
+                    }
+                    echo '纯真 IP 数据库更新成功;' . PHP_EOL;
+                }
             }
-        }
-
-        $iplocation = new QQWry();
-        $location = $iplocation->getlocation('8.8.8.8');
-        $Userlocation = $location['country'];
-        if (iconv('gbk', 'utf-8//IGNORE', $Userlocation) !== '美国') {
-            unlink(BASE_PATH . '/storage/qqwry.dat');
-            rename(BASE_PATH . '/storage/qqwry.dat.bak', BASE_PATH . '/storage/qqwry.dat');
         }
 
         // $this->updatedownload();

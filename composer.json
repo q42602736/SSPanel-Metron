@@ -28,7 +28,8 @@
         "stripe/stripe-php": "7.0.0",
         "geerlingguy/ping": "^1.2",
         "postal/postal": "^v2.0.1",
-        "http-interop/http-factory-guzzle": "^1.2"
+        "http-interop/http-factory-guzzle": "^1.2",
+        "ipip/db": "^1.0"
     },
     "autoload": {
         "psr-4": {

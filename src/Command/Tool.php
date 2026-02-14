@@ -71,19 +71,19 @@ class Tool extends Command
      */
     public function initQQWry()
     {
-        echo ('开始下载纯真 IP 数据库....');
-        $qqwry = file_get_contents('https://raw.githubusercontent.com/out0fmemory/qqwry.dat/master/qqwry_lastest.dat');
+        echo ('开始下载纯真 IP 数据库（IPDB 格式，支持 IPv4/IPv6）....' . PHP_EOL);
+        $qqwry = file_get_contents('https://raw.gitmirror.com/nmgliangwei/qqwry.ipdb/main/qqwry.ipdb');
         if ($qqwry != '') {
-            $fp = fopen(BASE_PATH . '/storage/qqwry.dat', 'wb');
+            $fp = fopen(BASE_PATH . '/storage/qqwry.ipdb', 'wb');
             if ($fp) {
                 fwrite($fp, $qqwry);
                 fclose($fp);
-                echo ('纯真 IP 数据库下载成功！');
+                echo ('纯真 IP 数据库下载成功！' . PHP_EOL);
             } else {
-                echo ('纯真 IP 数据库保存失败！');
+                echo ('纯真 IP 数据库保存失败！' . PHP_EOL);
             }
         } else {
-            echo ('下载失败！请重试，或在 https://github.com/SukkaW/qqwry-mirror/issues/new 反馈！');
+            echo ('下载失败！请重试，或在 https://github.com/nmgliangwei/qqwry.ipdb/issues/new 反馈！' . PHP_EOL);
         }
     }
 
