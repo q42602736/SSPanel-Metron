@@ -109,6 +109,14 @@ chown -R www:www 你的文件夹名/
 UPDATE user SET theme='metron'
 ```
 
+#### 11.初始化配置项
+
+在导入数据库后，执行以下命令初始化所有配置项（包括注册设置等）：
+
+```shell
+php xcat Tool detectConfigs
+```
+
 ### 使用宝塔面板的计划任务配置
 ```
 每日任务 (必须)
