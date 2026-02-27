@@ -450,6 +450,7 @@ return function (SlimApp $app) {
         $this->get('/getuserinfo',           App\Controllers\VueController::class . ':getUserInfo');
         $this->post('/getuserinviteinfo',    App\Controllers\VueController::class . ':getUserInviteInfo');
         $this->get('/getusershops',          App\Controllers\VueController::class . ':getUserShops');
+        $this->get('/getnodelist',           App\Controllers\VueController::class . ':getNodeList');
         $this->get('/getallresourse',        App\Controllers\VueController::class . ':getAllResourse');
         $this->get('/getnewsubtoken',        App\Controllers\VueController::class . ':getNewSubToken');
         $this->get('/getnewinvotecode',      App\Controllers\VueController::class . ':getNewInviteCode');
