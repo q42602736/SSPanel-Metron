@@ -287,6 +287,7 @@ $_MT['enable_webapi_email_hash'] = true;   // 节点webapi对接时 邮件地址
 $_MT['enable_node_traffic_rate'] = true;   // 是否显示节点的流量倍率
 $_MT['enable_online_user']       = true;   // 是否显示节点的在线人数
 $_MT['enable_node_load']         = true;   // 是否显示节点的负载
+$_MT['enable_node_detail_modal'] = true;   // 是否允许点击节点卡片弹出详情窗口
 $_MT['node_flag_mode']           = 'name';   // name: 从节点名字正则匹配地区(正则方法在.config.php国旗选项) info: 为从节点状态取值，在节点列表里编辑节点，填写节点状态为 us 则显示美国国旗。us这个是国家ISO 3166码，不懂就谷歌。
 $_MT['node_class_name']          = [   //  节点的等级对应的名字
     0 => '公益节点',   // 格式为 节点等级 => 节点等级名字
