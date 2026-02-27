@@ -86,7 +86,7 @@
                                             <!-- Reality 提示 -->
                                             <div id="server_hint_reality" style="display: none;">
                                                 <p class="form-control-guide">
-                                                    <i class="material-icons">info</i>格式：example.com;443;0;tcp;;security=reality|publicKey=公钥|shortId=短ID|serverName=伪装域名|fp=chrome|flow=xtls-rprx-vision
+                                                    <i class="material-icons">info</i>格式：example.com;443;0;tcp;;security=reality|privateKey=your_private_key|publicKey=your_public_key|shortId=0123456789abcdef|serverName=www.amazon.com|fp=chrome|flow=xtls-rprx-vision
                                                 </p>
                                             </div>
                                             
