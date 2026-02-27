@@ -233,7 +233,7 @@ class UserController extends BaseController
             ];
             return $this->echoJson($response, $res);
         }
-        if (count($data) > 0) {
+        if (is_array($data) && count($data) > 0) {
             foreach ($data as $log) {
                 $ip = $log['ip'];
                 $userid = $log['user_id'];
