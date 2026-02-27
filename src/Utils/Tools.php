@@ -535,9 +535,10 @@ class Tools
         }
         if (count($server) >= 6 && $server[5] != '') {
             $item = array_merge($item, URL::parse_args($server[5]));
+            // 保留 server 参数用于 SNI/Host，不覆盖 CDN 地址
             if (array_key_exists('server', $item)) {
-                $item['add'] = $item['server'];
-                unset($item['server']);
+                // server 参数保留在 $item 中，用于后续的 host/sni 配置
+                // 不再覆盖 $item['add']（CDN 地址）
             }
             if (array_key_exists('relayserver', $item)) {
                 $item['localserver'] = $item['add'];
