@@ -257,10 +257,32 @@ $_ENV['Clash_Profiles'] = [
                 'name' => '🔰国外流量',
                 'type' => 'select',
                 'content' => [
+                    'left-proxies' => [
+                        '自动选择',
+                        '故障转移'
+                    ],
                     'regex' => '(.*)',
                     'right-proxies' => [
                         '🚀直接连接'
                     ],
+                ]
+            ],
+            [
+                'name' => '自动选择',
+                'type' => 'url-test',
+                'url' => 'http://www.gstatic.com/generate_204',
+                'interval' => 86400,
+                'content' => [
+                    'regex' => '(.*)',
+                ]
+            ],
+            [
+                'name' => '故障转移',
+                'type' => 'fallback',
+                'url' => 'http://www.gstatic.com/generate_204',
+                'interval' => 7200,
+                'content' => [
+                    'regex' => '(.*)',
                 ]
             ],
             [
