@@ -83,7 +83,7 @@
                                             
                                             <!-- Reality 提示 -->
                                             <div id="server_hint_reality" style="display: none;">
-                                                <p class="form-control-guide">
+                                                <p class="form-control-guide" style="word-break: break-all; white-space: normal;">
                                                     <i class="material-icons">info</i>格式：example.com;443;0;tcp;;security=reality|privateKey=your_private_key|publicKey=your_public_key|shortId=0123456789abcdef|serverName=www.amazon.com|fp=chrome|flow=xtls-rprx-vision
                                                 </p>
                                             </div>
