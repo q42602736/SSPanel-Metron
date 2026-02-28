@@ -359,6 +359,51 @@ class VueController extends BaseController
         }
         $themes = Tools::getDir(BASE_PATH . '/resources/views');
 
+        // 获取启用的支付方式
+        $payment_methods = array();
+        if ($_ENV['payment_system'] === 'metronpay') {
+            // 检查是否配置了任何支付网关
+            $has_payment = false;
+            $payment_gateways = array();
+            
+            // 检查支付宝
+            $alipay_gateway = MetronSetting::get('pay_alipay');
+            if ($alipay_gateway !== 'none' && $alipay_gateway !== '' && $alipay_gateway !== null) {
+                $has_payment = true;
+                $payment_gateways['alipay'] = $alipay_gateway;
+            }
+            
+            // 检查微信支付
+            $wxpay_gateway = MetronSetting::get('pay_wxpay');
+            if ($wxpay_gateway !== 'none' && $wxpay_gateway !== '' && $wxpay_gateway !== null) {
+                $has_payment = true;
+                $payment_gateways['wxpay'] = $wxpay_gateway;
+            }
+            
+            // 检查QQ钱包
+            $qqpay_gateway = MetronSetting::get('pay_qqpay');
+            if ($qqpay_gateway !== 'none' && $qqpay_gateway !== '' && $qqpay_gateway !== null) {
+                $has_payment = true;
+                $payment_gateways['qqpay'] = $qqpay_gateway;
+            }
+            
+            // 检查数字货币
+            $crypto_gateway = MetronSetting::get('pay_crypto');
+            if ($crypto_gateway !== 'none' && $crypto_gateway !== '' && $crypto_gateway !== null) {
+                $has_payment = true;
+                $payment_gateways['crypto'] = $crypto_gateway;
+            }
+            
+            // 如果配置了任何支付网关，返回统一的"在线支付"选项
+            if ($has_payment) {
+                $payment_methods[] = array(
+                    'id' => 'online',
+                    'name' => '在线支付',
+                    'gateways' => $payment_gateways
+                );
+            }
+        }
+        
         $res['globalConfig'] = array(
             'geetest_html' => $GtSdk,
             'login_token' => $login_token,
@@ -375,6 +420,7 @@ class VueController extends BaseController
             'enable_email_verify' => Config::getconfig('Register.bool.Enable_email_verify'),
             'register_restricted_email' => MetronSetting::get('register_restricted_email'),
             'list_of_available_mailboxes' => MetronSetting::get('list_of_available_mailboxes'),
+            'payment_methods' => $payment_methods,
             'appName' => $_ENV['appName'],
             'dateY' => date('Y'),
             'isLogin' => $user->isLogin,
