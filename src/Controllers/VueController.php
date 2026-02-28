@@ -373,6 +373,8 @@ class VueController extends BaseController
             'jump_delay' => $_ENV['jump_delay'],
             'register_mode' => Config::getconfig('Register.string.Mode'),
             'enable_email_verify' => Config::getconfig('Register.bool.Enable_email_verify'),
+            'register_restricted_email' => MetronSetting::get('register_restricted_email'),
+            'list_of_available_mailboxes' => MetronSetting::get('list_of_available_mailboxes'),
             'appName' => $_ENV['appName'],
             'dateY' => date('Y'),
             'isLogin' => $user->isLogin,
