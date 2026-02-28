@@ -407,10 +407,14 @@ class AuthController extends BaseController
         }
 
 
-        if (User::where("reg_ip", $_SERVER['REMOTE_ADDR'])->count() >= 5){
-            $res['ret'] = 0;
-            $res['msg'] = '请不要频繁注册账号！';
-            return $res;
+        // IP注册限制检查
+        if (MetronSetting::get('enable_reg_ip_limit') === true) {
+            $limit = MetronSetting::get('reg_ip_limit') ?: 5;
+            if (User::where("reg_ip", $_SERVER['REMOTE_ADDR'])->count() >= $limit){
+                $res['ret'] = 0;
+                $res['msg'] = '请不要频繁注册账号！';
+                return $res;
+            }
         }
 
         //dumplin：1、邀请人等级为0则邀请码不可用；2、邀请人invite_num为可邀请次数，填负数则为无限
