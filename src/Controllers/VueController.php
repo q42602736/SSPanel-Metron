@@ -362,44 +362,43 @@ class VueController extends BaseController
         // 获取启用的支付方式
         $payment_methods = array();
         if ($_ENV['payment_system'] === 'metronpay') {
-            // 检查是否配置了任何支付网关
-            $has_payment = false;
-            $payment_gateways = array();
-            
             // 检查支付宝
             $alipay_gateway = MetronSetting::get('pay_alipay');
             if ($alipay_gateway !== 'none' && $alipay_gateway !== '' && $alipay_gateway !== null) {
-                $has_payment = true;
-                $payment_gateways['alipay'] = $alipay_gateway;
+                $payment_methods[] = array(
+                    'id' => 'alipay',
+                    'name' => '支付宝',
+                    'gateway' => $alipay_gateway
+                );
             }
             
             // 检查微信支付
             $wxpay_gateway = MetronSetting::get('pay_wxpay');
             if ($wxpay_gateway !== 'none' && $wxpay_gateway !== '' && $wxpay_gateway !== null) {
-                $has_payment = true;
-                $payment_gateways['wxpay'] = $wxpay_gateway;
+                $payment_methods[] = array(
+                    'id' => 'wxpay',
+                    'name' => '微信支付',
+                    'gateway' => $wxpay_gateway
+                );
             }
             
             // 检查QQ钱包
             $qqpay_gateway = MetronSetting::get('pay_qqpay');
             if ($qqpay_gateway !== 'none' && $qqpay_gateway !== '' && $qqpay_gateway !== null) {
-                $has_payment = true;
-                $payment_gateways['qqpay'] = $qqpay_gateway;
+                $payment_methods[] = array(
+                    'id' => 'qqpay',
+                    'name' => 'QQ钱包',
+                    'gateway' => $qqpay_gateway
+                );
             }
             
             // 检查数字货币
             $crypto_gateway = MetronSetting::get('pay_crypto');
             if ($crypto_gateway !== 'none' && $crypto_gateway !== '' && $crypto_gateway !== null) {
-                $has_payment = true;
-                $payment_gateways['crypto'] = $crypto_gateway;
-            }
-            
-            // 如果配置了任何支付网关，返回统一的"在线支付"选项
-            if ($has_payment) {
                 $payment_methods[] = array(
-                    'id' => 'online',
-                    'name' => '在线支付',
-                    'gateways' => $payment_gateways
+                    'id' => 'crypto',
+                    'name' => '数字货币',
+                    'gateway' => $crypto_gateway
                 );
             }
         }
