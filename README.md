@@ -58,8 +58,7 @@ example.com;port=443&server_name=example.com&insecure=1
 
 
 ```shell
-wget https://getcomposer.org/installer -O composer.phar && php composer.phar && php composer.phar install
-     --ignore-platform-reqs
+composer install --ignore-platform-reqs
 ```
 
 
