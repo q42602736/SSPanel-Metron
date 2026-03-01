@@ -599,7 +599,7 @@ class LinkController extends BaseController
             $unusedTraffic = '账户已过期，请续费后使用';
             $expire_in = '账户已过期，请续费后使用';
         }
-        if (!in_array($list, ['quantumult', 'quantumultx', 'shadowrocket', 'stash'])) {
+        if (!in_array($list, ['quantumult', 'quantumultx', 'stash'])) {
             $info_array[] = $unusedTraffic;
             $info_array[] = $expire_in;
         }
