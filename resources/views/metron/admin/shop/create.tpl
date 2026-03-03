@@ -183,18 +183,15 @@
                     <div class="card-main">
                         <div class="card-inner">
                             <div class="form-group form-group-label">
-                                <label class="floating-label" for="content_extra">服务支持</label>
-                                <input class="form-control maxwidth-edit" id="content_extra" type="text" value="">
-                                <p class="form-control-guide"><i class="material-icons">info</i>例：<code>check-全球节点分布;clear-快速客服响应</code>，减号左边为icon代号右边为文字,以;隔开
+                                <label class="floating-label" for="description">服务支持 / 套餐描述</label>
+                                <textarea class="form-control maxwidth-edit" id="description" rows="6"
+                                          placeholder="支持三种格式：&#10;1. 图标列表：check-全球节点分布;clear-快速客服响应&#10;2. Markdown&#10;3. HTML"></textarea>
+                                <p class="form-control-guide"><i class="material-icons">info</i>
+                                    支持三种格式：
+                                    <br>① 图标列表：<code>check-全球节点分布;clear-快速客服响应</code>（减号左边为 icon 代号，以 ; 分隔）
+                                    <br>② Markdown：直接输入 Markdown 语法
+                                    <br>③ HTML：直接输入 HTML 代码
                                 </p>
-                                <p class="form-control-guide">icon代号参阅：<a
-                                            href="https://material.io/tools/icons/?icon=clear&style=baseline">Material-icon</a>
-                                </p>
-                            </div>
-                            <div class="form-group form-group-label">
-                                <label class="floating-label" for="description">套餐详细描述（支持 HTML / Markdown）</label>
-                                <textarea class="form-control maxwidth-edit" id="description" rows="6" placeholder="支持 HTML 或 Markdown 格式，留空则不显示"></textarea>
-                                <p class="form-control-guide"><i class="material-icons">info</i>支持 HTML 和 Markdown 两种格式，将显示在套餐卡片描述区域</p>
                             </div>
                         </div>
                     </div>
@@ -239,7 +236,7 @@
                 var auto_reset_bandwidth = 0;
             }
 
-            let contentExtra = $$getValue('content_extra');
+            let contentExtra = $$getValue('description');
 
             let data = {
                 name: $$getValue('name'),
@@ -257,7 +254,6 @@
                 reset_exp: $$getValue('reset_exp'),
                 node_group: $$getValue('node_group'),
                 limitamount: $$getValue('limitamount'),
-                content_extra: contentExtra,
                 description: $$getValue('description'),
             }
 
