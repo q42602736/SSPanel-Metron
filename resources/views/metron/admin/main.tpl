@@ -12,7 +12,7 @@
     <!-- css -->
     <link href="/theme/material/css/base.min.css" rel="stylesheet">
     <link href="/theme/material/css/project.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/material-icons@1.13.12/iconfont/material-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/material-design-lite@1.1.0/dist/material.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/DataTables/DataTables@1.10.19/media/css/dataTables.material.min.css"
           rel="stylesheet">
