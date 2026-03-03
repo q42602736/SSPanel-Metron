@@ -191,6 +191,11 @@
                                             href="https://material.io/tools/icons/?icon=clear&style=baseline">Material-icon</a>
                                 </p>
                             </div>
+                            <div class="form-group form-group-label">
+                                <label class="floating-label" for="description">套餐详细描述（支持 HTML / Markdown）</label>
+                                <textarea class="form-control maxwidth-edit" id="description" rows="6" placeholder="支持 HTML 或 Markdown 格式，留空则不显示"></textarea>
+                                <p class="form-control-guide"><i class="material-icons">info</i>支持 HTML 和 Markdown 两种格式，将显示在套餐卡片描述区域</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -253,6 +258,7 @@
                 node_group: $$getValue('node_group'),
                 limitamount: $$getValue('limitamount'),
                 content_extra: contentExtra,
+                description: $$getValue('description'),
             }
 
             if ($$.getElementById('traffic-package-enable').checked) {

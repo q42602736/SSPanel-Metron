@@ -626,7 +626,14 @@ class VueController extends BaseController
             return $response->getBody()->write(json_encode($res));
         }
 
-        $shops = Shop::where('status', 1)->orderBy('name')->get();
+        $shopsRaw = Shop::where('status', 1)->orderBy('name')->get();
+
+        // 将 shops 序列化并附加 description 字段
+        $shops = $shopsRaw->map(function ($shop) {
+            $data = $shop->toArray();
+            $data['description'] = $shop->description();
+            return $data;
+        })->values()->toArray();
 
         // 构建 shop_plan 分组映射，展平为 [{name, periods: [{period, shop_id}]}]
         $plan_groups = [];

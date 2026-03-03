@@ -89,6 +89,10 @@ class ShopController extends AdminController
             $content['content_extra'] = $request->getParam('content_extra');
         }
 
+        if ($request->getParam('description') != '') {
+            $content['description'] = $request->getParam('description');
+        }
+
         $shop->content = json_encode($content);
 
         if (!$shop->save()) {
@@ -175,6 +179,10 @@ class ShopController extends AdminController
 
         if ($request->getParam('content_extra') != '') {
             $content['content_extra'] = $request->getParam('content_extra');
+        }
+
+        if ($request->getParam('description') != '') {
+            $content['description'] = $request->getParam('description');
         }
 
         $shop->content = json_encode($content);

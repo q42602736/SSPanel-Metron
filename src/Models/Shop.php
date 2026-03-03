@@ -115,6 +115,15 @@ class Shop extends Model
         return 0;
     }
 
+    public function description()
+    {
+        $content = json_decode($this->attributes['content']);
+        if (isset($content->description) && $content->description !== '') {
+            return $content->description;
+        }
+        return null;
+    }
+
     public function user_class()
     {
         $content = json_decode($this->attributes['content']);
