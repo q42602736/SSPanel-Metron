@@ -35,5 +35,16 @@
                 if (client == 'shadowrocket') {
                     index.qrcodeImport('shadowrocket', '{$subInfo["shadowrocket"]}');
                 }
+                if (client == 'clash') {
+                    // 直接实现 Clash 二维码功能，不依赖 metron.js
+                    $.getScript(ASSETS_URL + '/plugins/jQuery-qrcode/jquery.qrcode.min.js', function() {
+                        var clashUrl = '{$subInfo["clash"]}';
+                        $('#qrcode-sublink-content').html('<div class="text-center"><p>使用 Clash 客户端扫描</p><div align="center" id="qrcode" style="padding-top:10px;"></div></div>');
+                        $('#qrcode').qrcode({
+                            text: 'clash://install-config?url=' + encodeURIComponent(clashUrl)
+                        });
+                        $('#qrcode-sublink-modal').modal('show');
+                    });
+                }
             }
         </script>

@@ -15,6 +15,8 @@
                                                         <div class="btn-group mb-3 mr-3">
                                                             <button type="button" class="btn btn-pill btn-clash dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="metron-clash text-white"></i>&nbsp;&nbsp;Clash 订阅&nbsp;&nbsp;</button>
                                                             <div class="dropdown-menu">
+                                                                <button type="button" class="dropdown-item" href="##" onclick="qrcodeSublink('clash')">扫描二维码添加订阅</button>
+                                                                <div class="dropdown-divider"></div>
                                                                 <button type="button" class="dropdown-item copy-text" data-clipboard-text="{$subInfo["clash"]}">复制 Clash 订阅</button>
                                                                 <div class="dropdown-divider">
                                                                 </div>
