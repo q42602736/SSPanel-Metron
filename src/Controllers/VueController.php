@@ -628,8 +628,30 @@ class VueController extends BaseController
 
         $shops = Shop::where('status', 1)->orderBy('name')->get();
 
+        // 构建 shop_plan 分组映射，展平为 [{name, periods: [{period, shop_id}]}]
+        $plan_groups = [];
+        $shop_plan = MetronSetting::get('shop_plan');
+        if (is_array($shop_plan)) {
+            foreach ($shop_plan as $plan_name => $plan_info) {
+                if (isset($plan_info['描述']) && is_array($plan_info['描述'])) {
+                    $periods = [];
+                    foreach ($plan_info['描述'] as $period_name => $shop_id) {
+                        $periods[] = [
+                            'period' => $period_name,
+                            'shop_id' => (int)$shop_id,
+                        ];
+                    }
+                    $plan_groups[] = [
+                        'name' => $plan_name,
+                        'periods' => $periods,
+                    ];
+                }
+            }
+        }
+
         $res['arr'] = array(
             'shops' => $shops,
+            'plan_groups' => $plan_groups,
         );
         $res['ret'] = 1;
 
