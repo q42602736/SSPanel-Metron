@@ -111,9 +111,13 @@
                                         {/if}</div>
                                 </div>
                                 <div class="shop-content-extra">
-                                    {foreach $shop->content_extra() as $service}
-                                        <div><span class="icon">{$service[0]}</span> {$service[1]}</div>
-                                    {/foreach}
+                                    {if $shop->description() !== null}
+                                        <div class="shop-description">{$shop->description() nofilter}</div>
+                                    {else}
+                                        {foreach $shop->content_extra() as $service}
+                                            <div><span class="icon">{$service[0]}</span> {$service[1]}</div>
+                                        {/foreach}
+                                    {/if}
                                 </div>
                                 <a class="btn btn-brand-accent shop-btn" href="javascript:void(0);"
                                    onClick="buy('{$shop->id}',{$shop->auto_renew})">购买</a>

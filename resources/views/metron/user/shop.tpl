@@ -145,19 +145,27 @@
                                                                         </div>
                                                                     </div>
                                                                 {/if}
-                                                                {foreach $shop_activity->content_extra() as $service}
-                                                                    <div class="row text-center">
+                                                                {if $shop_activity->description() !== null}
+                                                                    <div class="row">
                                                                         <div class="col pl-6 pt-4 pb-0">
-                                                                            {if $service[0] === 'true'}
-                                                                                <div class="font-size-h4 font-weight-bolder {$style[$theme_style]['shop']['card_text']}">{$service[1]}</div>
-                                                                            {else}
-                                                                                <div class="font-size-h4 font-weight-bolder text-dark-50">
-                                                                                    <del>{$service[1]}</del>
-                                                                                </div>
-                                                                            {/if}
+                                                                            <div class="font-size-sm {$style[$theme_style]['shop']['card_text']}">{$shop_activity->description() nofilter}</div>
                                                                         </div>
                                                                     </div>
-                                                                {/foreach}
+                                                                {else}
+                                                                    {foreach $shop_activity->content_extra() as $service}
+                                                                        <div class="row text-center">
+                                                                            <div class="col pl-6 pt-4 pb-0">
+                                                                                {if $service[0] === 'true'}
+                                                                                    <div class="font-size-h4 font-weight-bolder {$style[$theme_style]['shop']['card_text']}">{$service[1]}</div>
+                                                                                {else}
+                                                                                    <div class="font-size-h4 font-weight-bolder text-dark-50">
+                                                                                        <del>{$service[1]}</del>
+                                                                                    </div>
+                                                                                {/if}
+                                                                            </div>
+                                                                        </div>
+                                                                    {/foreach}
+                                                                {/if}
                                                                 <div class="pt-8">
                                                                     {if $shopLt != 0 && $shopCan <= 0}
                                                                         <button class="btn {$style[$theme_style]['shop']['card_btn']} btn-block btn-pill"
@@ -272,17 +280,25 @@
                                                                     </div>
                                                                 </div>
                                                             {/if}
-                                                            {foreach $shop->content_extra() as $service}
-                                                                <div class="row text-center">
+                                                            {if $shop->description() !== null}
+                                                                <div class="row">
                                                                     <div class="col pl-6 pt-4 pb-0">
-                                                                        {if $service[0] === 'true'}
-                                                                            <div class="font-size-h4 font-weight-bolder {$style[$theme_style]['shop']['card_text']}">{$service[1]}</div>
-                                                                        {else}
-                                                                            <div class="font-size-h4 font-weight-bolder text-dark-50"><del>{$service[1]}</del></div>
-                                                                        {/if}
+                                                                        <div class="font-size-sm {$style[$theme_style]['shop']['card_text']}">{$shop->description() nofilter}</div>
                                                                     </div>
                                                                 </div>
-                                                            {/foreach}
+                                                            {else}
+                                                                {foreach $shop->content_extra() as $service}
+                                                                    <div class="row text-center">
+                                                                        <div class="col pl-6 pt-4 pb-0">
+                                                                            {if $service[0] === 'true'}
+                                                                                <div class="font-size-h4 font-weight-bolder {$style[$theme_style]['shop']['card_text']}">{$service[1]}</div>
+                                                                            {else}
+                                                                                <div class="font-size-h4 font-weight-bolder text-dark-50"><del>{$service[1]}</del></div>
+                                                                            {/if}
+                                                                        </div>
+                                                                    </div>
+                                                                {/foreach}
+                                                            {/if}
                                                             <div class="pt-8">
                                                                 {if $shopLt != 0 && $shopCan <= 0}
                                                                     <button class="btn {$style[$theme_style]['shop']['card_btn']} btn-block btn-pill" href="javascript:void(0);" type="button" onClick="shop.metronBuy('{$shop->id}',{$shop->auto_renew});" id="buytext-{$shop->id}" disabled="true">此商品已达到购买上限</button>
