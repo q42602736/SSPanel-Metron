@@ -148,7 +148,7 @@
                                                                 {if $shop_activity->description() !== null}
                                                                     <div class="row">
                                                                         <div class="col pl-6 pt-4 pb-0">
-                                                                            <div class="font-size-sm {$style[$theme_style]['shop']['card_text']}">{$shop_activity->description() nofilter}</div>
+                                                                            <div class="font-size-sm shop-description {$style[$theme_style]['shop']['card_text']}">{$shop_activity->description() nofilter}</div>
                                                                         </div>
                                                                     </div>
                                                                 {else}
@@ -283,7 +283,7 @@
                                                             {if $shop->description() !== null}
                                                                 <div class="row">
                                                                     <div class="col pl-6 pt-4 pb-0">
-                                                                        <div class="font-size-sm {$style[$theme_style]['shop']['card_text']}">{$shop->description() nofilter}</div>
+                                                                        <div class="font-size-sm shop-description {$style[$theme_style]['shop']['card_text']}">{$shop->description() nofilter}</div>
                                                                     </div>
                                                                 </div>
                                                             {else}
@@ -335,6 +335,16 @@
         </div>
     </div>
     {include file='include/global/scripts.tpl'}
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        document.querySelectorAll('.shop-description').forEach(function(el) {
+            var raw = el.innerHTML;
+            // 如果内容看起来像 HTML（包含标签），直接保留；否则按 Markdown 渲染
+            if (!/<[a-z][\s\S]*>/i.test(raw)) {
+                el.innerHTML = marked.parse(raw);
+            }
+        });
+    </script>
 
     <!-- modal -->
     <div class="modal fade" id="buy_modal" data-backdrop="static" tabindex="-1" role="dialog"

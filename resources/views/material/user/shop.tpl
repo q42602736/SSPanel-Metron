@@ -472,3 +472,13 @@
     });
 
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    document.querySelectorAll('.shop-description').forEach(function(el) {
+        var raw = el.innerHTML;
+        if (!/<[a-z][\s\S]*>/i.test(raw)) {
+            el.innerHTML = marked.parse(raw);
+        }
+    });
+</script>
