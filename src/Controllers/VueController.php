@@ -537,6 +537,10 @@ class VueController extends BaseController
         $location = iconv('gbk', 'utf-8//IGNORE', $location['country'] . $location['area']);
         $user['ip'] = $ip;
         $user['location'] = $location;
+        $user_level = MetronSetting::get('user_level');
+        $user['class_name'] = is_array($user_level) && isset($user_level[$user->class])
+            ? $user_level[$user->class]
+            : null;
         $res['info'] = array(
             'user' => $user,
             'ssrSubToken' => $ssr_sub_token,
