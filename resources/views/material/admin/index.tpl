@@ -31,7 +31,7 @@
 
                                     <div id="check_chart" style="height: 300px; width: 100%;"></div>
 
-                                    <script src="//cdn.jsdelivr.net/gh/SuicidalCat/canvasjs.js@v2.3.1/canvasjs.min.js"></script>
+                                    <script src="/assets/js/canvasjs.min.js"></script>
                                     <script>
                                         var chart = new CanvasJS.Chart("check_chart",
                                                 {
@@ -115,7 +115,7 @@
 
                                     <div id="alive_chart" style="height: 300px; width: 100%;"></div>
 
-                                    <script src="//cdn.jsdelivr.net/gh/YihanH/canvasjs.js@v2.2/canvasjs.min.js"></script>
+                                    <script src="/assets/js/canvasjs.min.js"></script>
                                     <script type="text/javascript">
                                         var chart = new CanvasJS.Chart("alive_chart",
                                                 {
@@ -191,7 +191,7 @@
 
                                     <div id="node_chart" style="height: 300px; width: 100%;"></div>
 
-                                    <script src="//cdn.jsdelivr.net/gh/YihanH/canvasjs.js@v2.2/canvasjs.min.js"></script>
+                                    <script src="/assets/js/canvasjs.min.js"></script>
                                     <script type="text/javascript">
                                         var chart = new CanvasJS.Chart("node_chart",
                                                 {
@@ -248,7 +248,7 @@
 
                                     <div id="traffic_chart" style="height: 300px; width: 100%;"></div>
 
-                                    <script src="//cdn.jsdelivr.net/gh/YihanH/canvasjs.js@v2.2/canvasjs.min.js"></script>
+                                    <script src="/assets/js/canvasjs.min.js"></script>
                                     <script type="text/javascript">
                                         var chart = new CanvasJS.Chart("traffic_chart",
                                                 {
