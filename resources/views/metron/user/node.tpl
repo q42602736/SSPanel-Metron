@@ -136,31 +136,31 @@
                                             <div style="padding: 15px; background-color: #f8f9fa; border-radius: 0.42rem;">
                                                 <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.9rem;">
                                                     {if isset($node['unlock']['unlock_item']['YouTube'])}
-                                                        <span style="white-space: nowrap;"><strong>YouTube:</strong> {$node['unlock']['unlock_item']['YouTube']}</span>
+                                                        <span style="white-space: nowrap;"><strong>YouTube:</strong> <span style="color: {if strpos($node['unlock']['unlock_item']['YouTube'], 'Yes') !== false}#1BC5BD{elseif strpos($node['unlock']['unlock_item']['YouTube'], 'No') !== false}#F64E60{else}#FFA800{/if};">{$node['unlock']['unlock_item']['YouTube']}</span></span>
                                                     {/if}
                                                     {if isset($node['unlock']['unlock_item']['Netflix'])}
-                                                        <span style="white-space: nowrap;"><strong>Netflix:</strong> {$node['unlock']['unlock_item']['Netflix']}</span>
+                                                        <span style="white-space: nowrap;"><strong>Netflix:</strong> <span style="color: {if strpos($node['unlock']['unlock_item']['Netflix'], 'Yes') !== false}#1BC5BD{elseif strpos($node['unlock']['unlock_item']['Netflix'], 'No') !== false}#F64E60{else}#FFA800{/if};">{$node['unlock']['unlock_item']['Netflix']}</span></span>
                                                     {/if}
                                                     {if isset($node['unlock']['unlock_item']['DisneyPlus'])}
-                                                        <span style="white-space: nowrap;"><strong>Disney+:</strong> {$node['unlock']['unlock_item']['DisneyPlus']}</span>
+                                                        <span style="white-space: nowrap;"><strong>Disney+:</strong> <span style="color: {if strpos($node['unlock']['unlock_item']['DisneyPlus'], 'Yes') !== false}#1BC5BD{elseif strpos($node['unlock']['unlock_item']['DisneyPlus'], 'No') !== false}#F64E60{else}#FFA800{/if};">{$node['unlock']['unlock_item']['DisneyPlus']}</span></span>
                                                     {/if}
                                                     {if isset($node['unlock']['unlock_item']['DiscoveryPlus'])}
-                                                        <span style="white-space: nowrap;"><strong>Discovery+:</strong> {$node['unlock']['unlock_item']['DiscoveryPlus']}</span>
+                                                        <span style="white-space: nowrap;"><strong>Discovery+:</strong> <span style="color: {if strpos($node['unlock']['unlock_item']['DiscoveryPlus'], 'Yes') !== false}#1BC5BD{elseif strpos($node['unlock']['unlock_item']['DiscoveryPlus'], 'No') !== false}#F64E60{else}#FFA800{/if};">{$node['unlock']['unlock_item']['DiscoveryPlus']}</span></span>
                                                     {/if}
                                                     {if isset($node['unlock']['unlock_item']['ParamountPlus'])}
-                                                        <span style="white-space: nowrap;"><strong>Paramount+:</strong> {$node['unlock']['unlock_item']['ParamountPlus']}</span>
+                                                        <span style="white-space: nowrap;"><strong>Paramount+:</strong> <span style="color: {if strpos($node['unlock']['unlock_item']['ParamountPlus'], 'Yes') !== false}#1BC5BD{elseif strpos($node['unlock']['unlock_item']['ParamountPlus'], 'No') !== false}#F64E60{else}#FFA800{/if};">{$node['unlock']['unlock_item']['ParamountPlus']}</span></span>
                                                     {/if}
                                                     {if isset($node['unlock']['unlock_item']['BahamutAnime'])}
-                                                        <span style="white-space: nowrap;"><strong>动画疯:</strong> {$node['unlock']['unlock_item']['BahamutAnime']}</span>
+                                                        <span style="white-space: nowrap;"><strong>动画疯:</strong> <span style="color: {if strpos($node['unlock']['unlock_item']['BahamutAnime'], 'Yes') !== false}#1BC5BD{elseif strpos($node['unlock']['unlock_item']['BahamutAnime'], 'No') !== false}#F64E60{else}#FFA800{/if};">{$node['unlock']['unlock_item']['BahamutAnime']}</span></span>
                                                     {/if}
                                                     {if isset($node['unlock']['unlock_item']['OpenAI'])}
-                                                        <span style="white-space: nowrap;"><strong>OpenAI:</strong> {$node['unlock']['unlock_item']['OpenAI']}</span>
+                                                        <span style="white-space: nowrap;"><strong>OpenAI:</strong> <span style="color: {if strpos($node['unlock']['unlock_item']['OpenAI'], 'Yes') !== false}#1BC5BD{elseif strpos($node['unlock']['unlock_item']['OpenAI'], 'No') !== false}#F64E60{else}#FFA800{/if};">{$node['unlock']['unlock_item']['OpenAI']}</span></span>
                                                     {/if}
                                                     {if isset($node['unlock']['unlock_item']['Gemini'])}
-                                                        <span style="white-space: nowrap;"><strong>Gemini:</strong> {$node['unlock']['unlock_item']['Gemini']}</span>
+                                                        <span style="white-space: nowrap;"><strong>Gemini:</strong> <span style="color: {if strpos($node['unlock']['unlock_item']['Gemini'], 'Yes') !== false}#1BC5BD{elseif strpos($node['unlock']['unlock_item']['Gemini'], 'No') !== false}#F64E60{else}#FFA800{/if};">{$node['unlock']['unlock_item']['Gemini']}</span></span>
                                                     {/if}
                                                     {if isset($node['unlock']['unlock_item']['TikTok'])}
-                                                        <span style="white-space: nowrap;"><strong>TikTok:</strong> {$node['unlock']['unlock_item']['TikTok']}</span>
+                                                        <span style="white-space: nowrap;"><strong>TikTok:</strong> <span style="color: {if strpos($node['unlock']['unlock_item']['TikTok'], 'Yes') !== false}#1BC5BD{elseif strpos($node['unlock']['unlock_item']['TikTok'], 'No') !== false}#F64E60{else}#FFA800{/if};">{$node['unlock']['unlock_item']['TikTok']}</span></span>
                                                     {/if}
                                                 </div>
                                             </div>
