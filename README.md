@@ -50,14 +50,7 @@ Telegram: [@fluentboard666](https://t.me/fluentboard666)
 在节点服务器上执行以下命令：
 
 ```bash
-# 下载脚本
-wget https://raw.githubusercontent.com/q42602736/SSPanel-Metron/master/media_unlock.sh -O media_unlock.sh
-
-# 添加执行权限
-chmod +x media_unlock.sh
-
-# 首次运行（交互式配置）
-./media_unlock.sh
+wget https://raw.githubusercontent.com/q42602736/SSPanel-Metron/master/media_unlock.sh -O media_unlock.sh && chmod +x media_unlock.sh && ./media_unlock.sh
 ```
 
 #### 配置说明
