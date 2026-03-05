@@ -133,53 +133,36 @@
                                         border-bottom-left-radius: 0.42rem;
                                         margin-top: 20px;
                                         margin-bottom: 10px;"></div>
-                                            <div class="datatable datatable-bordered datatable-head-custom datatable-default datatable-primary datatable-loaded" style="overflow-x: auto;">
-                                                <table id="node_unlocak" class="datatable-table" style="min-width: 100%; table-layout: fixed;">
-                                                    <thead class="datatable-head">
-                                                    <tr class="datatable-row" style="left: 0px;">
-                                                        <th data-field="YouTube" class="datatable-cell" style="min-width: 90px;"><span>YouTube</span></th>
-                                                        <th data-field="Netflix" class="datatable-cell" style="min-width: 90px;"><span>Netflix</span></th>
-                                                        <th data-field="DisneyPlus" class="datatable-cell" style="min-width: 85px;"><span>Disney+</span></th>
-                                                        <th data-field="DiscoveryPlus" class="datatable-cell" style="min-width: 95px;"><span>Discovery+</span></th>
-                                                        <th data-field="ParamountPlus" class="datatable-cell" style="min-width: 100px;"><span>Paramount+</span></th>
-                                                        <th data-field="BahamutAnime" class="datatable-cell" style="min-width: 75px;"><span>动画疯</span></th>
-                                                        <th data-field="OpenAI" class="datatable-cell" style="min-width: 80px;"><span>OpenAI</span></th>
-                                                        <th data-field="Gemini" class="datatable-cell" style="min-width: 75px;"><span>Gemini</span></th>
-                                                        <th data-field="TikTok" class="datatable-cell" style="min-width: 75px;"><span>TikTok</span></th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody style="" class="datatable-body">
-                                                    <tr data-row="0" class="datatable-row" style="left: 0px;">
-                                                        <td data-field="YouTube" style="min-width: 90px; font-size: 0.9rem;" aria-label="{$node['unlock']['unlock_item']['YouTube']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['YouTube']}</span>
-                                                        </td>
-                                                        <td data-field="Netflix" style="min-width: 90px; font-size: 0.9rem;" aria-label="{$node['unlock']['unlock_item']['Netflix']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['Netflix']}</span>
-                                                        </td>
-                                                        <td data-field="DisneyPlus" style="min-width: 85px; font-size: 0.9rem;" aria-label="{$node['unlock']['unlock_item']['DisneyPlus']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['DisneyPlus']}</span>
-                                                        </td>
-                                                        <td data-field="DiscoveryPlus" style="min-width: 95px; font-size: 0.9rem;" aria-label="{$node['unlock']['unlock_item']['DiscoveryPlus']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['DiscoveryPlus']}</span>
-                                                        </td>
-                                                        <td data-field="ParamountPlus" style="min-width: 100px; font-size: 0.9rem;" aria-label="{$node['unlock']['unlock_item']['ParamountPlus']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['ParamountPlus']}</span>
-                                                        </td>
-                                                        <td data-field="BahamutAnime" style="min-width: 75px; font-size: 0.9rem;" aria-label="{$node['unlock']['unlock_item']['BahamutAnime']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['BahamutAnime']}</span>
-                                                        </td>
-                                                        <td data-field="OpenAI" style="min-width: 80px; font-size: 0.9rem;" aria-label="{$node['unlock']['unlock_item']['OpenAI']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['OpenAI']}</span>
-                                                        </td>
-                                                        <td data-field="Gemini" style="min-width: 75px; font-size: 0.9rem;" aria-label="{$node['unlock']['unlock_item']['Gemini']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['Gemini']}</span>
-                                                        </td>
-                                                        <td data-field="TikTok" style="min-width: 75px; font-size: 0.9rem;" aria-label="{$node['unlock']['unlock_item']['TikTok']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['TikTok']}</span>
-                                                        </td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
+                                            <div style="padding: 15px; background-color: #f8f9fa; border-radius: 0.42rem;">
+                                                <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.9rem;">
+                                                    {if isset($node['unlock']['unlock_item']['YouTube'])}
+                                                        <span style="white-space: nowrap;"><strong>YouTube:</strong> {$node['unlock']['unlock_item']['YouTube']}</span>
+                                                    {/if}
+                                                    {if isset($node['unlock']['unlock_item']['Netflix'])}
+                                                        <span style="white-space: nowrap;"><strong>Netflix:</strong> {$node['unlock']['unlock_item']['Netflix']}</span>
+                                                    {/if}
+                                                    {if isset($node['unlock']['unlock_item']['DisneyPlus'])}
+                                                        <span style="white-space: nowrap;"><strong>Disney+:</strong> {$node['unlock']['unlock_item']['DisneyPlus']}</span>
+                                                    {/if}
+                                                    {if isset($node['unlock']['unlock_item']['DiscoveryPlus'])}
+                                                        <span style="white-space: nowrap;"><strong>Discovery+:</strong> {$node['unlock']['unlock_item']['DiscoveryPlus']}</span>
+                                                    {/if}
+                                                    {if isset($node['unlock']['unlock_item']['ParamountPlus'])}
+                                                        <span style="white-space: nowrap;"><strong>Paramount+:</strong> {$node['unlock']['unlock_item']['ParamountPlus']}</span>
+                                                    {/if}
+                                                    {if isset($node['unlock']['unlock_item']['BahamutAnime'])}
+                                                        <span style="white-space: nowrap;"><strong>动画疯:</strong> {$node['unlock']['unlock_item']['BahamutAnime']}</span>
+                                                    {/if}
+                                                    {if isset($node['unlock']['unlock_item']['OpenAI'])}
+                                                        <span style="white-space: nowrap;"><strong>OpenAI:</strong> {$node['unlock']['unlock_item']['OpenAI']}</span>
+                                                    {/if}
+                                                    {if isset($node['unlock']['unlock_item']['Gemini'])}
+                                                        <span style="white-space: nowrap;"><strong>Gemini:</strong> {$node['unlock']['unlock_item']['Gemini']}</span>
+                                                    {/if}
+                                                    {if isset($node['unlock']['unlock_item']['TikTok'])}
+                                                        <span style="white-space: nowrap;"><strong>TikTok:</strong> {$node['unlock']['unlock_item']['TikTok']}</span>
+                                                    {/if}
+                                                </div>
                                             </div>
                                         {/if}
                                     </div>
