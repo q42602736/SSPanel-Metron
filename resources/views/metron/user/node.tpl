@@ -139,39 +139,43 @@
                                                     <tr class="datatable-row" style="left: 0px;">
                                                         <th data-field="YouTube" class="datatable-cell"><span>YouTube</span></th>
                                                         <th data-field="Netflix" class="datatable-cell"><span>Netflix</span></th>
-                                                        <th data-field="DisneyPlus" class="datatable-cell"><span>DisneyPlus</span></th>
-                                                        <th data-field="港澳台B站" class="datatable-cell"><span>港澳台B站</span></th>
-                                                        <th data-field="台湾B站" class="datatable-cell"><span>台湾B站</span></th>
-                                                        <th data-field="MyTVSuper" class="datatable-cell"><span>MyTVSuper</span></th>
-                                                        <th data-field="BBC" class="datatable-cell"><span>BBC</span></th>
-                                                        <th data-field="Abema" class="datatable-cell"><span>Abema</span></th>
+                                                        <th data-field="DisneyPlus" class="datatable-cell"><span>Disney+</span></th>
+                                                        <th data-field="DiscoveryPlus" class="datatable-cell"><span>Discovery+</span></th>
+                                                        <th data-field="ParamountPlus" class="datatable-cell"><span>Paramount+</span></th>
+                                                        <th data-field="BahamutAnime" class="datatable-cell"><span>巴哈姆特</span></th>
+                                                        <th data-field="OpenAI" class="datatable-cell"><span>OpenAI</span></th>
+                                                        <th data-field="Gemini" class="datatable-cell"><span>Gemini</span></th>
+                                                        <th data-field="TikTok" class="datatable-cell"><span>TikTok</span></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody style="" class="datatable-body">
                                                     <tr data-row="0" class="datatable-row" style="left: 0px;">
-                                                        <td data-field="YouTube" style="width: 13%;" aria-label="{$node['unlock']['unlock_item']['YouTube']}" class="datatable-cell">
+                                                        <td data-field="YouTube" style="width: 11%;" aria-label="{$node['unlock']['unlock_item']['YouTube']}" class="datatable-cell">
                                                             <span>{$node['unlock']['unlock_item']['YouTube']}</span>
                                                         </td>
-                                                        <td data-field="Netflix" style="width: 13%;" aria-label="{$node['unlock']['unlock_item']['Netflix']}" class="datatable-cell">
+                                                        <td data-field="Netflix" style="width: 11%;" aria-label="{$node['unlock']['unlock_item']['Netflix']}" class="datatable-cell">
                                                             <span>{$node['unlock']['unlock_item']['Netflix']}</span>
                                                         </td>
-                                                        <td data-field="DisneyPlus" style="width: 13%;" aria-label="{$node['unlock']['unlock_item']['DisneyPlus']}" class="datatable-cell">
+                                                        <td data-field="DisneyPlus" style="width: 11%;" aria-label="{$node['unlock']['unlock_item']['DisneyPlus']}" class="datatable-cell">
                                                             <span>{$node['unlock']['unlock_item']['DisneyPlus']}</span>
                                                         </td>
-                                                        <td data-field="BilibiliHKMCTW" style="width: 13%;" aria-label="{$node['unlock']['unlock_item']['BilibiliHKMCTW']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['BilibiliHKMCTW']}</span>
+                                                        <td data-field="DiscoveryPlus" style="width: 11%;" aria-label="{$node['unlock']['unlock_item']['DiscoveryPlus']}" class="datatable-cell">
+                                                            <span>{$node['unlock']['unlock_item']['DiscoveryPlus']}</span>
                                                         </td>
-                                                        <td data-field="BilibiliTW" style="width: 13%;" aria-label="{$node['unlock']['unlock_item']['BilibiliTW']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['BilibiliTW']}</span>
+                                                        <td data-field="ParamountPlus" style="width: 11%;" aria-label="{$node['unlock']['unlock_item']['ParamountPlus']}" class="datatable-cell">
+                                                            <span>{$node['unlock']['unlock_item']['ParamountPlus']}</span>
                                                         </td>
-                                                        <td data-field="MyTVSuper" style="width: 13%;" aria-label="{$node['unlock']['unlock_item']['MyTVSuper']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['MyTVSuper']}</span>
+                                                        <td data-field="BahamutAnime" style="width: 11%;" aria-label="{$node['unlock']['unlock_item']['BahamutAnime']}" class="datatable-cell">
+                                                            <span>{$node['unlock']['unlock_item']['BahamutAnime']}</span>
                                                         </td>
-                                                        <td data-field="BBC" style="width: 13%;" aria-label="{$node['unlock']['unlock_item']['BBC']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['BBC']}</span>
+                                                        <td data-field="OpenAI" style="width: 11%;" aria-label="{$node['unlock']['unlock_item']['OpenAI']}" class="datatable-cell">
+                                                            <span>{$node['unlock']['unlock_item']['OpenAI']}</span>
                                                         </td>
-                                                        <td data-field="Abema" style="width: 13%;" aria-label="{$node['unlock']['unlock_item']['Abema']}" class="datatable-cell">
-                                                            <span>{$node['unlock']['unlock_item']['Abema']}</span>
+                                                        <td data-field="Gemini" style="width: 11%;" aria-label="{$node['unlock']['unlock_item']['Gemini']}" class="datatable-cell">
+                                                            <span>{$node['unlock']['unlock_item']['Gemini']}</span>
+                                                        </td>
+                                                        <td data-field="TikTok" style="width: 12%;" aria-label="{$node['unlock']['unlock_item']['TikTok']}" class="datatable-cell">
+                                                            <span>{$node['unlock']['unlock_item']['TikTok']}</span>
                                                         </td>
                                                     </tr>
                                                     </tbody>

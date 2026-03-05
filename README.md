@@ -21,6 +21,104 @@ Telegram: [@fluentboard666](https://t.me/fluentboard666)
 
 **V2BX-malio**: [https://github.com/q42602736/V2BX-malio](https://github.com/q42602736/V2BX-malio)
 
+### 🎬 流媒体解锁检测
+
+本项目提供了强大的流媒体解锁检测脚本 `media_unlock.sh`，支持自动检测节点的流媒体解锁状态并上传到面板。
+
+#### 支持的流媒体平台
+
+- ✅ Netflix
+- ✅ Disney+
+- ✅ YouTube Premium
+- ✅ Discovery+
+- ✅ Paramount+
+- ✅ Bahamut Anime（巴哈姆特动画疯）
+- ✅ OpenAI (ChatGPT)
+- ✅ Google Gemini
+- ✅ TikTok
+
+#### 主要特性
+
+- 🔍 支持 DNS 解锁配置（可为每个流媒体服务指定解锁 DNS）
+- 📊 自动上传检测结果到面板节点信息
+- ⏰ 支持定时任务自动检测
+- 📝 详细的日志记录
+- 🔄 数据验证和重试机制
+
+#### 快速安装
+
+在节点服务器上执行以下命令：
+
+```bash
+# 下载脚本
+wget https://raw.githubusercontent.com/q42602736/SSPanel-Metron/master/media_unlock.sh -O media_unlock.sh
+
+# 添加执行权限
+chmod +x media_unlock.sh
+
+# 首次运行（交互式配置）
+./media_unlock.sh
+```
+
+#### 配置说明
+
+首次运行时，脚本会提示输入以下信息：
+
+1. **面板地址**：你的 SSPanel-Metron 面板地址（例如：https://demo.sspanel.org）
+2. **mu_key**：面板后台的 mu_key（在面板后台 - 节点管理中查看）
+3. **节点 ID**：要检测的节点 ID
+
+配置完成后，脚本会自动保存配置到 `/root/.media_unlock.config`
+
+#### DNS 解锁配置（可选）
+
+如果你的节点使用 DNS 解锁方式，首次运行时脚本会提示配置每个流媒体服务的解锁 DNS 服务器地址。
+
+支持的格式：
+- IPv4 地址（例如：1.1.1.1）
+- DNS 服务器域名（例如：dns.example.com）
+- 直接回车使用系统默认 DNS
+
+#### 定时任务配置
+
+脚本支持自动配置定时任务，可选择以下检测频率：
+- 每 1 小时
+- 每 2 小时
+- 每 3 小时
+- 每 4 小时
+- 每 6 小时
+- 每 8 小时
+- 每 12 小时
+- 每 24 小时
+
+#### 后续运行
+
+配置完成后，可以使用以下命令跳过配置直接运行：
+
+```bash
+./media_unlock.sh -S
+```
+
+#### 查看日志
+
+```bash
+tail -f /root/media_unlock.log
+```
+
+#### 配置文件位置
+
+- 主配置文件：`/root/.media_unlock.config`
+- DNS 配置文件：`/root/.unlock_config`
+- 日志文件：`/root/media_unlock.log`
+
+#### 删除配置
+
+如需重新配置，可删除配置文件：
+
+```bash
+rm -f /root/.media_unlock.config /root/.unlock_config
+```
+
 ### 📝 新协议节点配置示例
 
 在面板后台添加节点时，`节点地址` 字段填写格式如下：
