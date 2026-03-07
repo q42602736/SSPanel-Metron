@@ -121,9 +121,6 @@ $_MT['chatra_id']                   = '';  // Chatra 的 ChatraID，可以在 Ch
 # chatwoot  |  https://www.chatwoot.com
 $_MT['chatwoot_base_url']           = 'https://app.chatwoot.com';  // Chatwoot 安装地址，自建时改为你的 Chatwoot 域名
 $_MT['chatwoot_website_token']      = '';  // Chatwoot 网站小部件 Website Token
-$_MT['chatwoot_launcher_mode']      = 'official';  // Chatwoot 悬浮按钮模式 official: 使用官方悬浮图标 | custom_avatar: 使用自定义头像按钮
-$_MT['chatwoot_account_id']         = '';  // custom_avatar 模式必填：Chatwoot Account ID，可从后台地址 /app/accounts/{id} 查看
-$_MT['chatwoot_api_access_token']   = '';  // custom_avatar 模式必填：Chatwoot 后台个人 API Access Token，仅服务端读取头像时使用
 
 # ┌──────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 # │                                              页面内容 设置                                                │
