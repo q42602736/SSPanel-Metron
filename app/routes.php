@@ -445,6 +445,7 @@ return function (SlimApp $app) {
 
     // Vue
     $app->group('', function () {
+        $this->get('/chatwoot/launcher',      App\Controllers\MetronController::class . ':chatwootLauncher');
         $this->get('/logout',                App\Controllers\VueController::class . ':vuelogout');
         $this->get('/globalconfig',          App\Controllers\VueController::class . ':getGlobalConfig');
         $this->get('/getuserinfo',           App\Controllers\VueController::class . ':getUserInfo');

@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Services\{Auth, Mail, Config, Payment, MetronSetting};
+use App\Services\{Auth, Mail, Config, Payment, MetronSetting, ChatwootWidget};
 use App\Models\{Ip,
     Ann,
     Code,
@@ -176,6 +176,11 @@ class MetronController extends BaseController
         $res['money'] = $user->money;
         $res['ret'] = 1;
         return $this->echoJson($response, $res);
+    }
+
+    public function chatwootLauncher($request, $response, $args)
+    {
+        return $this->echoJson($response, ChatwootWidget::getLauncherConfig());
     }
 
     public function ChangeUserName($request, $response, $args)
