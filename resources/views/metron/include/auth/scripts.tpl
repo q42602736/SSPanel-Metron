@@ -62,5 +62,7 @@
         {include file='include/global/crisp.tpl'}
         {else if $metron['enable_cust'] === 'chatra' && $metron['chatra_id'] != ''}
         {include file='include/global/chatra.tpl'}
+        {else if $metron['enable_cust'] === 'chatwoot' && $metron['chatwoot_base_url'] != '' && $metron['chatwoot_website_token'] != ''}
+        {include file='include/global/chatwoot.tpl'}
         {/if}
         {/if}
