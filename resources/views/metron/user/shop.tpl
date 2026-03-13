@@ -148,17 +148,15 @@
                                                                 {$shopActivityDescriptionItems = $shop_activity->description_items()}
                                                                 {if $shopActivityDescriptionItems|@count > 0}
                                                                     {foreach $shopActivityDescriptionItems as $service}
-                                                                        <div class="row">
+                                                                        <div class="row text-center">
                                                                             <div class="col pl-6 pt-4 pb-0">
                                                                                 {if $service.is_negative}
-                                                                                    <div class="d-flex align-items-center font-size-h4 font-weight-bolder text-dark-50">
-                                                                                        <i class="material-icons mr-2">{$service.icon}</i>
+                                                                                    <div class="font-size-h4 font-weight-bolder text-dark-50">
                                                                                         <del>{$service.text}</del>
                                                                                     </div>
                                                                                 {else}
-                                                                                    <div class="d-flex align-items-center font-size-h4 font-weight-bolder {$style[$theme_style]['shop']['card_text']}">
-                                                                                        <i class="material-icons mr-2">{$service.icon}</i>
-                                                                                        <span>{$service.text}</span>
+                                                                                    <div class="font-size-h4 font-weight-bolder {$style[$theme_style]['shop']['card_text']}">
+                                                                                        {$service.text}
                                                                                     </div>
                                                                                 {/if}
                                                                             </div>
@@ -288,17 +286,15 @@
                                                             {$shopDescriptionItems = $shop->description_items()}
                                                             {if $shopDescriptionItems|@count > 0}
                                                                 {foreach $shopDescriptionItems as $service}
-                                                                    <div class="row">
+                                                                    <div class="row text-center">
                                                                         <div class="col pl-6 pt-4 pb-0">
                                                                             {if $service.is_negative}
-                                                                                <div class="d-flex align-items-center font-size-h4 font-weight-bolder text-dark-50">
-                                                                                    <i class="material-icons mr-2">{$service.icon}</i>
+                                                                                <div class="font-size-h4 font-weight-bolder text-dark-50">
                                                                                     <del>{$service.text}</del>
                                                                                 </div>
                                                                             {else}
-                                                                                <div class="d-flex align-items-center font-size-h4 font-weight-bolder {$style[$theme_style]['shop']['card_text']}">
-                                                                                    <i class="material-icons mr-2">{$service.icon}</i>
-                                                                                    <span>{$service.text}</span>
+                                                                                <div class="font-size-h4 font-weight-bolder {$style[$theme_style]['shop']['card_text']}">
+                                                                                    {$service.text}
                                                                                 </div>
                                                                             {/if}
                                                                         </div>
