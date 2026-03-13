@@ -115,6 +115,105 @@ class Shop extends Model
         return 0;
     }
 
+    private function parse_description_items($description, $allow_implicit_check = false)
+    {
+        if (!is_string($description)) {
+            return array();
+        }
+
+        $description = trim($description);
+        if ($description === '' || strpos($description, '<') !== false) {
+            return array();
+        }
+
+        $segments = preg_split('/\s*;\s*/', str_replace(array("\r\n", "\r"), ';', $description));
+        if ($segments === false || count($segments) === 0) {
+            return array();
+        }
+
+        $items = array();
+        foreach ($segments as $segment) {
+            $segment = trim($segment);
+            if ($segment === '') {
+                continue;
+            }
+
+            if ($allow_implicit_check && false === strpos($segment, '-')) {
+                $segment = 'check-' . $segment;
+            }
+
+            $parts = explode('-', $segment, 2);
+            if (count($parts) !== 2) {
+                return array();
+            }
+
+            $icon = trim($parts[0]);
+            $text = trim($parts[1]);
+            if ($icon === '' || $text === '' || preg_match('/^[a-z0-9_]+$/i', $icon) !== 1) {
+                return array();
+            }
+
+            $icon = $this->normalize_description_icon($icon);
+            $items[] = array(
+                'icon'        => $icon,
+                'text'        => $text,
+                'is_negative' => $this->is_negative_description_icon($icon),
+            );
+        }
+
+        return $items;
+    }
+
+    private function normalize_description_icon($icon)
+    {
+        if ($icon === 'true') {
+            return 'check';
+        }
+
+        if ($icon === 'false') {
+            return 'clear';
+        }
+
+        return $icon;
+    }
+
+    private function is_negative_description_icon($icon)
+    {
+        return in_array($icon, array('clear', 'close', 'cancel', 'remove', 'times'), true);
+    }
+
+    public function description_items()
+    {
+        $description = $this->description();
+        if ($description !== null) {
+            $items = $this->parse_description_items($description);
+            if (!empty($items)) {
+                return $items;
+            }
+        }
+
+        $content = json_decode($this->attributes['content']);
+        if (isset($content->content_extra)) {
+            return $this->parse_description_items($content->content_extra, true);
+        }
+
+        return array();
+    }
+
+    public function rich_description()
+    {
+        $description = $this->description();
+        if ($description === null) {
+            return null;
+        }
+
+        if (!empty($this->parse_description_items($description))) {
+            return null;
+        }
+
+        return $description;
+    }
+
     public function description()
     {
         $content = json_decode($this->attributes['content']);

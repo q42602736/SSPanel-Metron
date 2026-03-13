@@ -111,12 +111,16 @@
                                         {/if}</div>
                                 </div>
                                 <div class="shop-content-extra">
-                                    {if $shop->description() !== null}
-                                        <div class="shop-description">{$shop->description() nofilter}</div>
-                                    {else}
-                                        {foreach $shop->content_extra() as $service}
-                                            <div><span class="icon">{$service[0]}</span> {$service[1]}</div>
+                                    {$shopDescriptionItems = $shop->description_items()}
+                                    {if $shopDescriptionItems|@count > 0}
+                                        {foreach $shopDescriptionItems as $service}
+                                            <div>
+                                                <span class="icon">{$service.icon}</span>
+                                                {if $service.is_negative}<del>{$service.text}</del>{else}{$service.text}{/if}
+                                            </div>
                                         {/foreach}
+                                    {elseif $shop->rich_description() !== null}
+                                        <div class="shop-description">{$shop->rich_description() nofilter}</div>
                                     {/if}
                                 </div>
                                 <a class="btn btn-brand-accent shop-btn" href="javascript:void(0);"

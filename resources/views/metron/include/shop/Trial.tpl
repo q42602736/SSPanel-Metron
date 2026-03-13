@@ -90,19 +90,32 @@
                                         </div>
                                     </div>
                                 {/if}
-                                {foreach $shop->content_extra() as $service}
-                                    <div class="row text-center">
+                                {$shopDescriptionItems = $shop->description_items()}
+                                {if $shopDescriptionItems|@count > 0}
+                                    {foreach $shopDescriptionItems as $service}
+                                        <div class="row">
+                                            <div class="col pl-6 pt-4 pb-0">
+                                                {if $service.is_negative}
+                                                    <div class="d-flex align-items-center font-size-h4 font-weight-bolder text-dark-50">
+                                                        <i class="material-icons mr-2">{$service.icon}</i>
+                                                        <del>{$service.text}</del>
+                                                    </div>
+                                                {else}
+                                                    <div class="d-flex align-items-center font-size-h4 font-weight-bolder {$style[$theme_style]['shop']['card_text']}">
+                                                        <i class="material-icons mr-2">{$service.icon}</i>
+                                                        <span>{$service.text}</span>
+                                                    </div>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                    {/foreach}
+                                {elseif $shop->rich_description() !== null}
+                                    <div class="row">
                                         <div class="col pl-6 pt-4 pb-0">
-                                            {if $service[0] === 'true'}
-                                                <div class="font-size-h4 font-weight-bolder {$style[$theme_style]['shop']['card_text']}">{$service[1]}</div>
-                                            {else}
-                                                <div class="font-size-h4 font-weight-bolder text-dark-50">
-                                                    <del>{$service[1]}</del>
-                                                </div>
-                                            {/if}
+                                            <div class="font-size-sm shop-description {$style[$theme_style]['shop']['card_text']}">{$shop->rich_description() nofilter}</div>
                                         </div>
                                     </div>
-                                {/foreach}
+                                {/if}
                                 <div class="pt-8">
                                     {if $shopLt != 0 && $shopCan <= 0}
                                         <button class="btn {$style[$theme_style]['shop']['card_btn']} btn-block btn-pill"
