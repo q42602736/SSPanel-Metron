@@ -163,10 +163,7 @@ class AuthController extends BaseController
             return $response->getBody()->write(json_encode($rs));
         }
 
-        $time = 3600 * 24;
-        if ($rememberMe) {
-            $time = 3600 * 24 * ($_ENV['rememberMeDuration'] ?: 7);
-        }
+        $time = Auth::resolveLoginDuration($rememberMe);
 
         if ($user->ga_enable == 1) {
             $ga = new GA();

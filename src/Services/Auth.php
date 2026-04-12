@@ -17,6 +17,33 @@ class Auth
         self::getDriver()->login($uid, $time);
     }
 
+    public static function resolveLoginDuration($rememberMe)
+    {
+        $defaultHours = (int) ($_ENV['loginDuration24Hours'] ?? 24);
+        $rememberDays = (int) ($_ENV['rememberMeDuration'] ?? 7);
+
+        if ($rememberMe === null || $rememberMe === '' || $rememberMe === false) {
+            return 3600 * $defaultHours;
+        }
+
+        $value = is_string($rememberMe)
+            ? strtolower(trim($rememberMe))
+            : $rememberMe;
+
+        if ($value === true || $value === 1 || $value === '1' || $value === 'true' || $value === 'on' || $value === 'week') {
+            return 3600 * 24 * $rememberDays;
+        }
+
+        switch ($value) {
+            case '24h':
+                return 3600 * $defaultHours;
+            case '7d':
+                return 3600 * 24 * $rememberDays;
+            default:
+                return 3600 * 24 * $rememberDays;
+        }
+    }
+
     /**
      * Get current user(cached)
      *
