@@ -288,6 +288,7 @@ class AuthController extends BaseController
         if (Config::getconfig('Register.bool.Enable_email_verify')) {
             $email = $request->getParam('email');
             $email = trim($email);
+            $email = strtolower($email);
 
             if ($email == '') {
                 $res['ret'] = 0;
@@ -316,13 +317,13 @@ class AuthController extends BaseController
                     return $response->getBody()->write(json_encode($res));
                 }
             }
-            if (!Check::isGmailSmall($email)) {
+            if (!Check::isEmailAliasLegal($email)) {
                 $res['ret'] = 0;
-                $res['msg'] = '禁止使用带+号的Gmail虚拟邮箱';
+                $res['msg'] = '禁止使用邮箱别名小号';
                 return $response->getBody()->write(json_encode($res));
             }
 
-            $user = User::where('email', '=', $email)->first();
+            $user = Check::findEmailOwner($email);
             if ($user != null) {
                 $res['ret'] = 0;
                 $res['msg'] = '此邮箱已经注册';
@@ -604,13 +605,13 @@ class AuthController extends BaseController
                 return $response->getBody()->write(json_encode($res));
             }
         }
-        if (!Check::isGmailSmall($email)) {
+        if (!Check::isEmailAliasLegal($email)) {
             $res['ret'] = 0;
-            $res['msg'] = '禁止使用带+号的Gmail虚拟邮箱';
+            $res['msg'] = '禁止使用邮箱别名小号';
             return $response->getBody()->write(json_encode($res));
         }
         // check email
-        $user = User::where('email', $email)->first();
+        $user = Check::findEmailOwner($email);
         if ($user != null) {
             $res['ret'] = 0;
             $res['msg'] = '邮箱已经被注册了';
