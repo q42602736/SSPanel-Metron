@@ -148,18 +148,23 @@ class PAYJS extends AbstractPayment
         $data['sign'] = $this->sign($params);
         return json_decode($this->post($data, $type = 'query'), true);
     }
+
+    private function verifyNotifySign($data, $signature)
+    {
+        unset($data['sign']);
+        $data = array_filter($data);
+        ksort($data);
+        $sign = strtoupper(md5(urldecode(http_build_query($data) . '&key=' . $this->appSecret)));
+        return hash_equals($sign, $signature);
+    }
+
     public function notify($request, $response, $args)
     {
         $data = $_POST;
 
-        if ($data['return_code'] == 1) {
+        if (isset($data['return_code'], $data['sign'], $data['out_trade_no'], $data['total_fee']) && $data['return_code'] == 1) {
             // 验证签名
-            $in_sign = $data['sign'];
-            unset($data['sign']);
-            $data = array_filter($data);
-            ksort($data);
-            $sign = strtoupper(md5(urldecode(http_build_query($data) . '&key=' . $this->appSecret)));
-            $resultVerify = $sign ? true : false;
+            $resultVerify = $this->verifyNotifySign($data, $data['sign']);
 
             //$str_to_sign = $this->prepareSign($data);
             //$resultVerify = $this->verify($str_to_sign, $request->getParam('sign'));
@@ -167,7 +172,17 @@ class PAYJS extends AbstractPayment
             if ($resultVerify) {
                 // 验重
                 $p = Paylist::where('tradeno', '=', $data['out_trade_no'])->first();
-                $money = $p->total;
+                if ($p === null) {
+                    echo 'FAIL3';
+                    return;
+                }
+
+                $money = (int) round(((float) $p->total) * 100);
+                if ((int) $data['total_fee'] !== $money) {
+                    echo 'FAIL4';
+                    return;
+                }
+
                 if ($p->status != 1) {
                     $this->postPayment($data['out_trade_no'], '微信支付');
                     echo 'SUCCESS';
@@ -194,23 +209,25 @@ class PAYJS extends AbstractPayment
     }
     public function getReturnHTML($request, $response, $args)
     {
-        $pid = $_GET['merchantTradeNo'];
+        $pid = $request->getParam('merchantTradeNo') ?: $request->getParam('out_trade_no');
         $p = Paylist::where('tradeno', '=', $pid)->first();
+
+        if ($p === null) {
+            return View::getSmarty()->assign('money', 0)->assign('success', 0)->fetch('user/pay_success.tpl');
+        }
+
         $money = $p->total;
         if ($p->status == 1) {
             $success = 1;
         } else {
-            $data = $_POST;
+            $data = $request->getParams();
 
-            $in_sign = $data['sign'];
-            unset($data['sign']);
-            $data = array_filter($data);
-            ksort($data);
-            $sign = strtoupper(md5(urldecode(http_build_query($data) . '&key=' . $this->appSecret)));
-            $resultVerify = $sign ? true : false;
-
-            if ($resultVerify) {
-                $this->postPayment($data['out_trade_no'], '微信支付');
+            if (
+                isset($data['sign'], $data['out_trade_no'], $data['total_fee']) &&
+                $data['out_trade_no'] === $p->tradeno &&
+                (int) $data['total_fee'] === (int) round(((float) $p->total) * 100) &&
+                $this->verifyNotifySign($data, $data['sign'])
+            ) {
                 $success = 1;
             } else {
                 $success = 0;

@@ -172,7 +172,10 @@ class MtAgent extends \App\Controllers\BaseController
                     if (!Check::isEmailLegal($email)) {
                         return $response->getBody()->write(json_encode(['ret' => 0, 'msg' => '邮箱无效']));
                     }
-                    $checkemail = User::where('email', '=', $email)->first();
+                    if (!Check::isEmailAliasLegal($email)) {
+                        return $response->getBody()->write(json_encode(['ret' => 0, 'msg' => '禁止使用邮箱别名小号']));
+                    }
+                    $checkemail = Check::findEmailOwner($email, $edituser->id);
                     if ($checkemail != null) {
                         return $response->getBody()->write(json_encode(['ret' => 0, 'msg' => '此邮箱已存在']));
                     }
@@ -298,13 +301,13 @@ class MtAgent extends \App\Controllers\BaseController
         if (!Check::isEmailLegal($email)) {
             return $response->getBody()->write(json_encode(['ret' => 0, 'msg' => '邮箱无效']));
         }
-        if (!Check::isGmailSmall($email)) {
+        if (!Check::isEmailAliasLegal($email)) {
             $res['ret'] = 0;
-            $res['msg'] = '禁止使用带+号的Gmail虚拟邮箱';
+            $res['msg'] = '禁止使用邮箱别名小号';
             return $response->getBody()->write(json_encode($res));
         }
 
-        $newuser = User::where('email', $email)->first();
+        $newuser = Check::findEmailOwner($email);
         if ($newuser != null) {
             $res['ret'] = 0;
             $res['msg'] = '邮箱已经被注册了';

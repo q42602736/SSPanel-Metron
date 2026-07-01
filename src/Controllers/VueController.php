@@ -261,13 +261,13 @@ class VueController extends BaseController
                 return $response->getBody()->write(json_encode($res));
             }
         }
-        if (!Check::isGmailSmall($email)) {
+        if (!Check::isEmailAliasLegal($email)) {
             $res['ret'] = 0;
-            $res['msg'] = '禁止使用带+号的Gmail虚拟邮箱';
+            $res['msg'] = '禁止使用邮箱别名小号';
             return $response->getBody()->write(json_encode($res));
         }
         // check email
-        $user = User::where('email', $email)->first();
+        $user = Check::findEmailOwner($email);
         if ($user != null) {
             $res['ret'] = 0;
             $res['msg'] = '邮箱已经被注册了';

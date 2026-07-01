@@ -237,7 +237,7 @@ class MetronController extends BaseController
         switch ($page) {
             case 'profile':
                 $name = trim($request->getParam('user_name'));
-                $email = trim($request->getParam('email'));
+                $email = strtolower(trim($request->getParam('email')));
                 $email_code = trim($request->getParam('email_code'));
 
                 /* 昵称检验 */
@@ -280,11 +280,14 @@ class MetronController extends BaseController
                     if (!Check::isEmailLegal($email)) {
                         return $response->getBody()->write(json_encode(['ret' => 0, 'msg' => '邮箱无效']));
                     }
+                    if (!Check::isEmailAliasLegal($email)) {
+                        return $response->getBody()->write(json_encode(['ret' => 0, 'msg' => '禁止使用邮箱别名小号']));
+                    }
                     $metron = new MtEmail();
                     if (!$metron->checkEmailSuffix($email)) {
                         return $response->getBody()->write(json_encode(['ret' => 0, 'msg' => '不支持的邮箱后缀']));
                     }
-                    $checkemail = User::where('email', '=', $email)->first();
+                    $checkemail = Check::findEmailOwner($email, $user->id);
                     if ($checkemail) {
                         return $response->getBody()->write(json_encode(['ret' => 0, 'msg' => '此邮箱已存在']));
                     }
@@ -366,8 +369,8 @@ class MetronController extends BaseController
 
         switch ($type) {
             case 'email_name':
-                $email = $request->getParam('email');
-                if (User::where('email', $email)->first()) {
+                $email = strtolower(trim($request->getParam('email')));
+                if (!Check::isEmailAliasLegal($email) || Check::findEmailOwner($email, $user->id)) {
                     $res['valid'] = false;
                     return $response->getBody()->write(json_encode($res));
                 }

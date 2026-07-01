@@ -13,11 +13,13 @@ class MtEmail
      */
     public function sendEmailCode($email, $user = null)
     {
+        $email = strtolower(trim($email));
+
         if (!$this->checkEmailSuffix($email)){
             return ['ret' => 0, 'msg' => '不支持的邮箱后缀'];
         }
 
-        if ($user->email == $email) {
+        if ($user != null && $user->email == $email) {
             return ['ret' => 0, 'msg' => '邮箱地址没有修改'];
         }
         if ($email == '') {
@@ -28,8 +30,12 @@ class MtEmail
             return ['ret' => 0, 'msg' => '邮箱无效'];
         }
 
-        $user = User::where('email', '=', $email)->first();
-        if ($user != null) {
+        if (!Check::isEmailAliasLegal($email)) {
+            return ['ret' => 0, 'msg' => '禁止使用邮箱别名小号'];
+        }
+
+        $existsUser = Check::findEmailOwner($email, $user == null ? null : $user->id);
+        if ($existsUser != null) {
             return ['ret' => 0, 'msg' => '此邮箱已存在'];
         }
 
@@ -73,6 +79,11 @@ class MtEmail
      */
     public function checkEmailSuffix($email)
     {
+        $email = strtolower(trim($email));
+        if (strpos($email, '@') === false) {
+            return false;
+        }
+
         // 注册邮箱黑名单
         $email_postfix = '@'.(explode("@",$email)[1]);
         if (in_array($email_postfix, MetronSetting::get('disable_mailbox_list')) === true) {

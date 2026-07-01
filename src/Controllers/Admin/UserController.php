@@ -20,6 +20,7 @@ use App\Services\{
 use App\Utils\{
     GA,
     Hash,
+    Check,
     Tools,
     QQWry,
     Radius,
@@ -93,14 +94,18 @@ class UserController extends AdminController
         $money   = (int) trim($request->getParam('userMoney'));
         $shop_id = (int) $request->getParam('userShop');
 
-        // not really user input
-        //if (!Check::isEmailLegal($email)) {
-        //    $res['ret'] = 0;
-        //   $res['msg'] = '邮箱无效';
-        //   return $response->getBody()->write(json_encode($res));
-        //}
+        if (!Check::isEmailLegal($email)) {
+            $res['ret'] = 0;
+            $res['msg'] = '邮箱无效';
+            return $response->getBody()->write(json_encode($res));
+        }
+        if (!Check::isEmailAliasLegal($email)) {
+            $res['ret'] = 0;
+            $res['msg'] = '禁止使用邮箱别名小号';
+            return $response->getBody()->write(json_encode($res));
+        }
         // check email
-        $user = User::where('email', $email)->first();
+        $user = Check::findEmailOwner($email);
         if ($user != null) {
             $res['ret'] = 0;
             $res['msg'] = '邮箱已经被注册了';
@@ -330,9 +335,27 @@ class UserController extends AdminController
 
         $email1 = $user->email;
 
-        $user->email = $request->getParam('email');
+        $email = strtolower(trim($request->getParam('email')));
+        if (!Check::isEmailLegal($email)) {
+            $rs['ret'] = 0;
+            $rs['msg'] = '邮箱无效';
+            return $response->getBody()->write(json_encode($rs));
+        }
+        if (!Check::isEmailAliasLegal($email)) {
+            $rs['ret'] = 0;
+            $rs['msg'] = '禁止使用邮箱别名小号';
+            return $response->getBody()->write(json_encode($rs));
+        }
+        $checkemail = Check::findEmailOwner($email, $user->id);
+        if ($checkemail != null) {
+            $rs['ret'] = 0;
+            $rs['msg'] = '此邮箱已存在';
+            return $response->getBody()->write(json_encode($rs));
+        }
 
-        $email2 = $request->getParam('email');
+        $user->email = $email;
+
+        $email2 = $email;
 
         $passwd = $request->getParam('passwd');
 
