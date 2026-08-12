@@ -44,6 +44,7 @@
         </div>
     </div>
     {include file='include/global/scripts.tpl'}
+    {literal}
     <script>
         function dedicatedBuy(shopId) {
             $.post('/user/buy', {shop: shopId, coupon: '', disableothers: 0, autorenew: 0}, function (data) {
@@ -56,5 +57,6 @@
             }, 'json');
         }
     </script>
+    {/literal}
 </body>
 </html>
