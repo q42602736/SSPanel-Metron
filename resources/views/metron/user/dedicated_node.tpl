@@ -147,52 +147,106 @@
     </div>
     {literal}
     <script>
-        let dedicatedPaymentNodeId = 0;
-        let dedicatedPaymentPrice = 0;
+        (function () {
+            var dedicatedPaymentNodeId = 0;
+            var dedicatedPaymentPrice = 0;
+            var modal = document.getElementById('dedicated-payment-modal');
+            var summary = document.getElementById('dedicated-payment-summary');
+            var result = document.getElementById('dedicated-payment-result');
+            var buttons = document.querySelectorAll('.dedicated-pay-option');
 
-        function dedicatedBuy(nodeId, nodeName, price) {
-            dedicatedPaymentNodeId = parseInt(nodeId, 10);
-            dedicatedPaymentPrice = parseFloat(price);
-            $('#dedicated-payment-summary').text(nodeName + '，应付 ' + dedicatedPaymentPrice.toFixed(2) + ' 元');
-            $('#dedicated-payment-result').hide().empty();
-            $('.dedicated-pay-option').prop('disabled', false);
-            $('#dedicated-payment-modal').modal('show');
-        }
-
-        $('.dedicated-pay-option').on('click', function () {
-            const button = $(this);
-            const paymentType = button.data('type');
-            button.prop('disabled', true).text('正在创建订单...');
-            $('.dedicated-pay-option').not(button).prop('disabled', true);
-
-            $.ajax({
-                url: '/user/payment/purchase',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    price: dedicatedPaymentPrice,
-                    type: paymentType,
-                    shopid: 0,
-                    dedicated_node_id: dedicatedPaymentNodeId
-                },
-                success: function (data) {
-                    const result = $('#dedicated-payment-result');
-                    if (!data || data.ret !== 1) {
-                        result.removeClass('alert-light').addClass('alert-danger').text((data && data.msg) || '创建支付订单失败').show();
-                        $('.dedicated-pay-option').prop('disabled', false);
-                        button.text(button.data('type') === paymentType ? '重新支付' : '支付');
-                        return;
-                    }
-                    result.removeClass('alert-danger').addClass('alert-light').html('订单已创建，请完成支付：<a class="btn btn-primary ml-2" target="_blank" rel="noopener" href="' + data.url + '">前往支付</a>').show();
-                    button.text('订单已创建');
-                },
-                error: function (xhr) {
-                    $('#dedicated-payment-result').removeClass('alert-light').addClass('alert-danger').text('创建支付订单失败：' + xhr.status).show();
-                    $('.dedicated-pay-option').prop('disabled', false);
-                    button.text('重新支付');
+            function setResult(message, isError, html) {
+                result.className = 'alert mt-3 ' + (isError ? 'alert-danger' : 'alert-light');
+                if (html) {
+                    result.innerHTML = message;
+                } else {
+                    result.textContent = message;
                 }
+                result.style.display = 'block';
+            }
+
+            function showModal() {
+                if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+                    window.jQuery('#dedicated-payment-modal').modal('show');
+                    return;
+                }
+                modal.style.display = 'block';
+                modal.classList.add('show');
+                modal.setAttribute('aria-hidden', 'false');
+            }
+
+            function hideModal() {
+                if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+                    window.jQuery('#dedicated-payment-modal').modal('hide');
+                    return;
+                }
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+                modal.setAttribute('aria-hidden', 'true');
+            }
+
+            window.dedicatedBuy = function (nodeId, nodeName, price) {
+                dedicatedPaymentNodeId = parseInt(nodeId, 10);
+                dedicatedPaymentPrice = parseFloat(price);
+                summary.textContent = nodeName + '，应付 ' + dedicatedPaymentPrice.toFixed(2) + ' 元';
+                result.style.display = 'none';
+                result.textContent = '';
+                Array.prototype.forEach.call(buttons, function (button) {
+                    button.disabled = false;
+                    button.textContent = button.getAttribute('data-label');
+                });
+                showModal();
+            };
+
+            Array.prototype.forEach.call(document.querySelectorAll('[data-dismiss="modal"]'), function (button) {
+                button.addEventListener('click', hideModal);
             });
-        }
+
+            Array.prototype.forEach.call(buttons, function (button) {
+                button.setAttribute('data-label', button.textContent);
+                button.addEventListener('click', function () {
+                    var paymentType = button.getAttribute('data-type');
+                    var body = new URLSearchParams();
+                    body.set('price', dedicatedPaymentPrice);
+                    body.set('type', paymentType);
+                    body.set('shopid', '0');
+                    body.set('dedicated_node_id', dedicatedPaymentNodeId);
+                    button.disabled = true;
+                    button.textContent = '正在创建订单...';
+                    Array.prototype.forEach.call(buttons, function (item) {
+                        item.disabled = true;
+                    });
+
+                    fetch('/user/payment/purchase', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+                        body: body.toString()
+                    }).then(function (response) {
+                        return response.text().then(function (text) {
+                            var data = null;
+                            try { data = JSON.parse(text); } catch (error) { data = null; }
+                            if (!response.ok) {
+                                throw new Error('创建支付订单失败：' + response.status);
+                            }
+                            return data;
+                        });
+                    }).then(function (data) {
+                        if (!data || data.ret !== 1) {
+                            throw new Error((data && data.msg) || '创建支付订单失败');
+                        }
+                        setResult('订单已创建，请完成支付：<a class="btn btn-primary ml-2" target="_blank" rel="noopener" href="' + data.url + '">前往支付</a>', false, true);
+                        button.textContent = '订单已创建';
+                    }).catch(function (error) {
+                        setResult(error.message || '创建支付订单失败', true, false);
+                        Array.prototype.forEach.call(buttons, function (item) {
+                            item.disabled = false;
+                        });
+                        button.textContent = '重新支付';
+                    });
+                });
+            });
+        }());
     </script>
     {/literal}
 </body>
