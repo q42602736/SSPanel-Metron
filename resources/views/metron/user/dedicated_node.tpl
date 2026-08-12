@@ -24,8 +24,19 @@
                                         </div>
                                         <div class="text-muted mb-3">IP：{$node->getMaskedIp()}</div>
                                         <div class="mb-4">{$node->info}</div>
-                                        {if $item['unlock_text'] != ''}
-                                            <div class="text-muted mb-4">解锁：{$item['unlock_text']}</div>
+                                        {if $item['unlock_items']}
+                                            <div style="border-top: 2px dashed #ECF0F3;
+                                        border-bottom-right-radius: 0.42rem;
+                                        border-bottom-left-radius: 0.42rem;
+                                        margin-top: 20px;
+                                        margin-bottom: 10px;"></div>
+                                            <div style="padding: 15px; background-color: #f8f9fa; border-radius: 0.42rem; margin-bottom: 20px;">
+                                                <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.9rem;">
+                                                    {foreach $item['unlock_items'] as $unlockItem}
+                                                        <span style="white-space: nowrap;"><strong>{$unlockItem['label']}:</strong> <span style="color: {if strpos($unlockItem['value'], 'Yes') !== false}#1BC5BD{elseif strpos($unlockItem['value'], 'No') !== false}#F64E60{else}#FFA800{/if};">{$unlockItem['value']}</span></span>
+                                                    {/foreach}
+                                                </div>
+                                            </div>
                                         {/if}
                                         <div class="mt-auto d-flex justify-content-between align-items-center">
                                             <div><strong class="font-size-h3">{$node->dedicated_price}</strong> 元 / {$node->dedicated_days} 天</div>

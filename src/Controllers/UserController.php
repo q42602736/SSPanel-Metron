@@ -714,15 +714,32 @@ class UserController extends BaseController
                 ->where('created_at', '>', time() - 86460)
                 ->orderBy('id', 'desc')
                 ->first();
-            $unlockText = '';
+            $unlockItems = [];
             if ($unlock !== null) {
                 $unlockData = json_decode($unlock->result, true);
                 if (is_array($unlockData)) {
-                    $unlockParts = [];
-                    foreach ($unlockData as $name => $value) {
-                        $unlockParts[] = $name . ' ' . $value;
+                    $unlockLabels = [
+                        'YouTube' => 'YouTube',
+                        'Netflix' => 'Netflix',
+                        'DisneyPlus' => 'Disney+',
+                        'DiscoveryPlus' => 'Discovery+',
+                        'ParamountPlus' => 'Paramount+',
+                        'BahamutAnime' => '动画疯',
+                        'OpenAI' => 'OpenAI',
+                        'Gemini' => 'Gemini',
+                        'TikTok' => 'TikTok',
+                    ];
+                    foreach ($unlockLabels as $key => $label) {
+                        if (!array_key_exists($key, $unlockData)) {
+                            continue;
+                        }
+                        $value = str_replace(
+                            ['Originals Only', 'Oversea Only'],
+                            ['仅限自制', '仅限海外'],
+                            $unlockData[$key]
+                        );
+                        $unlockItems[] = ['label' => $label, 'value' => $value];
                     }
-                    $unlockText = implode('，', $unlockParts);
                 }
             }
             $matches = [];
@@ -732,7 +749,7 @@ class UserController extends BaseController
                 'access' => $myAccess,
                 'occupied' => $access !== null && $myAccess === null,
                 'flag' => $matches[0] ?? 'un',
-                'unlock_text' => $unlockText,
+                'unlock_items' => $unlockItems,
                 'expire_text' => $myAccess ? date('Y-m-d', $myAccess->expire_at) : '',
                 'traffic_text' => $myAccess && $myAccess->traffic_limit > 0
                     ? Tools::flowAutoShow(max(0, $myAccess->traffic_limit - $myAccess->traffic_used))
