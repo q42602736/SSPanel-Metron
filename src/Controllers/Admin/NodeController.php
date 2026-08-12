@@ -135,6 +135,14 @@ class NodeController extends AdminController
             $node->node_ip = '';
         }
 
+        $duplicate = $this->findDedicatedDuplicate($node);
+        if ($duplicate !== null) {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => '相同地址和类型的专用节点已存在，请勿重复添加'
+            ]);
+        }
+
         if ($node->sort == 1) {
             Radius::AddNas($node->node_ip, $request->getParam('server'));
         }
@@ -265,6 +273,14 @@ class NodeController extends AdminController
         $node->bandwidthlimit_resetday    = $request->getParam('bandwidthlimit_resetday');
         $this->normalizeSaleFields($node);
 
+        $duplicate = $this->findDedicatedDuplicate($node, (int) $id);
+        if ($duplicate !== null) {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => '相同地址和类型的专用节点已存在，请勿重复保存'
+            ]);
+        }
+
         $node->save();
 
         if (Config::getconfig('Telegram.bool.UpdateNode')) {
@@ -301,6 +317,31 @@ class NodeController extends AdminController
         $node->dedicated_days = 30;
         $node->dedicated_traffic = 0;
         $node->dedicated_status = 0;
+    }
+
+    /**
+     * 查找同类型、同地址的专用节点，避免重复创建同一个可售 IP。
+     */
+    private function findDedicatedDuplicate(Node $node, ?int $excludeId = null): ?Node
+    {
+        if (!$node->isDedicated()) {
+            return null;
+        }
+
+        $query = Node::where('sale_type', 1)
+            ->where('sort', (int) $node->sort)
+            ->where(function ($builder) use ($node) {
+                $builder->where('server', $node->server);
+                if ($node->node_ip !== '') {
+                    $builder->orWhere('node_ip', $node->node_ip);
+                }
+            });
+
+        if ($excludeId !== null) {
+            $query->where('id', '<>', $excludeId);
+        }
+
+        return $query->first();
     }
 
     /**

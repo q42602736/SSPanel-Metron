@@ -572,6 +572,12 @@
 
 
         submitHandler: () => {
+            const submitButton = $('#submit');
+            if (submitButton.prop('disabled')) {
+                return;
+            }
+            submitButton.prop('disabled', true).text('正在保存...');
+
             if ($$.getElementById('custom_method').checked) {
                 var custom_method = 1;
             } else {
@@ -664,12 +670,14 @@
                         window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
 
                     } else {
+                        submitButton.prop('disabled', false).text('修改');
                         $("#result").modal();
                         $$.getElementById('msg').innerHTML = data.msg;
                     }
                 },
                 {literal}
                 error: (jqXHR) => {
+                    submitButton.prop('disabled', false).text('修改');
                     $("#result").modal();
                     $$.getElementById('msg').innerHTML = `发生错误：${jqXHR.status}`;
                 }
