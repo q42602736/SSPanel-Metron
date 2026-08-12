@@ -35,14 +35,14 @@ class Telegram
                 try {
                     $bot->sendMessage($sendMessage);
                 } catch (Exception $e) {
-                    echo $e->getMessage();
+                    error_log('[Telegram] ' . $e->getMessage());
                 }
             } else {
                 $bot = new BotApi($_ENV['telegram_token']);
                 try {
                     $bot->sendMessage($chat_id, $messageText);
                 } catch (Exception $e) {
-                    echo $e->getMessage();
+                    error_log('[Telegram] ' . $e->getMessage());
                 }
             }
         }
@@ -75,14 +75,14 @@ class Telegram
                 try {
                     $bot->sendMessage($sendMessage);
                 } catch (Exception $e) {
-                    echo $e->getMessage();
+                    error_log('[Telegram] ' . $e->getMessage());
                 }
             } else {
                 $bot = new BotApi($_ENV['telegram_token']);
                 try {
                     $bot->sendMessage($chat_id, $messageText, 'Markdown');
                 } catch (Exception $e) {
-                    echo $e->getMessage();
+                    error_log('[Telegram] ' . $e->getMessage());
                 }
             }
         }
