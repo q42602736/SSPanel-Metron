@@ -20,14 +20,13 @@
                                         <h3 class="font-weight-bolder">{$node->name}</h3>
                                         <div class="text-muted mb-3">IP：{$node->getMaskedIp()}</div>
                                         <div class="mb-4">{$node->info}</div>
-                                        {if $item['unlock']}
-                                            {$unlock = json_decode($item['unlock']->result, true)}
-                                            <div class="text-muted mb-4">解锁：{foreach $unlock as $name => $value}{$name} {$value}{/foreach}</div>
+                                        {if $item['unlock_text'] != ''}
+                                            <div class="text-muted mb-4">解锁：{$item['unlock_text']}</div>
                                         {/if}
                                         <div class="mt-auto d-flex justify-content-between align-items-center">
                                             <div><strong class="font-size-h3">{$shop->price}</strong> 元 / {$shop->accessDays()} 天</div>
                                             {if $access}
-                                                <span class="label label-success">有效至 {date('Y-m-d', $access->expire_at)}</span>
+                                                <span class="label label-success">有效至 {$item['expire_text']}</span>
                                             {else}
                                                 <button type="button" class="btn btn-primary" onclick="dedicatedBuy({$shop->id})">购买</button>
                                             {/if}

@@ -717,7 +717,24 @@ class UserController extends BaseController
                 ->where('created_at', '>', time() - 86460)
                 ->orderBy('id', 'desc')
                 ->first();
-            $items[] = ['shop' => $shop, 'node' => $node, 'access' => $access, 'unlock' => $unlock];
+            $unlockText = '';
+            if ($unlock !== null) {
+                $unlockData = json_decode($unlock->result, true);
+                if (is_array($unlockData)) {
+                    $unlockParts = [];
+                    foreach ($unlockData as $name => $value) {
+                        $unlockParts[] = $name . ' ' . $value;
+                    }
+                    $unlockText = implode('，', $unlockParts);
+                }
+            }
+            $items[] = [
+                'shop' => $shop,
+                'node' => $node,
+                'access' => $access,
+                'unlock_text' => $unlockText,
+                'expire_text' => $access ? date('Y-m-d', $access->expire_at) : '',
+            ];
         }
 
         return $this->view()->assign('dedicated_nodes', $items)->display('user/dedicated_node.tpl');
