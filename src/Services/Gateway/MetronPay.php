@@ -319,6 +319,12 @@ class MetronPay extends AbstractPayment
             $payment_system = MetronSetting::get('pay_crypto');
             switch ($payment_system) {
                 case ('bobpay'):
+                    if (trim((string) Config::get('tron_app_id')) === '' || trim((string) Config::get('tron_app_secret')) === '') {
+                        return json_encode([
+                            'ret' => 0,
+                            'msg' => '数字货币支付未配置，请先填写 BobPay 的应用 ID 和应用密钥'
+                        ]);
+                    }
                     $tron = new BobTronPay();
                     $result = $tron->MetronPay($type, $price, $shopinfo, $paylist_id);
                     if ($result['errcode'] == 0) {
@@ -331,11 +337,17 @@ class MetronPay extends AbstractPayment
                     } else {
                         $return = array(
                             'ret' => 0,
-                            'msg' => $result['errmsg']
+                            'msg' => $result['errmsg'] ?? ($result['msg'] ?? '数字货币支付网关处理失败')
                         );
                     }
                     return json_encode($return);
                 case ('alpha'):
+                    if (trim((string) Config::get('alpha_app_id')) === '' || trim((string) Config::get('alpha_app_secret')) === '') {
+                        return json_encode([
+                            'ret' => 0,
+                            'msg' => '数字货币支付未配置，请先填写 AlphaPay 的应用 ID 和应用密钥'
+                        ]);
+                    }
                     $alpha = new AlphaPay();
                     $result = $alpha->MetronPay('USDT', $price, $shopinfo, $paylist_id);
                     if ($result['errcode'] == 0) {
@@ -348,7 +360,7 @@ class MetronPay extends AbstractPayment
                     } else {
                         $return = array(
                             'ret' => 0,
-                            'msg' => $result['errmsg']
+                            'msg' => $result['errmsg'] ?? ($result['msg'] ?? '数字货币支付网关处理失败')
                         );
                     }
                     return json_encode($return);
