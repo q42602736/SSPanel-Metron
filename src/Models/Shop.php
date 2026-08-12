@@ -37,7 +37,7 @@ class Shop extends Model
             return false;
         }
 
-        NodeAccess::grant($user->id, $node->id, $days, $this->id, $bought ? $bought->id : 0);
+        NodeAccess::grant($user->id, $node->id, $days, $this->id, $bought ? $bought->id : 0, 0, $this->price);
         return true;
     }
 

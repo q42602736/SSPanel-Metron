@@ -43,6 +43,9 @@ class ShopController extends AdminController
         $shop->auto_reset_bandwidth = $request->getParam('auto_reset_bandwidth');
 
         $productType = $request->getParam('product_type', 'normal');
+        if ($productType === 'dedicated_node') {
+            return $response->withJson(['ret' => 0, 'msg' => '专用节点价格请在节点编辑页面配置，不需要创建商品']);
+        }
         $nodeId = (int) $request->getParam('node_id', 0);
         $accessDays = (int) $request->getParam('access_days', 0);
         if ($productType === 'dedicated_node') {
@@ -134,6 +137,9 @@ class ShopController extends AdminController
         $shop = Shop::find($id);
 
         $productType = $request->getParam('product_type', 'normal');
+        if ($productType === 'dedicated_node') {
+            return $response->withJson(['ret' => 0, 'msg' => '专用节点价格请在节点编辑页面配置，不需要创建商品']);
+        }
         $nodeId = (int) $request->getParam('node_id', 0);
         $accessDays = (int) $request->getParam('access_days', 0);
         if ($productType === 'dedicated_node') {

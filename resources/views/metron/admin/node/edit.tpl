@@ -276,8 +276,31 @@
                                             <label class="floating-label" for="sale_type">节点用途</label>
                                             <select id="sale_type" class="form-control maxwidth-edit" name="sale_type">
                                                 <option value="0" {if $node->sale_type==0}selected{/if}>普通节点</option>
-                                                <option value="1" {if $node->sale_type==1}selected{/if}>专用节点（需单独商品授权）</option>
+                                                <option value="1" {if $node->sale_type==1}selected{/if}>专用节点（节点即商品）</option>
                                             </select>
+                                        </div>
+
+                                        <div id="dedicated_sale_fields" {if $node->sale_type!=1}style="display:none"{/if}>
+                                            <div class="form-group form-group-label">
+                                                <label class="floating-label" for="dedicated_price">专用节点价格</label>
+                                                <input class="form-control maxwidth-edit" id="dedicated_price" type="number" min="0" step="0.01" value="{$node->dedicated_price}" name="dedicated_price">
+                                            </div>
+                                            <div class="form-group form-group-label">
+                                                <label class="floating-label" for="dedicated_days">授权天数</label>
+                                                <input class="form-control maxwidth-edit" id="dedicated_days" type="number" min="1" value="{$node->dedicated_days|default:30}" name="dedicated_days">
+                                            </div>
+                                            <div class="form-group form-group-label">
+                                                <label class="floating-label" for="dedicated_traffic">专用流量（GB）</label>
+                                                <input class="form-control maxwidth-edit" id="dedicated_traffic" type="number" min="0" value="{$node->dedicated_traffic}" name="dedicated_traffic">
+                                                <p class="form-control-guide"><i class="material-icons">info</i>0 表示不限专用流量</p>
+                                            </div>
+                                            <div class="form-group form-group-label">
+                                                <label class="floating-label" for="dedicated_status">专用节点上架</label>
+                                                <select class="form-control maxwidth-edit" id="dedicated_status" name="dedicated_status">
+                                                    <option value="1" {if $node->dedicated_status==1}selected{/if}>上架，可购买</option>
+                                                    <option value="0" {if $node->dedicated_status!=1}selected{/if}>下架，不可购买</option>
+                                                </select>
+                                            </div>
                                         </div>
 
                                         <div class="form-group form-group-label">
@@ -619,7 +642,12 @@
                     node_sort: $$getValue('node_sort'),
                     class: $$getValue('class'),
                     node_bandwidth_limit: $$getValue('node_bandwidth_limit'),
-                    bandwidthlimit_resetday: $$getValue('bandwidthlimit_resetday')
+                    bandwidthlimit_resetday: $$getValue('bandwidthlimit_resetday'),
+                    sale_type: $$getValue('sale_type'),
+                    dedicated_price: $$getValue('dedicated_price'),
+                    dedicated_days: $$getValue('dedicated_days'),
+                    dedicated_traffic: $$getValue('dedicated_traffic'),
+                    dedicated_status: $$getValue('dedicated_status')
                     {/literal},
                     custom_rss,
                     mu_only: $$getValue('mu_only')
@@ -642,6 +670,9 @@
                 }
             });
         }
+    });
+    $('#sale_type').on('change', function () {
+        $('#dedicated_sale_fields').toggle($(this).val() === '1');
     });
     {/literal}
 </script>

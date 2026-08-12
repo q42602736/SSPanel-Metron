@@ -49,7 +49,7 @@ class NodeController extends UserController
             if (!$node->canAccess($user)) {
                 continue;
             }
-            if ($user->is_admin == 0 && $node->node_group != $user->node_group && $node->node_group != 0) {
+            if (!$node->isDedicated() && $user->is_admin == 0 && $node->node_group != $user->node_group && $node->node_group != 0) {
                 continue;
             }
 

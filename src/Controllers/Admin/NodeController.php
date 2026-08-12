@@ -46,6 +46,10 @@ class NodeController extends AdminController
             'node_speedlimit'         => '节点限速/Mbps',
             'node_bandwidth'          => '已走流量/GB',
             'node_bandwidth_limit'    => '流量限制/GB',
+            'dedicated_price'         => '专用价格',
+            'dedicated_days'          => '专用天数',
+            'dedicated_traffic'       => '专用流量/GB',
+            'dedicated_status'        => '专用上架',
             'bandwidthlimit_resetday' => '流量重置日',
             'node_heartbeat'          => '上一次活跃时间',
             'custom_method'           => '自定义加密',
@@ -98,6 +102,10 @@ class NodeController extends AdminController
         $node->type             = $request->getParam('type');
         $node->node_group       = $request->getParam('group');
         $node->sale_type        = (int) $request->getParam('sale_type', 0);
+        $node->dedicated_price  = max(0, (float) $request->getParam('dedicated_price', 0));
+        $node->dedicated_days   = max(1, (int) $request->getParam('dedicated_days', 30));
+        $node->dedicated_traffic = max(0, (int) $request->getParam('dedicated_traffic', 0));
+        $node->dedicated_status  = (int) $request->getParam('dedicated_status', 0);
         $node->node_speedlimit  = $request->getParam('node_speedlimit');
         $node->status           = $request->getParam('status');
         $node->sort             = $request->getParam('sort');
@@ -188,6 +196,10 @@ class NodeController extends AdminController
         $node->name             = $request->getParam('name');
         $node->node_group       = $request->getParam('group');
         $node->sale_type        = (int) $request->getParam('sale_type', 0);
+        $node->dedicated_price  = max(0, (float) $request->getParam('dedicated_price', 0));
+        $node->dedicated_days   = max(1, (int) $request->getParam('dedicated_days', 30));
+        $node->dedicated_traffic = max(0, (int) $request->getParam('dedicated_traffic', 0));
+        $node->dedicated_status  = (int) $request->getParam('dedicated_status', 0);
         $node->server           = trim($request->getParam('server'));
         $node->method           = $request->getParam('method');
         $node->port             = $request->getParam('port')?:0;
@@ -366,6 +378,9 @@ class NodeController extends AdminController
                 ->orwhere('node_speedlimit', 'LIKE', "%$search%")
                 ->orwhere('node_bandwidth', 'LIKE', "%$search%")
                 ->orwhere('node_bandwidth_limit', 'LIKE', "%$search%")
+                ->orwhere('dedicated_price', 'LIKE', "%$search%")
+                ->orwhere('dedicated_days', 'LIKE', "%$search%")
+                ->orwhere('dedicated_traffic', 'LIKE', "%$search%")
                 ->orwhere('bandwidthlimit_resetday', 'LIKE', "%$search%")
                 ->orwhere('node_heartbeat', $like_str, "%$search%")
                 ->orwhere('custom_method', 'LIKE', "%$search%")
@@ -432,6 +447,10 @@ class NodeController extends AdminController
             $tempdata['node_speedlimit']            = $node->node_speedlimit;
             $tempdata['node_bandwidth']             = Tools::flowToGB($node->node_bandwidth);
             $tempdata['node_bandwidth_limit']       = Tools::flowToGB($node->node_bandwidth_limit);
+            $tempdata['dedicated_price']            = $node->dedicated_price;
+            $tempdata['dedicated_days']             = $node->dedicated_days;
+            $tempdata['dedicated_traffic']          = $node->dedicated_traffic;
+            $tempdata['dedicated_status']           = $node->dedicated_status ? '上架' : '下架';
             $tempdata['bandwidthlimit_resetday']    = $node->bandwidthlimit_resetday;
             $tempdata['node_heartbeat']             = date('Y-m-d H:i:s', $node->node_heartbeat);
             $tempdata['custom_method']              = ((bool) $node->custom_method ? '启用' : '关闭');

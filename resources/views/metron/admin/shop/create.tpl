@@ -28,7 +28,7 @@
                                 <label class="floating-label" for="product_type">商品类型</label>
                                 <select class="form-control maxwidth-edit" id="product_type">
                                     <option value="normal">普通套餐</option>
-                                    <option value="dedicated_node">专用节点</option>
+                                    <option value="dedicated_node" disabled>专用节点（请在节点页面配置）</option>
                                 </select>
                             </div>
 

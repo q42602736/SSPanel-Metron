@@ -48,8 +48,7 @@ class UserController extends BaseController
         $dedicatedUserIds = [];
         if ($node->isDedicated()) {
             $dedicatedUserIds = NodeAccess::where('node_id', $node->id)
-                ->where('status', 1)
-                ->where('expire_at', '>', time())
+                ->whereRaw(NodeAccess::activeSql())
                 ->pluck('user_id')
                 ->all();
             if (empty($dedicatedUserIds)) {
@@ -100,11 +99,12 @@ class UserController extends BaseController
                     }
                 )->orwhere('is_admin', 1);
             }
-        )
-            ->where('enable', 1)->where('expire_in', '>', date('Y-m-d H:i:s'))->get();
+        )->where('enable', 1);
 
         if ($node->isDedicated()) {
-            $users_raw = $users_raw->whereIn('id', $dedicatedUserIds);
+            $users_raw = User::whereIn('id', $dedicatedUserIds)->where('enable', 1)->get();
+        } else {
+            $users_raw = $users_raw->where('expire_in', '>', date('Y-m-d H:i:s'))->get();
         }
 
         $users = array();
@@ -117,7 +117,7 @@ class UserController extends BaseController
         );
 
         foreach ($users_raw as $user_raw) {
-            if ($user_raw->transfer_enable <= $user_raw->u + $user_raw->d) {
+            if (!$node->isDedicated() && $user_raw->transfer_enable <= $user_raw->u + $user_raw->d) {
                 if ($_ENV['keep_connect'] === true) {
                     // 流量耗尽用户限速至 1Mbps
                     $user_raw->node_speedlimit = 1;
@@ -194,6 +194,16 @@ class UserController extends BaseController
                 $user->t = time();
                 $user->u += $u * $node->traffic_rate;
                 $user->d += $d * $node->traffic_rate;
+                if ($node->isDedicated()) {
+                    $access = NodeAccess::where('node_id', $node->id)
+                        ->where('user_id', $user_id)
+                        ->whereRaw(NodeAccess::activeSql())
+                        ->first();
+                    if ($access !== null) {
+                        NodeAccess::where('id', $access->id)->increment('traffic_used', (int) (($u + $d) * $node->traffic_rate));
+                        NodeAccess::releaseStale($node->id);
+                    }
+                }
                 $this_time_total_bandwidth += $u + $d;
                 if (!$user->save()) {
                     $res = [

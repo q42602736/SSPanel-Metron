@@ -13,7 +13,7 @@
                     </div>
                     <div class="d-flex flex-column-fluid"><div class="container"><div class="row">
                         {foreach $dedicated_nodes as $item}
-                            {$shop = $item['shop']} {$node = $item['node']} {$access = $item['access']}
+                            {$node = $item['node']} {$access = $item['access']}
                             <div class="col-md-6 col-xl-4 mb-6">
                                 <div class="card card-custom h-100">
                                     <div class="card-body d-flex flex-column">
@@ -24,11 +24,13 @@
                                             <div class="text-muted mb-4">解锁：{$item['unlock_text']}</div>
                                         {/if}
                                         <div class="mt-auto d-flex justify-content-between align-items-center">
-                                            <div><strong class="font-size-h3">{$shop->price}</strong> 元 / {$shop->accessDays()} 天</div>
+                                            <div><strong class="font-size-h3">{$node->dedicated_price}</strong> 元 / {$node->dedicated_days} 天</div>
                                             {if $access}
-                                                <span class="label label-success">有效至 {$item['expire_text']}</span>
+                                                <span class="label label-success">有效至 {$item['expire_text']}，专用流量 {$item['traffic_text']}</span>
+                                            {elseif $item['occupied']}
+                                                <span class="label label-secondary">已售出</span>
                                             {else}
-                                                <button type="button" class="btn btn-primary" onclick="dedicatedBuy({$shop->id})">购买</button>
+                                                <button type="button" class="btn btn-primary" onclick="dedicatedBuy({$node->id})">购买</button>
                                             {/if}
                                         </div>
                                     </div>
@@ -46,8 +48,8 @@
     {include file='include/global/scripts.tpl'}
     {literal}
     <script>
-        function dedicatedBuy(shopId) {
-            $.post('/user/buy', {shop: shopId, coupon: '', disableothers: 0, autorenew: 0}, function (data) {
+        function dedicatedBuy(nodeId) {
+            $.post('/user/dedicated-node/buy', {node_id: nodeId}, function (data) {
                 if (data.ret === 1) {
                     alert(data.msg);
                     window.location.reload();

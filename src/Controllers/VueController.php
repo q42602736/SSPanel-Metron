@@ -822,7 +822,7 @@ class VueController extends BaseController
             if (!$node->canAccess($user)) {
                 continue;
             }
-            if ($node->node_group != $user->node_group && $node->node_group != 0) {
+            if (!$node->isDedicated() && $node->node_group != $user->node_group && $node->node_group != 0) {
                 continue;
             }
             if ($node->sort == 9) {

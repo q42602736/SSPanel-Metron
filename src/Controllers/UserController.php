@@ -31,6 +31,7 @@ use App\Models\{Ip,
     DetectLog,
     DetectRule,
     TrafficLog,
+    DedicatedNodeOrder,
     InviteCode,
     UserSubscribeLog};
 use App\Utils\{
@@ -48,6 +49,7 @@ use App\Utils\{
     DatatablesHelper,
     TelegramSessionManager
 };
+use Illuminate\Database\Capsule\Manager as DB;
 use App\Metron\{Metron, MtAuth, MtTelegram};
 use Ramsey\Uuid\Uuid;
 use voku\helper\AntiXSS;
@@ -698,21 +700,16 @@ class UserController extends BaseController
 
     public function dedicatedNode($request, $response, $args)
     {
+        NodeAccess::releaseStale();
         $items = [];
-        $shops = Shop::where('status', 1)->orderBy('name')->get();
-        foreach ($shops as $shop) {
-            if (!$shop->isDedicatedNode()) {
-                continue;
-            }
-            $node = Node::find($shop->nodeId());
-            if ($node === null || !$node->isDedicated() || $node->type != 1) {
-                continue;
-            }
-            $access = NodeAccess::where('user_id', $this->user->id)
-                ->where('node_id', $node->id)
-                ->where('status', 1)
-                ->where('expire_at', '>', time())
-                ->first();
+        $nodes = Node::where('sale_type', 1)
+            ->where('type', 1)
+            ->where('dedicated_status', 1)
+            ->orderBy('name')
+            ->get();
+        foreach ($nodes as $node) {
+            $access = NodeAccess::activeForNode($node->id);
+            $myAccess = $access && (int) $access->user_id === (int) $this->user->id ? $access : null;
             $unlock = StreamMedia::where('node_id', $node->id)
                 ->where('created_at', '>', time() - 86460)
                 ->orderBy('id', 'desc')
@@ -729,15 +726,87 @@ class UserController extends BaseController
                 }
             }
             $items[] = [
-                'shop' => $shop,
                 'node' => $node,
-                'access' => $access,
+                'access' => $myAccess,
+                'occupied' => $access !== null && $myAccess === null,
                 'unlock_text' => $unlockText,
-                'expire_text' => $access ? date('Y-m-d', $access->expire_at) : '',
+                'expire_text' => $myAccess ? date('Y-m-d', $myAccess->expire_at) : '',
+                'traffic_text' => $myAccess && $myAccess->traffic_limit > 0
+                    ? Tools::flowAutoShow(max(0, $myAccess->traffic_limit - $myAccess->traffic_used))
+                    : '不限',
             ];
         }
 
         return $this->view()->assign('dedicated_nodes', $items)->display('user/dedicated_node.tpl');
+    }
+
+    public function dedicatedNodeBuy($request, $response, $args)
+    {
+        $nodeId = (int) $request->getParam('node_id', 0);
+        if (!$this->user->isLogin || $nodeId < 1) {
+            return $response->withJson(['ret' => 0, 'msg' => '非法请求']);
+        }
+
+        try {
+            $result = DB::connection('default')->transaction(function () use ($nodeId) {
+                $now = time();
+                $user = User::where('id', $this->user->id)->lockForUpdate()->first();
+                if ($user === null) {
+                    throw new Exception('登录状态已失效');
+                }
+                $node = Node::where('id', $nodeId)->lockForUpdate()->first();
+                if ($node === null || !$node->isDedicatedForSale()) {
+                    throw new Exception('专用节点暂不可购买');
+                }
+
+                NodeAccess::releaseStale($node->id);
+                if (NodeAccess::activeForNode($node->id) !== null) {
+                    throw new Exception('该专用节点已被购买');
+                }
+                NodeAccess::releaseStale();
+                if (NodeAccess::forUser($user->id)->isNotEmpty()) {
+                    throw new Exception('您已有有效的专用节点');
+                }
+
+                $price = (float) $node->dedicated_price;
+                if (bccomp((string) $user->money, (string) $price, 2) < 0) {
+                    throw new Exception('余额不足，请先充值');
+                }
+
+                $user->money = bcsub((string) $user->money, (string) $price, 2);
+                $user->save();
+
+                $order = new DedicatedNodeOrder();
+                $order->user_id = $user->id;
+                $order->node_id = $node->id;
+                $order->price = $price;
+                $order->days = (int) $node->dedicated_days;
+                $order->traffic_limit = $node->dedicatedTrafficBytes();
+                $order->created_at = $now;
+                $order->save();
+
+                $access = NodeAccess::grant(
+                    $user->id,
+                    $node->id,
+                    $node->dedicated_days,
+                    0,
+                    0,
+                    $node->dedicatedTrafficBytes(),
+                    $price
+                );
+                return ['node' => $node, 'access' => $access];
+            });
+        } catch (Exception $e) {
+            $messages = ['登录状态已失效', '专用节点暂不可购买', '该专用节点已被购买', '您已有有效的专用节点', '余额不足，请先充值'];
+            $message = in_array($e->getMessage(), $messages, true) ? $e->getMessage() : '购买失败，请稍后重试';
+            return $response->withJson(['ret' => 0, 'msg' => $message]);
+        }
+
+        return $response->withJson([
+            'ret' => 1,
+            'msg' => '专用节点购买成功',
+            'node' => $result['node']->name,
+        ]);
     }
 
     public function CouponCheck($request, $response, $args)
@@ -944,24 +1013,8 @@ class UserController extends BaseController
         }
 
         if ($shop->isDedicatedNode()) {
-            $user->money = bcsub($user->money, $price, 2);
-            $user->save();
-            $bought = new Bought();
-            $bought->userid = $user->id;
-            $bought->shopid = $shop->id;
-            $bought->datetime = time();
-            $bought->renew = ($autorenew == 1 && $shop->auto_renew > 0) ? time() + $shop->auto_renew * 86400 : 0;
-            $bought->coupon = $code;
-            $bought->price = $price;
-            $bought->usedd = 1;
-            $bought->save();
-            if (!$shop->grantDedicatedNode($user, $bought)) {
-                $res['ret'] = 0;
-                $res['msg'] = '专用节点商品配置无效';
-                return $response->getBody()->write(json_encode($res));
-            }
-            $res['ret'] = 1;
-            $res['msg'] = '专用节点购买成功';
+            $res['ret'] = 0;
+            $res['msg'] = '专用节点请从专用节点页面购买';
             return $response->getBody()->write(json_encode($res));
         }
 

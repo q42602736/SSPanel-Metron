@@ -160,8 +160,13 @@ class URL
         }
         if (!$user->is_admin) {
             $group = ($user->node_group != 0 ? [0, $user->node_group] : [0]);
-            $query->whereIn('node_group', $group)
-                ->where('node_class', '<=', $user->class);
+            $query->where(function ($query) use ($group, $user) {
+                $query->where(function ($query) use ($group, $user) {
+                    $query->whereIn('node_group', $group)
+                        ->where('node_class', '<=', $user->class)
+                        ->where('sale_type', 0);
+                })->orWhere('sale_type', 1);
+            });
         }
 
         // 等级筛选

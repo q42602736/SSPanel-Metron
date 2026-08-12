@@ -35,6 +35,10 @@ class Node extends Model
         'mu_only'         => 'int',
         'sort'            => 'int',
         'sale_type'       => 'int',
+        'dedicated_price' => 'float',
+        'dedicated_days'  => 'int',
+        'dedicated_traffic' => 'int',
+        'dedicated_status' => 'int',
     ];
 
     public function getLastNodeInfoLog()
@@ -183,6 +187,20 @@ class Node extends Model
     public function isDedicated(): bool
     {
         return (int) ($this->attributes['sale_type'] ?? 0) === 1;
+    }
+
+    public function isDedicatedForSale(): bool
+    {
+        return $this->isDedicated()
+            && (int) ($this->attributes['type'] ?? 0) === 1
+            && (int) ($this->attributes['dedicated_status'] ?? 0) === 1
+            && (float) ($this->attributes['dedicated_price'] ?? 0) >= 0
+            && (int) ($this->attributes['dedicated_days'] ?? 0) > 0;
+    }
+
+    public function dedicatedTrafficBytes(): int
+    {
+        return max(0, (int) ($this->attributes['dedicated_traffic'] ?? 0)) * 1024 * 1024 * 1024;
     }
 
     public function canAccess(User $user): bool
