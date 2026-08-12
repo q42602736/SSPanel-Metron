@@ -725,10 +725,13 @@ class UserController extends BaseController
                     $unlockText = implode('，', $unlockParts);
                 }
             }
+            $matches = [];
+            preg_match($_ENV['flag_regex'], $node->name, $matches);
             $items[] = [
                 'node' => $node,
                 'access' => $myAccess,
                 'occupied' => $access !== null && $myAccess === null,
+                'flag' => $matches[0] ?? 'un',
                 'unlock_text' => $unlockText,
                 'expire_text' => $myAccess ? date('Y-m-d', $myAccess->expire_at) : '',
                 'traffic_text' => $myAccess && $myAccess->traffic_limit > 0

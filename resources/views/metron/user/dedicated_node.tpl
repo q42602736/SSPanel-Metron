@@ -17,7 +17,11 @@
                             <div class="col-md-6 col-xl-4 mb-6">
                                 <div class="card card-custom h-100">
                                     <div class="card-body d-flex flex-column">
-                                        <h3 class="font-weight-bolder">{$node->name}</h3>
+                                        <div class="d-flex align-items-center mb-3">
+                                            <img alt="节点地区" class="mr-3 rounded-circle" width="42" height="42"
+                                                 src="{$metron['assets_url']}/media/flags/1x1_zh_cn/{$item['flag']}.svg">
+                                            <h3 class="font-weight-bolder mb-0">{$node->name}</h3>
+                                        </div>
                                         <div class="text-muted mb-3">IP：{$node->getMaskedIp()}</div>
                                         <div class="mb-4">{$node->info}</div>
                                         {if $item['unlock_text'] != ''}
