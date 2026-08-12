@@ -2,6 +2,42 @@
 <html lang="zh-CN">
 <head>
     <title>专用节点 &mdash; {$config["appName"]}</title>
+    <style>
+        .dedicated-node-footer {
+            min-width: 0;
+        }
+
+        .dedicated-node-footer-row {
+            column-gap: 16px;
+            row-gap: 12px;
+        }
+
+        .dedicated-node-price {
+            flex: 0 0 auto;
+        }
+
+        .dedicated-node-status {
+            flex: 1 1 240px;
+            min-width: 0;
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            line-height: 1.6;
+            text-align: right;
+        }
+
+        .dedicated-node-buy {
+            flex: 0 0 auto;
+            min-width: 88px;
+        }
+
+        @media (max-width: 575.98px) {
+            .dedicated-node-status {
+                flex-basis: 100%;
+                text-align: left;
+            }
+        }
+    </style>
     {include file='include/global/head.tpl'}
     <div class="d-flex flex-column flex-root">
         <div class="d-flex flex-row flex-column-fluid page">
@@ -38,15 +74,17 @@
                                                 </div>
                                             </div>
                                         {/if}
-                                        <div class="mt-auto d-flex justify-content-between align-items-center">
-                                            <div><strong class="font-size-h3">{$node->dedicated_price}</strong> 元 / {$node->dedicated_days} 天</div>
+                                        <div class="mt-auto pt-4 dedicated-node-footer">
+                                            <div class="d-flex justify-content-between align-items-end flex-wrap dedicated-node-footer-row">
+                                                <div class="dedicated-node-price"><strong class="font-size-h3">{$node->dedicated_price}</strong> 元 / {$node->dedicated_days} 天</div>
                                             {if $access}
-                                                <span class="label label-success">有效至 {$item['expire_text']}，专用流量 {$item['traffic_text']}</span>
+                                                <span class="label label-success dedicated-node-status">有效至 {$item['expire_text']}，专用流量 {$item['traffic_text']}</span>
                                             {elseif $item['occupied']}
-                                                <span class="label label-secondary">已售出</span>
+                                                <span class="label label-secondary dedicated-node-status">已售出</span>
                                             {else}
-                                                <button type="button" class="btn btn-primary" onclick="dedicatedBuy({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}')">购买</button>
+                                                <button type="button" class="btn btn-primary dedicated-node-buy" onclick="dedicatedBuy({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}')">购买</button>
                                             {/if}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
