@@ -111,7 +111,7 @@
                                                    value="aes-256-cfb">
                                         </div> -->
 
-                                        <div class="form-group form-group-label">
+                                        <div class="form-group form-group-label regular-node-fields">
                                             <label class="floating-label" for="rate">流量比例</label>
                                             <input class="form-control maxwidth-edit" id="rate" type="text" name="rate"
                                                    value="1">
@@ -298,6 +298,7 @@
                                             </div>
                                         </div>
 
+                                        <div class="regular-node-fields">
                                         <div class="form-group form-group-label">
                                             <label class="floating-label" for="class">节点等级</label>
                                             <input class="form-control maxwidth-edit" id="class" type="text" value="0"
@@ -332,6 +333,7 @@
                                             <input class="form-control maxwidth-edit" id="node_speedlimit" type="text" value="0"
                                                    name="node_speedlimit">
                                             <p class="form-control-guide"><i class="material-icons">info</i>不限速填0，对于每个用户端口生效</p>
+                                        </div>
                                         </div>
 
                                         <div class="form-group form-group-label">
@@ -514,7 +516,10 @@
             node_speedlimit: {required: true},
             sort: {required: true},
             node_bandwidth_limit: {required: true},
-            bandwidthlimit_resetday: {required: true}
+            bandwidthlimit_resetday: {required: true},
+            dedicated_price: {required: true, min: 0},
+            dedicated_days: {required: true, min: 1},
+            dedicated_traffic: {required: true, min: 0}
         },
 
         submitHandler: () => {
@@ -615,7 +620,9 @@
     });
     {literal}
     $('#sale_type').on('change', function () {
-        $('#dedicated_sale_fields').toggle($(this).val() === '1');
+        const isDedicated = $(this).val() === '1';
+        $('#dedicated_sale_fields').toggle(isDedicated);
+        $('.regular-node-fields').toggle(!isDedicated);
     }).trigger('change');
     {/literal}
 

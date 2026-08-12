@@ -100,12 +100,12 @@ class NodeController extends AdminController
         $node->traffic_rate     = $request->getParam('rate');
         $node->info             = $request->getParam('info');
         $node->type             = $request->getParam('type');
-        $node->node_group       = $request->getParam('group');
         $node->sale_type        = (int) $request->getParam('sale_type', 0);
         $node->dedicated_price  = max(0, (float) $request->getParam('dedicated_price', 0));
         $node->dedicated_days   = max(1, (int) $request->getParam('dedicated_days', 30));
         $node->dedicated_traffic = max(0, (int) $request->getParam('dedicated_traffic', 0));
         $node->dedicated_status  = (int) $request->getParam('dedicated_status', 0);
+        $node->node_group       = $request->getParam('group');
         $node->node_speedlimit  = $request->getParam('node_speedlimit');
         $node->status           = $request->getParam('status');
         $node->sort             = $request->getParam('sort');
@@ -142,6 +142,7 @@ class NodeController extends AdminController
         $node->node_sort                  = (int)$request->getParam('node_sort');
         $node->node_bandwidth_limit       = $request->getParam('node_bandwidth_limit') * 1024 * 1024 * 1024;
         $node->bandwidthlimit_resetday    = $request->getParam('bandwidthlimit_resetday');
+        $this->normalizeSaleFields($node);
 
         $node->save();
 
@@ -194,12 +195,12 @@ class NodeController extends AdminController
         $id                     = $args['id'];
         $node                   = Node::find($id);
         $node->name             = $request->getParam('name');
-        $node->node_group       = $request->getParam('group');
         $node->sale_type        = (int) $request->getParam('sale_type', 0);
         $node->dedicated_price  = max(0, (float) $request->getParam('dedicated_price', 0));
         $node->dedicated_days   = max(1, (int) $request->getParam('dedicated_days', 30));
         $node->dedicated_traffic = max(0, (int) $request->getParam('dedicated_traffic', 0));
         $node->dedicated_status  = (int) $request->getParam('dedicated_status', 0);
+        $node->node_group       = $request->getParam('group');
         $node->server           = trim($request->getParam('server'));
         $node->method           = $request->getParam('method');
         $node->port             = $request->getParam('port')?:0;
@@ -262,6 +263,7 @@ class NodeController extends AdminController
         $node->node_sort                  = (int)$request->getParam('node_sort');
         $node->node_bandwidth_limit       = $request->getParam('node_bandwidth_limit') * 1024 * 1024 * 1024;
         $node->bandwidthlimit_resetday    = $request->getParam('bandwidthlimit_resetday');
+        $this->normalizeSaleFields($node);
 
         $node->save();
 
@@ -281,6 +283,24 @@ class NodeController extends AdminController
                 'msg' => '修改成功'
             ]
         );
+    }
+
+    private function normalizeSaleFields(Node $node): void
+    {
+        if ($node->isDedicated()) {
+            $node->node_class = 0;
+            $node->node_group = 0;
+            $node->node_bandwidth_limit = 0;
+            $node->bandwidthlimit_resetday = 1;
+            $node->node_speedlimit = 0;
+            $node->traffic_rate = 1;
+            return;
+        }
+
+        $node->dedicated_price = 0;
+        $node->dedicated_days = 30;
+        $node->dedicated_traffic = 0;
+        $node->dedicated_status = 0;
     }
 
     /**
