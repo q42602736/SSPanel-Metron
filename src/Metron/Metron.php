@@ -3,8 +3,10 @@
 namespace App\Metron;
 
 use App\Services\MetronSetting;
-use App\Models\{Link, Code, Node, Shop, User, Bought, Coupon, Ticket, Paylist, Payback};
+use App\Models\{Link, Code, Node, NodeAccess, DedicatedNodeOrder, Shop, User, Bought, Coupon, Ticket, Paylist, Payback};
 use App\Utils\QQWry;
+use Illuminate\Database\Capsule\Manager as DB;
+use Exception;
 
 class Metron
 {
@@ -458,6 +460,73 @@ class Metron
         $res['msg'] = '购买成功';
 
         return $res;
+    }
+
+    /**
+     * 支付回调后完成专用节点购买，不在创建支付订单时提前授权。
+     */
+    public static function metronpay_buy_dedicated_node($pid = 0)
+    {
+        $ps = Paylist::where('tradeno', $pid)->first();
+        $shopinfo = $ps ? json_decode($ps->shop, true) : null;
+        if ($ps === null || !is_array($shopinfo) || empty($shopinfo['dedicated_node_id'])) {
+            return ['ret' => 0, 'msg' => '专用节点订单无效'];
+        }
+        if (isset($shopinfo['status']) && $shopinfo['status'] === 1) {
+            return ['ret' => 0, 'msg' => '该专用节点订单已完成'];
+        }
+
+        try {
+            DB::connection('default')->transaction(function () use ($ps, $shopinfo) {
+                $user = User::where('id', $ps->userid)->lockForUpdate()->first();
+                $node = Node::where('id', (int) $shopinfo['dedicated_node_id'])->lockForUpdate()->first();
+                if ($user === null || $node === null || !$node->isDedicated()) {
+                    throw new Exception('专用节点订单无效');
+                }
+
+                NodeAccess::releaseStale($node->id);
+                if (NodeAccess::activeForNode($node->id) !== null) {
+                    throw new Exception('该专用节点已被其他用户购买，支付金额已退回余额');
+                }
+
+                $price = (float) $ps->total;
+                if (bccomp((string) $user->money, (string) $price, 2) < 0) {
+                    throw new Exception('支付金额到账异常，请联系客服');
+                }
+                $user->money = bcsub((string) $user->money, (string) $price, 2);
+                $user->save();
+
+                $order = new DedicatedNodeOrder();
+                $order->user_id = $user->id;
+                $order->node_id = $node->id;
+                $order->price = $price;
+                $order->days = (int) ($shopinfo['dedicated_days'] ?? $node->dedicated_days);
+                $order->traffic_limit = (int) ($shopinfo['dedicated_traffic'] ?? $node->dedicatedTrafficBytes());
+                $order->created_at = time();
+                $order->save();
+
+                NodeAccess::grant(
+                    $user->id,
+                    $node->id,
+                    $order->days,
+                    0,
+                    0,
+                    $order->traffic_limit,
+                    $price
+                );
+
+                $shopinfo['status'] = 1;
+                $ps->shop = json_encode($shopinfo, JSON_UNESCAPED_UNICODE);
+                $ps->save();
+            });
+        } catch (Exception $e) {
+            $shopinfo['status'] = $e->getMessage();
+            $ps->shop = json_encode($shopinfo, JSON_UNESCAPED_UNICODE);
+            $ps->save();
+            return ['ret' => 0, 'msg' => $e->getMessage()];
+        }
+
+        return ['ret' => 1, 'msg' => '专用节点购买成功'];
     }
 
     /**

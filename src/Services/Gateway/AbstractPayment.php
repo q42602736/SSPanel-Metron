@@ -73,7 +73,12 @@ abstract class AbstractPayment
         $codeq->save();
 
         if ($p->shop != null) {
-            $p_buy = Metron::metronpay_buyshop($pid);
+            $shopInfo = json_decode($p->shop, true);
+            if (isset($shopInfo['dedicated_node_id'])) {
+                $p_buy = Metron::metronpay_buy_dedicated_node($pid);
+            } else {
+                $p_buy = Metron::metronpay_buyshop($pid);
+            }
         }
 
         if ($user->ref_by != '' && $user->ref_by != 0 && $user->ref_by != null) {
@@ -82,7 +87,9 @@ abstract class AbstractPayment
 
         if ($p->shop != null && MetronSetting::get('recharge_enable')){
             $shop = json_decode($p->shop, true);
-            Metron::recharge($shop['id'], $user);
+            if (!isset($shop['dedicated_node_id'])) {
+                Metron::recharge($shop['id'], $user);
+            }
         }
 
         if ($_ENV['enable_donate'] == true) {

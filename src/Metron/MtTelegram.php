@@ -53,7 +53,9 @@ class MtTelegram
             $type = '钱包充值';
         } else {
             $shopinfo = json_decode($pl->shop, true);
-            if ($shopinfo['id'] != 0) {
+            if (isset($shopinfo['dedicated_node_id'])) {
+                $type = '购买专用节点【' . ($shopinfo['name'] ?? '专用节点') . '】';
+            } elseif ($shopinfo['id'] != 0) {
                 $shopname = Shop::where('id', $shopinfo['id'])->value('name');
                 $type = '购买套餐【' . $shopname . '】';
             } elseif ($shopinfo['telegram']['the'] == 'code') {

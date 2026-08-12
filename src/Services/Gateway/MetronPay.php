@@ -3,7 +3,7 @@
 namespace App\Services\Gateway;
 
 use App\Services\{View, Auth, Config, MetronSetting};
-use App\Models\{Shop, Paylist};
+use App\Models\{Shop, Paylist, Node, NodeAccess};
 use Omnipay\Omnipay;
 
 class MetronPay extends AbstractPayment
@@ -28,6 +28,27 @@ class MetronPay extends AbstractPayment
                 $shopinfo['coupon'] = $request->getParam('shopcoupon');
             }
             $shopinfo['disableothers'] = 1;
+
+            $dedicatedNodeId = (int) $request->getParam('dedicated_node_id', 0);
+            if ($dedicatedNodeId > 0) {
+                $node = Node::find($dedicatedNodeId);
+                if ($node === null || !$node->isDedicatedForSale()) {
+                    return json_encode(['ret' => 0, 'msg' => '专用节点暂不可购买']);
+                }
+                NodeAccess::releaseStale($node->id);
+                if (NodeAccess::activeForNode($node->id) !== null) {
+                    return json_encode(['ret' => 0, 'msg' => '该专用节点已被购买']);
+                }
+                $price = (float) $node->dedicated_price;
+                if ($price <= 0) {
+                    return json_encode(['ret' => 0, 'msg' => '专用节点价格必须大于 0 元']);
+                }
+                $shopinfo['id'] = -1;
+                $shopinfo['name'] = $node->name;
+                $shopinfo['dedicated_node_id'] = $node->id;
+                $shopinfo['dedicated_days'] = (int) $node->dedicated_days;
+                $shopinfo['dedicated_traffic'] = (int) $node->dedicatedTrafficBytes();
+            }
         } else {
             $type = $telegram['type'];
             $price = $telegram['price'];
@@ -482,7 +503,16 @@ class MetronPay extends AbstractPayment
             # 记录中商品字段存在
             if ($p->shop) {
                 $shopinfo = json_decode($p->shop, true);                                        # shop 字段转数组
-                if ($shopinfo['id'] != 0) {
+                if (isset($shopinfo['dedicated_node_id'])) {
+                    $result['shop_name'] = $shopinfo['name'] ?? '专用节点';
+                    if (isset($shopinfo['status']) && $shopinfo['status'] === 1) {
+                        $result['shop_status'] = 1;
+                    } elseif (!isset($shopinfo['status'])) {
+                        $result['shop_status'] = 0;
+                    } else {
+                        $result['shop_status'] = $shopinfo['status'];
+                    }
+                } elseif ($shopinfo['id'] != 0) {
                     $shop = Shop::where('id', $shopinfo['id'])->where('status', 1)->first();    # 提取对应的商品信息
                     if (isset($shopinfo['status']) && $shopinfo['status'] === 1) {                                                 # 要购买的商品状态为1 (已购买)
                         $result['shop_status'] = 1;

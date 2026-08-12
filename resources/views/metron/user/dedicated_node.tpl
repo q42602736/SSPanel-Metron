@@ -45,7 +45,7 @@
                                             {elseif $item['occupied']}
                                                 <span class="label label-secondary">已售出</span>
                                             {else}
-                                                <button type="button" class="btn btn-primary" onclick="dedicatedBuy({$node->id})">购买</button>
+                                                <button type="button" class="btn btn-primary" onclick="dedicatedBuy({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}')">购买</button>
                                             {/if}
                                         </div>
                                     </div>
@@ -61,17 +61,99 @@
         </div>
     </div>
     {include file='include/global/scripts.tpl'}
+    <div class="modal fade" id="dedicated-payment-modal" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">选择支付方式</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <p id="dedicated-payment-summary" class="font-weight-bold"></p>
+                    <p class="text-muted">完成支付后，系统会自动开通专用节点。</p>
+                    <div class="row">
+                        {if $config['payment_system'] == 'metronpay'}
+                            {if $metron['pay_alipay'] != 'none' && $metron['pay_alipay'] != ''}
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-primary btn-block dedicated-pay-option" data-type="pay_alipay">支付宝</button></div>
+                            {/if}
+                            {if $metron['pay_alipay_2'] != 'none' && $metron['pay_alipay_2'] != ''}
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-primary btn-block dedicated-pay-option" data-type="pay_alipay_2">支付宝</button></div>
+                            {/if}
+                            {if $metron['pay_alipay_3'] != 'none' && $metron['pay_alipay_3'] != ''}
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-primary btn-block dedicated-pay-option" data-type="pay_alipay_3">支付宝</button></div>
+                            {/if}
+                            {if $metron['pay_wxpay'] != 'none' && $metron['pay_wxpay'] != ''}
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-success btn-block dedicated-pay-option" data-type="pay_wxpay">微信支付</button></div>
+                            {/if}
+                            {if $metron['pay_wxpay_2'] != 'none' && $metron['pay_wxpay_2'] != ''}
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-success btn-block dedicated-pay-option" data-type="pay_wxpay_2">微信支付</button></div>
+                            {/if}
+                            {if $metron['pay_wxpay_3'] != 'none' && $metron['pay_wxpay_3'] != ''}
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-success btn-block dedicated-pay-option" data-type="pay_wxpay_3">微信支付</button></div>
+                            {/if}
+                            {if $metron['pay_qqpay'] != 'none' && $metron['pay_qqpay'] != ''}
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-info btn-block dedicated-pay-option" data-type="pay_qqpay">QQ钱包</button></div>
+                            {/if}
+                            {if $metron['pay_crypto'] != 'none' && $metron['pay_crypto'] != ''}
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-warning btn-block dedicated-pay-option" data-type="pay_crypto">数字货币</button></div>
+                            {/if}
+                        {/if}
+                    </div>
+                    <div id="dedicated-payment-result" class="alert alert-light mt-3" style="display: none;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
     {literal}
     <script>
-        function dedicatedBuy(nodeId) {
-            $.post('/user/dedicated-node/buy', {node_id: nodeId}, function (data) {
-                if (data.ret === 1) {
-                    alert(data.msg);
-                    window.location.reload();
-                    return;
+        let dedicatedPaymentNodeId = 0;
+        let dedicatedPaymentPrice = 0;
+
+        function dedicatedBuy(nodeId, nodeName, price) {
+            dedicatedPaymentNodeId = parseInt(nodeId, 10);
+            dedicatedPaymentPrice = parseFloat(price);
+            $('#dedicated-payment-summary').text(nodeName + '，应付 ' + dedicatedPaymentPrice.toFixed(2) + ' 元');
+            $('#dedicated-payment-result').hide().empty();
+            $('.dedicated-pay-option').prop('disabled', false);
+            $('#dedicated-payment-modal').modal('show');
+        }
+
+        $('.dedicated-pay-option').on('click', function () {
+            const button = $(this);
+            const paymentType = button.data('type');
+            button.prop('disabled', true).text('正在创建订单...');
+            $('.dedicated-pay-option').not(button).prop('disabled', true);
+
+            $.ajax({
+                url: '/user/payment/purchase',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    price: dedicatedPaymentPrice,
+                    type: paymentType,
+                    shopid: 0,
+                    dedicated_node_id: dedicatedPaymentNodeId
+                },
+                success: function (data) {
+                    const result = $('#dedicated-payment-result');
+                    if (!data || data.ret !== 1) {
+                        result.removeClass('alert-light').addClass('alert-danger').text((data && data.msg) || '创建支付订单失败').show();
+                        $('.dedicated-pay-option').prop('disabled', false);
+                        button.text(button.data('type') === paymentType ? '重新支付' : '支付');
+                        return;
+                    }
+                    result.removeClass('alert-danger').addClass('alert-light').html('订单已创建，请完成支付：<a class="btn btn-primary ml-2" target="_blank" rel="noopener" href="' + data.url + '">前往支付</a>').show();
+                    button.text('订单已创建');
+                },
+                error: function (xhr) {
+                    $('#dedicated-payment-result').removeClass('alert-light').addClass('alert-danger').text('创建支付订单失败：' + xhr.status).show();
+                    $('.dedicated-pay-option').prop('disabled', false);
+                    button.text('重新支付');
                 }
-                alert(data.msg || '购买失败');
-            }, 'json');
+            });
         }
     </script>
     {/literal}

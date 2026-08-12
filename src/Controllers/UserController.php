@@ -31,7 +31,6 @@ use App\Models\{Ip,
     DetectLog,
     DetectRule,
     TrafficLog,
-    DedicatedNodeOrder,
     InviteCode,
     UserSubscribeLog};
 use App\Utils\{
@@ -49,7 +48,6 @@ use App\Utils\{
     DatatablesHelper,
     TelegramSessionManager
 };
-use Illuminate\Database\Capsule\Manager as DB;
 use App\Metron\{Metron, MtAuth, MtTelegram};
 use Ramsey\Uuid\Uuid;
 use voku\helper\AntiXSS;
@@ -762,66 +760,9 @@ class UserController extends BaseController
 
     public function dedicatedNodeBuy($request, $response, $args)
     {
-        $nodeId = (int) $request->getParam('node_id', 0);
-        if (!$this->user->isLogin || $nodeId < 1) {
-            return $response->withJson(['ret' => 0, 'msg' => '非法请求']);
-        }
-
-        try {
-            $result = DB::connection('default')->transaction(function () use ($nodeId) {
-                $now = time();
-                $user = User::where('id', $this->user->id)->lockForUpdate()->first();
-                if ($user === null) {
-                    throw new Exception('登录状态已失效');
-                }
-                $node = Node::where('id', $nodeId)->lockForUpdate()->first();
-                if ($node === null || !$node->isDedicatedForSale()) {
-                    throw new Exception('专用节点暂不可购买');
-                }
-
-                NodeAccess::releaseStale($node->id);
-                if (NodeAccess::activeForNode($node->id) !== null) {
-                    throw new Exception('该专用节点已被购买');
-                }
-
-                $price = (float) $node->dedicated_price;
-                if (bccomp((string) $user->money, (string) $price, 2) < 0) {
-                    throw new Exception('余额不足，请先充值');
-                }
-
-                $user->money = bcsub((string) $user->money, (string) $price, 2);
-                $user->save();
-
-                $order = new DedicatedNodeOrder();
-                $order->user_id = $user->id;
-                $order->node_id = $node->id;
-                $order->price = $price;
-                $order->days = (int) $node->dedicated_days;
-                $order->traffic_limit = $node->dedicatedTrafficBytes();
-                $order->created_at = $now;
-                $order->save();
-
-                $access = NodeAccess::grant(
-                    $user->id,
-                    $node->id,
-                    $node->dedicated_days,
-                    0,
-                    0,
-                    $node->dedicatedTrafficBytes(),
-                    $price
-                );
-                return ['node' => $node, 'access' => $access];
-            });
-        } catch (Exception $e) {
-            $messages = ['登录状态已失效', '专用节点暂不可购买', '该专用节点已被购买', '余额不足，请先充值'];
-            $message = in_array($e->getMessage(), $messages, true) ? $e->getMessage() : '购买失败，请稍后重试';
-            return $response->withJson(['ret' => 0, 'msg' => $message]);
-        }
-
         return $response->withJson([
-            'ret' => 1,
-            'msg' => '专用节点购买成功',
-            'node' => $result['node']->name,
+            'ret' => 0,
+            'msg' => '专用节点必须完成在线支付后才能购买'
         ]);
     }
 
