@@ -9,7 +9,8 @@ use App\Models\{
     User,
     DetectLog,
     TrafficLog,
-    NodeOnlineLog
+    NodeOnlineLog,
+    NodeAccess
 };
 use App\Utils\Tools;
 use App\Metron\{Metron, MtAuth};
@@ -43,6 +44,18 @@ class UserController extends BaseController
         }
         $node->node_heartbeat = time();
         $node->save();
+
+        $dedicatedUserIds = [];
+        if ($node->isDedicated()) {
+            $dedicatedUserIds = NodeAccess::where('node_id', $node->id)
+                ->where('status', 1)
+                ->where('expire_at', '>', time())
+                ->pluck('user_id')
+                ->all();
+            if (empty($dedicatedUserIds)) {
+                return $this->echoJson($response, ['ret' => 1, 'data' => []]);
+            }
+        }
 
         // 节点流量耗尽则返回 null
         if (($node->node_bandwidth_limit != 0) && $node->node_bandwidth_limit < $node->node_bandwidth) {
@@ -89,6 +102,10 @@ class UserController extends BaseController
             }
         )
             ->where('enable', 1)->where('expire_in', '>', date('Y-m-d H:i:s'))->get();
+
+        if ($node->isDedicated()) {
+            $users_raw = $users_raw->whereIn('id', $dedicatedUserIds);
+        }
 
         $users = array();
 

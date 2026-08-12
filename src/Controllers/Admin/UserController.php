@@ -163,7 +163,9 @@ class UserController extends AdminController
             if ($shop_id > 0) {
                 $shop = Shop::find($shop_id);
                 if ($shop != null) {
-                    \App\Metron\Metron::bought_usedd($user, 1, 0);
+                    if (!$shop->isDedicatedNode()) {
+                        \App\Metron\Metron::bought_usedd($user, 1, 0);
+                    }
                     $bought           = new Bought();
                     $bought->userid   = $user->id;
                     $bought->shopid   = $shop->id;
@@ -173,7 +175,7 @@ class UserController extends AdminController
                     $bought->price    = $shop->price;
                     $bought->usedd    = 1;
                     $bought->save();
-                    $shop->buy($user);
+                    $shop->buy($user, 0, $bought);
                 } else {
                     $res['msg'] .= '<br/>但是套餐添加失败了，原因是套餐不存在';
                 }
@@ -224,7 +226,9 @@ class UserController extends AdminController
                 $disable_bought->save();
             }
         }
-        \App\Metron\Metron::bought_usedd($user, 1, 0);
+        if (!$shop->isDedicatedNode()) {
+            \App\Metron\Metron::bought_usedd($user, 1, 0);
+        }
         $bought           = new Bought();
         $bought->userid   = $user->id;
         $bought->shopid   = $shop->id;
@@ -240,7 +244,7 @@ class UserController extends AdminController
         $bought->usedd = 1;
         $bought->save();
 
-        $shop->buy($user);
+        $shop->buy($user, 0, $bought);
         $result['ret'] = 1;
         $result['msg'] = '套餐添加成功';
         return $response->getBody()->write(json_encode($result));

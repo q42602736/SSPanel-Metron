@@ -33,6 +33,7 @@ class NodeController extends AdminController
             'name'                    => '节点名称',
             'type'                    => '显示与隐藏',
             'sort'                    => '类型',
+            'sale_type'               => '节点用途',
             'server'                  => '节点地址',
             'outaddress'              => '出口地址',
             'node_ip'                 => '节点IP',
@@ -96,6 +97,7 @@ class NodeController extends AdminController
         $node->info             = $request->getParam('info');
         $node->type             = $request->getParam('type');
         $node->node_group       = $request->getParam('group');
+        $node->sale_type        = (int) $request->getParam('sale_type', 0);
         $node->node_speedlimit  = $request->getParam('node_speedlimit');
         $node->status           = $request->getParam('status');
         $node->sort             = $request->getParam('sort');
@@ -185,6 +187,7 @@ class NodeController extends AdminController
         $node                   = Node::find($id);
         $node->name             = $request->getParam('name');
         $node->node_group       = $request->getParam('group');
+        $node->sale_type        = (int) $request->getParam('sale_type', 0);
         $node->server           = trim($request->getParam('server'));
         $node->method           = $request->getParam('method');
         $node->port             = $request->getParam('port')?:0;
@@ -416,6 +419,7 @@ class NodeController extends AdminController
                     $sort = '系统保留';
             }
             $tempdata['sort']                       = $sort;
+            $tempdata['sale_type']                  = $node->isDedicated() ? '专用节点' : '普通节点';
             $tempdata['server']                     = $node->server;
             $tempdata['outaddress']                 = $node->getOutServer();
             $tempdata['node_ip']                    = $node->node_ip;

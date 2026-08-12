@@ -46,6 +46,9 @@ class NodeController extends UserController
         $nodes_muport = [];
 
         foreach ($nodes as $node) {
+            if (!$node->canAccess($user)) {
+                continue;
+            }
             if ($user->is_admin == 0 && $node->node_group != $user->node_group && $node->node_group != 0) {
                 continue;
             }
@@ -198,6 +201,9 @@ class NodeController extends UserController
     {
         $id           = $args['id'];
         $point_node   = Node::find($id);
+        if ($point_node === null || !$point_node->canAccess($this->user)) {
+            return $response->withStatus(403)->write('无权访问该节点');
+        }
         $prefix       = explode(' - ', $point_node->name);
         return $response->write(
             $this->view()
@@ -222,6 +228,9 @@ class NodeController extends UserController
         $node          = Node::find($id);
         if ($node == null) {
             return null;
+        }
+        if (!$node->canAccess($user)) {
+            return $response->withStatus(403)->write('无权访问该节点');
         }
 
         switch ($node->sort) {

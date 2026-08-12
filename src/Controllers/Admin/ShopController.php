@@ -5,7 +5,8 @@ namespace App\Controllers\Admin;
 use App\Controllers\AdminController;
 use App\Models\{
     Shop,
-    Bought
+    Bought,
+    Node
 };
 use App\Utils\DatatablesHelper;
 use Ozdemir\Datatables\Datatables;
@@ -30,7 +31,7 @@ class ShopController extends AdminController
 
     public function create($request, $response, $args)
     {
-        return $this->view()->display('admin/shop/create.tpl');
+        return $this->view()->assign('nodes', Node::where('type', 1)->orderBy('name')->get())->display('admin/shop/create.tpl');
     }
 
     public function add($request, $response, $args)
@@ -40,6 +41,16 @@ class ShopController extends AdminController
         $shop->price = $request->getParam('price');
         $shop->auto_renew = $request->getParam('auto_renew');
         $shop->auto_reset_bandwidth = $request->getParam('auto_reset_bandwidth');
+
+        $productType = $request->getParam('product_type', 'normal');
+        $nodeId = (int) $request->getParam('node_id', 0);
+        $accessDays = (int) $request->getParam('access_days', 0);
+        if ($productType === 'dedicated_node') {
+            $node = Node::find($nodeId);
+            if ($node === null || !$node->isDedicated() || $accessDays < 1) {
+                return $response->withJson(['ret' => 0, 'msg' => '请选择专用节点并填写有效授权天数']);
+            }
+        }
 
         $content = array();
         if ($request->getParam('bandwidth') != 0) {
@@ -92,6 +103,11 @@ class ShopController extends AdminController
         if ($request->getParam('description') != '') {
             $content['description'] = $request->getParam('description');
         }
+        if ($productType === 'dedicated_node') {
+            $content['product_type'] = 'dedicated_node';
+            $content['node_id'] = $nodeId;
+            $content['access_days'] = $accessDays;
+        }
 
         $shop->content = json_encode($content);
 
@@ -109,13 +125,23 @@ class ShopController extends AdminController
     {
         $id = $args['id'];
         $shop = Shop::find($id);
-        return $this->view()->assign('shop', $shop)->display('admin/shop/edit.tpl');
+        return $this->view()->assign('shop', $shop)->assign('nodes', Node::where('type', 1)->orderBy('name')->get())->display('admin/shop/edit.tpl');
     }
 
     public function update($request, $response, $args)
     {
         $id = $args['id'];
         $shop = Shop::find($id);
+
+        $productType = $request->getParam('product_type', 'normal');
+        $nodeId = (int) $request->getParam('node_id', 0);
+        $accessDays = (int) $request->getParam('access_days', 0);
+        if ($productType === 'dedicated_node') {
+            $node = Node::find($nodeId);
+            if ($node === null || !$node->isDedicated() || $accessDays < 1) {
+                return $response->withJson(['ret' => 0, 'msg' => '请选择专用节点并填写有效授权天数']);
+            }
+        }
 
         $shop->name = $request->getParam('name');
         $shop->price = $request->getParam('price');
@@ -183,6 +209,11 @@ class ShopController extends AdminController
 
         if ($request->getParam('description') != '') {
             $content['description'] = $request->getParam('description');
+        }
+        if ($productType === 'dedicated_node') {
+            $content['product_type'] = 'dedicated_node';
+            $content['node_id'] = $nodeId;
+            $content['access_days'] = $accessDays;
         }
 
         $shop->content = json_encode($content);

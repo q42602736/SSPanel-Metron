@@ -7,6 +7,40 @@ class Shop extends Model
     protected $connection = 'default';
     protected $table = 'shop';
 
+    public function contentArray(): array
+    {
+        $content = json_decode($this->attributes['content'] ?? '{}', true);
+        return is_array($content) ? $content : [];
+    }
+
+    public function isDedicatedNode(): bool
+    {
+        return ($this->contentArray()['product_type'] ?? '') === 'dedicated_node';
+    }
+
+    public function nodeId(): int
+    {
+        return (int) ($this->contentArray()['node_id'] ?? 0);
+    }
+
+    public function accessDays(): int
+    {
+        return max(0, (int) ($this->contentArray()['access_days'] ?? 0));
+    }
+
+    public function grantDedicatedNode($user, $bought = null): bool
+    {
+        $nodeId = $this->nodeId();
+        $days = $this->accessDays();
+        $node = $nodeId > 0 ? Node::find($nodeId) : null;
+        if ($node === null || !$node->isDedicated() || $days < 1) {
+            return false;
+        }
+
+        NodeAccess::grant($user->id, $node->id, $days, $this->id, $bought ? $bought->id : 0);
+        return true;
+    }
+
     public function content()
     {
         $content = json_decode($this->attributes['content'], true);
@@ -277,8 +311,12 @@ class Shop extends Model
         }
     }
 
-    public function buy($user, $is_renew = 0)
+    public function buy($user, $is_renew = 0, $bought = null)
     {
+        if ($this->isDedicatedNode()) {
+            $this->grantDedicatedNode($user, $bought);
+            return;
+        }
         $content = json_decode($this->attributes['content'], true);
         $content_text = '';
         if (array_key_exists('traffic_package', $content)) {

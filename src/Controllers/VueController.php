@@ -628,6 +628,9 @@ class VueController extends BaseController
         }
 
         $shopsRaw = Shop::where('status', 1)->orderBy('name')->get();
+        $shopsRaw = $shopsRaw->filter(static function ($shop) {
+            return !$shop->isDedicatedNode();
+        })->values();
 
         // 将 shops 序列化并附加 description 字段
         $shops = $shopsRaw->map(function ($shop) {
@@ -816,6 +819,9 @@ class VueController extends BaseController
         $nodes_muport = array();
 
         foreach ($nodes as $node) {
+            if (!$node->canAccess($user)) {
+                continue;
+            }
             if ($node->node_group != $user->node_group && $node->node_group != 0) {
                 continue;
             }
@@ -920,6 +926,9 @@ class VueController extends BaseController
 
         if ($node == null) {
             return $response->withJson([null]);
+        }
+        if (!$node->canAccess($user)) {
+            return $response->withJson(['ret' => 0, 'msg' => '无权访问该节点']);
         }
 
         $ssr_item = $node->getItem($user, $mu, $relay_rule_id, 0);

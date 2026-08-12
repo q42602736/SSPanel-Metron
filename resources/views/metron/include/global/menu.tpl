@@ -29,6 +29,11 @@
                                                 </a>
                                             </li>
                                             <li class="menu-item menu-item-submenu menu-item-rel">
+                                                <a href="/user/dedicated-node" class="menu-link">
+                                                    <span class="menu-text"><strong>专用节点</strong></span>
+                                                </a>
+                                            </li>
+                                            <li class="menu-item menu-item-submenu menu-item-rel">
                                                 <a href="/user/node" class="menu-link">
                                                     <span class="menu-text"><strong>节点列表</strong></span>
                                                 </a>

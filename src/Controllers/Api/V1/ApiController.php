@@ -84,6 +84,9 @@ class ApiController
                     ->orWhere('node_group', '=', 0);
             }
         )->orderBy('name')->get();
+        $nodes = $nodes->filter(static function ($node) use ($user) {
+            return $node->canAccess($user);
+        })->values();
 
         $mu_nodes = Node::where('sort', 9)->where('node_class', '<=', $user->class)->where('type', '1')->where(
             static function ($query) use ($user) {
@@ -91,6 +94,9 @@ class ApiController
                     ->orWhere('node_group', '=', 0);
             }
         )->orderBy('name')->get();
+        $mu_nodes = $mu_nodes->filter(static function ($node) use ($user) {
+            return $node->canAccess($user);
+        })->values();
 
         $temparray = array();
         foreach ($nodes as $node) {

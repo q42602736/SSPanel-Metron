@@ -273,6 +273,14 @@
                                         </div>
 
                                         <div class="form-group form-group-label">
+                                            <label class="floating-label" for="sale_type">节点用途</label>
+                                            <select id="sale_type" class="form-control maxwidth-edit" name="sale_type">
+                                                <option value="0" {if $node->sale_type==0}selected{/if}>普通节点</option>
+                                                <option value="1" {if $node->sale_type==1}selected{/if}>专用节点（需单独商品授权）</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group form-group-label">
                                             <label class="floating-label" for="class">节点等级</label>
                                             <input class="form-control maxwidth-edit" id="class" name="class" type="text"
                                                    value="{$node->node_class}">
@@ -637,4 +645,3 @@
     });
     {/literal}
 </script>
-

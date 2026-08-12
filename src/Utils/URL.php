@@ -192,6 +192,9 @@ class URL
         }
 
         $nodes = $query->where('type', '1')->orderBy('node_sort', 'desc')->orderBy('name')->get();
+        $nodes = $nodes->filter(static function ($node) use ($user) {
+            return $node->canAccess($user);
+        })->values();
 
         if (MetronSetting::get('nodes_filter') === true && MetronSetting::get('nodes_miniName') === true && $rules['nodefilter']['mininame'] === 1) {
             $regex = MetronSetting::get('nodes_regex');
@@ -278,6 +281,9 @@ class URL
                     ->whereIn('node_group', $group);
             }
             $mu_nodes = $mu_node_query->get();
+            $mu_nodes = $mu_nodes->filter(static function ($node) use ($user) {
+                return $node->canAccess($user);
+            })->values();
         }
 
         // 获取适用于用户的中转规则

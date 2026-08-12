@@ -24,6 +24,30 @@
                                 <input class="form-control maxwidth-edit" id="price" type="text" value="{$shop->price}">
                             </div>
 
+                            {$content = json_decode($shop->content)}
+                            <div class="form-group form-group-label">
+                                <label class="floating-label" for="product_type">商品类型</label>
+                                <select class="form-control maxwidth-edit" id="product_type">
+                                    <option value="normal" {if !property_exists($content,'product_type')}selected{/if}>普通套餐</option>
+                                    <option value="dedicated_node" {if property_exists($content,'product_type') && $content->product_type == 'dedicated_node'}selected{/if}>专用节点</option>
+                                </select>
+                            </div>
+                            <div id="dedicated_node_fields" {if !property_exists($content,'product_type')}style="display:none"{/if}>
+                                <div class="form-group form-group-label">
+                                    <label class="floating-label" for="node_id">专用节点</label>
+                                    <select class="form-control maxwidth-edit" id="node_id">
+                                        <option value="0">请选择专用节点</option>
+                                        {foreach $nodes as $node}
+                                            {if $node->isDedicated()}<option value="{$node->id}" {if property_exists($content,'node_id') && $content->node_id == $node->id}selected{/if}>{$node->name}（{$node->getMaskedIp()}）</option>{/if}
+                                        {/foreach}
+                                    </select>
+                                </div>
+                                <div class="form-group form-group-label">
+                                    <label class="floating-label" for="access_days">授权天数</label>
+                                    <input class="form-control maxwidth-edit" id="access_days" type="number" min="1" value="{if property_exists($content,'access_days')}{$content->access_days}{else}30{/if}">
+                                </div>
+                            </div>
+
                             <div class="form-group form-group-label">
                                 <label class="floating-label" for="auto_renew">自动续订天数</label>
                                 <input class="form-control maxwidth-edit" id="auto_renew" type="text"
@@ -241,6 +265,10 @@
 
 <script>
     window.addEventListener('load', () => {
+        const productType = document.getElementById('product_type');
+        productType.addEventListener('change', () => {
+            document.getElementById('dedicated_node_fields').style.display = productType.value === 'dedicated_node' ? '' : 'none';
+        });
         function submit() {
             if ($$.getElementById('auto_reset_bandwidth').checked) {
                 var auto_reset_bandwidth = 1;
@@ -252,6 +280,9 @@
 
             let data = {
                 name: $$getValue('name'),
+                product_type: $$getValue('product_type'),
+                node_id: $$getValue('node_id'),
+                access_days: $$getValue('access_days'),
                 auto_reset_bandwidth,
                 price: $$getValue('price'),
                 auto_renew: $$getValue('auto_renew'),

@@ -34,6 +34,7 @@ class Node extends Model
         'traffic_rate'    => 'float',
         'mu_only'         => 'int',
         'sort'            => 'int',
+        'sale_type'       => 'int',
     ];
 
     public function getLastNodeInfoLog()
@@ -177,6 +178,40 @@ class Node extends Model
         $node_ip_str = $this->attributes['node_ip'];
         $node_ip_array = explode(',', $node_ip_str);
         return $node_ip_array[0];
+    }
+
+    public function isDedicated(): bool
+    {
+        return (int) ($this->attributes['sale_type'] ?? 0) === 1;
+    }
+
+    public function canAccess(User $user): bool
+    {
+        if (!$this->isDedicated() || $user->is_admin) {
+            return true;
+        }
+
+        return NodeAccess::validFor($user->id, $this->id);
+    }
+
+    public function getMaskedIp(): string
+    {
+        $ip = trim((string) ($this->attributes['node_ip'] ?? ''));
+        if ($ip === '') {
+            $ip = trim($this->getServer());
+        }
+        $ip = explode(',', $ip)[0];
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $parts = explode('.', $ip);
+            $parts[3] = 'xx';
+            return implode('.', $parts);
+        }
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $parts = explode(':', $ip);
+            $parts[count($parts) - 1] = 'xx';
+            return implode(':', $parts);
+        }
+        return $ip;
     }
 
     /**

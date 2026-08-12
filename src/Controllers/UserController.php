@@ -22,6 +22,8 @@ use App\Models\{Ip,
     Coupon,
     Ticket,
     Payback,
+    NodeAccess,
+    StreamMedia,
     BlockIp,
     LoginIp,
     UnblockIp,
@@ -664,6 +666,9 @@ class UserController extends BaseController
     public function shop($request, $response, $args)
     {
         $shops = Shop::where('status', 1)->orderBy('name')->get();
+        $shops = $shops->filter(static function ($shop) {
+            return !$shop->isDedicatedNode();
+        })->values();
         $shop_activity = null;
         $shop_info = null;
         foreach ($shops as $shop){
@@ -689,6 +694,33 @@ class UserController extends BaseController
             ->assign('shop_info', $shop_info)
             ->assign('shop_activity', $shop_activity)
             ->display('user/shop.tpl');
+    }
+
+    public function dedicatedNode($request, $response, $args)
+    {
+        $items = [];
+        $shops = Shop::where('status', 1)->orderBy('name')->get();
+        foreach ($shops as $shop) {
+            if (!$shop->isDedicatedNode()) {
+                continue;
+            }
+            $node = Node::find($shop->nodeId());
+            if ($node === null || !$node->isDedicated() || $node->type != 1) {
+                continue;
+            }
+            $access = NodeAccess::where('user_id', $this->user->id)
+                ->where('node_id', $node->id)
+                ->where('status', 1)
+                ->where('expire_at', '>', time())
+                ->first();
+            $unlock = StreamMedia::where('node_id', $node->id)
+                ->where('created_at', '>', time() - 86460)
+                ->orderBy('id', 'desc')
+                ->first();
+            $items[] = ['shop' => $shop, 'node' => $node, 'access' => $access, 'unlock' => $unlock];
+        }
+
+        return $this->view()->assign('dedicated_nodes', $items)->display('user/dedicated_node.tpl');
     }
 
     public function CouponCheck($request, $response, $args)
@@ -820,7 +852,7 @@ class UserController extends BaseController
         $bought->price = $price;
         $bought->save();
 
-        $shop->buy($user);
+        $shop->buy($user, 0, $bought);
 
         $res['ret'] = 1;
         $res['msg'] = '购买成功';
@@ -894,6 +926,28 @@ class UserController extends BaseController
             return $response->getBody()->write(json_encode($res));
         }
 
+        if ($shop->isDedicatedNode()) {
+            $user->money = bcsub($user->money, $price, 2);
+            $user->save();
+            $bought = new Bought();
+            $bought->userid = $user->id;
+            $bought->shopid = $shop->id;
+            $bought->datetime = time();
+            $bought->renew = ($autorenew == 1 && $shop->auto_renew > 0) ? time() + $shop->auto_renew * 86400 : 0;
+            $bought->coupon = $code;
+            $bought->price = $price;
+            $bought->usedd = 1;
+            $bought->save();
+            if (!$shop->grantDedicatedNode($user, $bought)) {
+                $res['ret'] = 0;
+                $res['msg'] = '专用节点商品配置无效';
+                return $response->getBody()->write(json_encode($res));
+            }
+            $res['ret'] = 1;
+            $res['msg'] = '专用节点购买成功';
+            return $response->getBody()->write(json_encode($res));
+        }
+
         $user->money = bcsub($user->money, $price, 2);
         $user->save();
 
@@ -921,7 +975,7 @@ class UserController extends BaseController
         $bought->usedd = 1;
         $bought->save();
 
-        $shop->buy($user);
+        $shop->buy($user, 0, $bought);
 
         if (MetronSetting::get('recharge_enable')){
             Metron::recharge($shop->id, $user);

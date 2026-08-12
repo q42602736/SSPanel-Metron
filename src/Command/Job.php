@@ -807,7 +807,6 @@ class Job extends Command
             if ($user->money >= $shop->price) {
                 $user->money -= $shop->price;
                 $user->save();
-                $shop->buy($user, 1);
                 $bought->renew = 0;
                 $bought->save();
 
@@ -819,6 +818,7 @@ class Job extends Command
                 $bought_new->price = $shop->price;
                 $bought_new->coupon = '';
                 $bought_new->save();
+                $shop->buy($user, 1, $bought_new);
 
                 $user->sendMail(
                     $_ENV['appName'] . '-续费成功',

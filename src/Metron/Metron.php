@@ -415,7 +415,7 @@ class Metron
         $user->money = bcsub($user->money, $price, 2);
         $user->save();
 
-        if ($disableothers == 1) {
+        if (!$shop->isDedicatedNode() && $disableothers == 1) {
             $boughts = Bought::where('userid', $user->id)->get();
             foreach ($boughts as $disable_bought) {
                 $disable_bought->renew = 0;
@@ -423,13 +423,17 @@ class Metron
             }
         }
 
-        $used = Bought::where('userid', $user->id)->where('usedd', 1)->get();
-        foreach ($used as $use_del) {
-            $use_del->usedd = 0;
-            $use_del->save();
+        if (!$shop->isDedicatedNode()) {
+            $used = Bought::where('userid', $user->id)->where('usedd', 1)->get();
+            foreach ($used as $use_del) {
+                $use_del->usedd = 0;
+                $use_del->save();
+            }
         }
 
-        Metron::bought_usedd($user, 1, 0);
+        if (!$shop->isDedicatedNode()) {
+            Metron::bought_usedd($user, 1, 0);
+        }
         $bought = new Bought();
         $bought->userid = $user->id;
         $bought->shopid = $shop->id;
@@ -445,7 +449,7 @@ class Metron
         $bought->usedd  = 1;
         $bought->save();
 
-        $shop->buy($user);
+        $shop->buy($user, 0, $bought);
         $shopinfo['status'] = 1;
         $ps->shop = json_encode($shopinfo);
         $ps->save();
