@@ -488,7 +488,7 @@ class MetronController extends BaseController
             $res = ['ret' => 0, 'msg' => '无权访问该节点'];
             return $response->getBody()->write(json_encode($res));
         }
-        if ($user->class < $node->node_class) {
+        if (!$node->isDedicated() && $user->class < $node->node_class) {
             $res = ['ret' => 0, 'msg' => '权限不足'];
             return $response->getBody()->write(json_encode($res));
         }

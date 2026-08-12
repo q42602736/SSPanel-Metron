@@ -214,6 +214,35 @@ class User extends Model
         return Tools::flowAutoShow($transfer_enable - $total);
     }
 
+    /**
+     * 普通套餐是否仍可使用。
+     */
+    public function hasActiveRegularService(): bool
+    {
+        if ($this->is_admin) {
+            return true;
+        }
+
+        if ((int) $this->enable !== 1 || (int) $this->class <= 0) {
+            return false;
+        }
+
+        $accountExpire = strtotime((string) $this->expire_in);
+        $classExpire = (string) $this->class_expire;
+        if ($accountExpire === false || $accountExpire <= time()) {
+            return false;
+        }
+        if ($classExpire !== '1989-06-04 00:05:00') {
+            $classExpireAt = strtotime($classExpire);
+            if ($classExpireAt === false || $classExpireAt <= time()) {
+                return false;
+            }
+        }
+
+        return ($_ENV['keep_connect'] ?? false) === true
+            || $this->transfer_enable > $this->u + $this->d;
+    }
+
     /*
      * 剩余流量占总流量的百分比
      */

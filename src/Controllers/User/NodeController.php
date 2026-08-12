@@ -232,15 +232,19 @@ class NodeController extends UserController
         if (!$node->canAccess($user)) {
             return $response->withStatus(403)->write('无权访问该节点');
         }
+        $hasNodePermission = $node->isDedicated()
+            || $user->is_admin
+            || ($user->class >= $node->node_class
+                && ($user->node_group == $node->node_group || $node->node_group == 0));
 
         switch ($node->sort) {
             case 0:
-                if ((($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin) && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
+                if ($hasNodePermission && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
                     return $this->view()->assign('node', $node)->assign('user', $user)->assign('mu', $mu)->assign('relay_rule_id', $relay_rule_id)->registerClass('URL', URL::class)->display('user/nodeinfo.tpl');
                 }
                 break;
             case 1:
-                if ($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) {
+                if ($hasNodePermission) {
                     $email = $this->user->email;
                     $email = Radius::GetUserName($email);
                     $json_show = 'VPN 信息<br>地址：' . $node->server . '<br>' . '用户名：' . $email . '<br>密码：' . $this->user->passwd . '<br>支持方式：' . $node->method . '<br>备注：' . $node->info;
@@ -249,7 +253,7 @@ class NodeController extends UserController
                 }
                 break;
             case 2:
-                if ($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) {
+                if ($hasNodePermission) {
                     $email = $this->user->email;
                     $email = Radius::GetUserName($email);
                     $json_show = 'SSH 信息<br>地址：' . $node->server . '<br>' . '用户名：' . $email . '<br>密码：' . $this->user->passwd . '<br>支持方式：' . $node->method . '<br>备注：' . $node->info;
@@ -258,7 +262,7 @@ class NodeController extends UserController
                 }
                 break;
             case 5:
-                if ($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) {
+                if ($hasNodePermission) {
                     $email = $this->user->email;
                     $email = Radius::GetUserName($email);
 
@@ -268,17 +272,17 @@ class NodeController extends UserController
                 }
                 break;
             case 10:
-                if ((($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin) && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
+                if ($hasNodePermission && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
                     return $this->view()->assign('node', $node)->assign('user', $user)->assign('mu', $mu)->assign('relay_rule_id', $relay_rule_id)->registerClass('URL', URL::class)->display('user/nodeinfo.tpl');
                 }
                 break;
             case 13:
-                if ((($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin) && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
+                if ($hasNodePermission && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
                     return $this->view()->assign('node', $node)->assign('user', $user)->assign('mu', $mu)->assign('relay_rule_id', $relay_rule_id)->registerClass('URL', URL::class)->display('user/nodeinfo.tpl');
                 }
                 break;
             case 16:
-                if ((($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin) && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
+                if ($hasNodePermission && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
                     $item = $node->getV2RayItem($user, $mu, $relay_rule_id);
                     if (!isset($item['security'])) {
                         $item['security'] = $item['tls'] ?? '';
@@ -297,7 +301,7 @@ class NodeController extends UserController
                 }
                 break;
             case 17:
-                if ((($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin) && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
+                if ($hasNodePermission && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
                     $item = $node->getHy2Item($user, $mu, $relay_rule_id);
                     if (!isset($item['security'])) {
                         $item['security'] = '';
@@ -314,7 +318,7 @@ class NodeController extends UserController
                 }
                 break;
             case 18:
-                if ((($user->class >= $node->node_class && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin) && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
+                if ($hasNodePermission && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
                     $item = $node->getAnyTlsItem($user, $mu, $relay_rule_id);
                     if (!isset($item['security'])) {
                         $item['security'] = 'tls';

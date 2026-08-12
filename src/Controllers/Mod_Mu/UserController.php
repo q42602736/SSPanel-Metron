@@ -192,8 +192,6 @@ class UserController extends BaseController
                 }
 
                 $user->t = time();
-                $user->u += $u * $node->traffic_rate;
-                $user->d += $d * $node->traffic_rate;
                 if ($node->isDedicated()) {
                     $access = NodeAccess::where('node_id', $node->id)
                         ->where('user_id', $user_id)
@@ -203,6 +201,9 @@ class UserController extends BaseController
                         NodeAccess::where('id', $access->id)->increment('traffic_used', (int) (($u + $d) * $node->traffic_rate));
                         NodeAccess::releaseStale($node->id);
                     }
+                } else {
+                    $user->u += $u * $node->traffic_rate;
+                    $user->d += $d * $node->traffic_rate;
                 }
                 $this_time_total_bandwidth += $u + $d;
                 if (!$user->save()) {

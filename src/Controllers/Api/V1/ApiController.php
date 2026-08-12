@@ -5,8 +5,7 @@ namespace App\Controllers\Api\V1;
 use App\Models\Node;
 use App\Models\User;
 use App\Services\Config;
-use App\Utils\Tools;
-use App\Utils\Hash;
+use App\Utils\{Tools, Hash, URL};
 
 use App\Controllers\Api\TokenStorage;
 
@@ -78,25 +77,8 @@ class ApiController
         $storage = TokenStorage::createTokenStorage();
         $token = $storage->get($accessToken);
         $user = User::find($token->userId);
-        $nodes = Node::where('sort', 0)->where('type', '1')->where(
-            static function ($query) use ($user) {
-                $query->where('node_group', '=', $user->node_group)
-                    ->orWhere('node_group', '=', 0);
-            }
-        )->orderBy('name')->get();
-        $nodes = $nodes->filter(static function ($node) use ($user) {
-            return $node->canAccess($user);
-        })->values();
-
-        $mu_nodes = Node::where('sort', 9)->where('node_class', '<=', $user->class)->where('type', '1')->where(
-            static function ($query) use ($user) {
-                $query->where('node_group', '=', $user->node_group)
-                    ->orWhere('node_group', '=', 0);
-            }
-        )->orderBy('name')->get();
-        $mu_nodes = $mu_nodes->filter(static function ($node) use ($user) {
-            return $node->canAccess($user);
-        })->values();
+        $nodes = URL::getNodes($user, 0);
+        $mu_nodes = URL::getNodes($user, 9);
 
         $temparray = array();
         foreach ($nodes as $node) {

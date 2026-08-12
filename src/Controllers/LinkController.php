@@ -581,6 +581,9 @@ class LinkController extends BaseController
     public static function getListExtend($user, $list)
     {
         $return = [];
+        if (!$user->hasActiveRegularService()) {
+            return $return;
+        }
         $info_array = (count($_ENV['sub_message']) != 0 ? (array)$_ENV['sub_message'] : []);
         if (strtotime($user->expire_in) > time()) {
             if ($user->transfer_enable == 0) {

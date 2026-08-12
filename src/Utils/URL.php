@@ -159,14 +159,18 @@ class URL
             $query->where('sort', $sort);
         }
         if (!$user->is_admin) {
-            $group = ($user->node_group != 0 ? [0, $user->node_group] : [0]);
-            $query->where(function ($query) use ($group, $user) {
+            if ($user->hasActiveRegularService()) {
+                $group = ($user->node_group != 0 ? [0, $user->node_group] : [0]);
                 $query->where(function ($query) use ($group, $user) {
-                    $query->whereIn('node_group', $group)
-                        ->where('node_class', '<=', $user->class)
-                        ->where('sale_type', 0);
-                })->orWhere('sale_type', 1);
-            });
+                    $query->where(function ($query) use ($group, $user) {
+                        $query->whereIn('node_group', $group)
+                            ->where('node_class', '<=', $user->class)
+                            ->where('sale_type', 0);
+                    })->orWhere('sale_type', 1);
+                });
+            } else {
+                $query->where('sale_type', 1);
+            }
         }
 
         // 等级筛选
@@ -274,7 +278,11 @@ class URL
 
         // 单端口 sort = 9
         $mu_nodes = [];
-        if ($is_mu != 0 && in_array($Rule['type'], ['all', 'ss', 'ssr'])) {
+        if (
+            $is_mu != 0
+            && in_array($Rule['type'], ['all', 'ss', 'ssr'])
+            && ($user->is_admin || $user->hasActiveRegularService())
+        ) {
             $mu_node_query = Node::query();
             $mu_node_query->where('sort', 9)->where('type', '1');
             if ($is_mu != 1) {
@@ -413,10 +421,6 @@ class URL
     public static function get_NewAllUrl(User $user, array $Rule): string
     {
         $return_url = '';
-        if (strtotime($user->expire_in) < time()) {
-            return $return_url;
-        }
-
         $items = URL::getNew_AllItems($user, $Rule);
         foreach ($items as $item) {
             if ($item['type'] == 'hysteria2' || $item['type'] == 'anytls') {
@@ -639,10 +643,7 @@ class URL
     public static function getAllHy2($user, $emoji = false)
     {
         $return_array = array();
-        $nodes = Node::whereIn('sort', [17])
-            ->where('type', '1')
-            ->orderBy('name')
-            ->get();
+        $nodes = self::getNodes($user, 17);
         foreach ($nodes as $node) {
             $item = $node->getHy2Item($user, 0, 0, 0, $emoji);
             if ($item != null) {

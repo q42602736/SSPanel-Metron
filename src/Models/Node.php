@@ -205,8 +205,18 @@ class Node extends Model
 
     public function canAccess(User $user): bool
     {
-        if (!$this->isDedicated() || $user->is_admin) {
+        if ($user->is_admin) {
             return true;
+        }
+
+        if ((int) $user->enable !== 1) {
+            return false;
+        }
+
+        if (!$this->isDedicated()) {
+            return $user->hasActiveRegularService()
+                && (int) $user->class >= (int) $this->node_class
+                && ((int) $this->node_group === 0 || (int) $this->node_group === (int) $user->node_group);
         }
 
         return NodeAccess::validFor($user->id, $this->id);

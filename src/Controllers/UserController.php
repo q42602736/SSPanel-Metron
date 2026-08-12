@@ -763,10 +763,6 @@ class UserController extends BaseController
                 if (NodeAccess::activeForNode($node->id) !== null) {
                     throw new Exception('该专用节点已被购买');
                 }
-                NodeAccess::releaseStale();
-                if (NodeAccess::forUser($user->id)->isNotEmpty()) {
-                    throw new Exception('您已有有效的专用节点');
-                }
 
                 $price = (float) $node->dedicated_price;
                 if (bccomp((string) $user->money, (string) $price, 2) < 0) {
@@ -797,7 +793,7 @@ class UserController extends BaseController
                 return ['node' => $node, 'access' => $access];
             });
         } catch (Exception $e) {
-            $messages = ['登录状态已失效', '专用节点暂不可购买', '该专用节点已被购买', '您已有有效的专用节点', '余额不足，请先充值'];
+            $messages = ['登录状态已失效', '专用节点暂不可购买', '该专用节点已被购买', '余额不足，请先充值'];
             $message = in_array($e->getMessage(), $messages, true) ? $e->getMessage() : '购买失败，请稍后重试';
             return $response->withJson(['ret' => 0, 'msg' => $message]);
         }

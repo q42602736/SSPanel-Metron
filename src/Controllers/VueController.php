@@ -836,7 +836,7 @@ class VueController extends BaseController
             $array_node['id'] = $node->id;
             $array_node['class'] = $node->node_class;
             $array_node['name'] = $node->name;
-            if ($this->user->class < $node->node_class) {
+            if (!$node->isDedicated() && $this->user->class < $node->node_class) {
                 $array_node['server'] = '***.***.***.***';
             } elseif ($node->sort == 13) {
                 $server = Tools::ssv2Array($node->server);
@@ -930,14 +930,17 @@ class VueController extends BaseController
         if (!$node->canAccess($user)) {
             return $response->withJson(['ret' => 0, 'msg' => '无权访问该节点']);
         }
+        $hasNodePermission = $node->isDedicated()
+            || $user->is_admin
+            || ($user->class >= $node->node_class
+                && ($user->node_group == $node->node_group || $node->node_group == 0));
 
         $ssr_item = $node->getItem($user, $mu, $relay_rule_id, 0);
         $ss_item = $node->getItem($user, $mu, $relay_rule_id, 1);
 
         switch ($node->sort) {
             case 0:
-                if ((($user->class >= $node->node_class
-                            && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin)
+                if ($hasNodePermission
                     && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)
                 ) {
 
@@ -968,8 +971,7 @@ class VueController extends BaseController
                 break;
             case 1:
                 if (
-                    $user->class >= $node->node_class
-                    && ($user->node_group == $node->node_group || $node->node_group == 0)
+                    $hasNodePermission
                 ) {
                     $email = $user->email;
                     $email = Radius::GetUserName($email);
@@ -984,8 +986,7 @@ class VueController extends BaseController
                 break;
             case 2:
                 if (
-                    $user->class >= $node->node_class
-                    && ($user->node_group == $node->node_group || $node->node_group == 0)
+                    $hasNodePermission
                 ) {
                     $email = $user->email;
                     $email = Radius::GetUserName($email);
@@ -1000,8 +1001,7 @@ class VueController extends BaseController
                 break;
             case 5:
                 if (
-                    $user->class >= $node->node_class
-                    && ($user->node_group == $node->node_group || $node->node_group == 0)
+                    $hasNodePermission
                 ) {
                     $email = $user->email;
                     $email = Radius::GetUserName($email);
@@ -1016,8 +1016,7 @@ class VueController extends BaseController
                 }
                 break;
             case 10:
-                if ((($user->class >= $node->node_class
-                            && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin)
+                if ($hasNodePermission
                     && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
 
                     $res = [
@@ -1046,8 +1045,7 @@ class VueController extends BaseController
                 }
                 break;
             case 11:
-                if ((($user->class >= $node->node_class
-                            && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin)
+                if ($hasNodePermission
                     && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
 
                     $res = [
@@ -1063,8 +1061,7 @@ class VueController extends BaseController
                 }
                 break;
             case 12:
-                if ((($user->class >= $node->node_class
-                            && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin)
+                if ($hasNodePermission
                     && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
 
                     $res = [
@@ -1080,8 +1077,7 @@ class VueController extends BaseController
                 }
                 break;
             case 13:
-                if ((($user->class >= $node->node_class
-                            && ($user->node_group == $node->node_group || $node->node_group == 0)) || $user->is_admin)
+                if ($hasNodePermission
                     && ($node->node_bandwidth_limit == 0 || $node->node_bandwidth < $node->node_bandwidth_limit)) {
 
                     $res = [
