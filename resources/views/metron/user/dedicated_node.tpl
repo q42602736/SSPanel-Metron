@@ -485,26 +485,26 @@
                 </div>
                 <div class="modal-body">
                     <p id="dedicated-payment-summary" class="font-weight-bold dedicated-payment-summary"></p>
-                    <p class="text-muted dedicated-payment-hint">选择支付方式后会直接打开支付页面，完成支付后自动开通。</p>
+                    <p class="text-muted dedicated-payment-hint">二维码支付会直接显示在这里，网页支付会自动打开新标签页。</p>
                     <div class="row dedicated-pay-grid">
                         {if $config['payment_system'] == 'metronpay'}
                             {if $metron['pay_alipay'] != 'none' && $metron['pay_alipay'] != ''}
-                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-primary btn-block dedicated-pay-option" data-type="pay_alipay">支付宝</button></div>
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-primary btn-block dedicated-pay-option" data-type="pay_alipay" data-payment-mode="{if $metron['pay_alipay'] == 'f2fpay' || $metron['pay_alipay'] == 'vmq'}qrcode{else}url{/if}">支付宝</button></div>
                             {/if}
                             {if $metron['pay_alipay_2'] != 'none' && $metron['pay_alipay_2'] != ''}
-                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-primary btn-block dedicated-pay-option" data-type="pay_alipay_2">支付宝</button></div>
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-primary btn-block dedicated-pay-option" data-type="pay_alipay_2" data-payment-mode="{if $metron['pay_alipay_2'] == 'f2fpay' || $metron['pay_alipay_2'] == 'vmq'}qrcode{else}url{/if}">支付宝</button></div>
                             {/if}
                             {if $metron['pay_alipay_3'] != 'none' && $metron['pay_alipay_3'] != ''}
-                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-primary btn-block dedicated-pay-option" data-type="pay_alipay_3">支付宝</button></div>
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-primary btn-block dedicated-pay-option" data-type="pay_alipay_3" data-payment-mode="{if $metron['pay_alipay_3'] == 'f2fpay' || $metron['pay_alipay_3'] == 'vmq'}qrcode{else}url{/if}">支付宝</button></div>
                             {/if}
                             {if $metron['pay_wxpay'] != 'none' && $metron['pay_wxpay'] != ''}
-                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-success btn-block dedicated-pay-option" data-type="pay_wxpay">微信支付</button></div>
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-success btn-block dedicated-pay-option" data-type="pay_wxpay" data-payment-mode="{if $metron['pay_wxpay'] == 'payjs' || $metron['pay_wxpay'] == 'vmq'}qrcode{else}url{/if}">微信支付</button></div>
                             {/if}
                             {if $metron['pay_wxpay_2'] != 'none' && $metron['pay_wxpay_2'] != ''}
-                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-success btn-block dedicated-pay-option" data-type="pay_wxpay_2">微信支付</button></div>
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-success btn-block dedicated-pay-option" data-type="pay_wxpay_2" data-payment-mode="{if $metron['pay_wxpay_2'] == 'payjs' || $metron['pay_wxpay_2'] == 'vmq'}qrcode{else}url{/if}">微信支付</button></div>
                             {/if}
                             {if $metron['pay_wxpay_3'] != 'none' && $metron['pay_wxpay_3'] != ''}
-                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-success btn-block dedicated-pay-option" data-type="pay_wxpay_3">微信支付</button></div>
+                                <div class="col-6 mb-3"><button type="button" class="btn btn-light-success btn-block dedicated-pay-option" data-type="pay_wxpay_3" data-payment-mode="{if $metron['pay_wxpay_3'] == 'payjs' || $metron['pay_wxpay_3'] == 'vmq'}qrcode{else}url{/if}">微信支付</button></div>
                             {/if}
                             {if $metron['pay_qqpay'] != 'none' && $metron['pay_qqpay'] != ''}
                                 <div class="col-6 mb-3"><button type="button" class="btn btn-light-info btn-block dedicated-pay-option" data-type="pay_qqpay">QQ钱包</button></div>
@@ -535,6 +535,7 @@
             var buttons = document.querySelectorAll('.dedicated-pay-option');
             var pollTimer = null;
             var paymentWindow = null;
+            var paymentWindowPending = false;
 
             function setResult(message, isError, html) {
                 result.className = 'alert mt-3 ' + (isError ? 'alert-danger' : 'alert-light');
@@ -616,6 +617,7 @@
                 } else {
                     paymentWindow = window.open(url, '_blank', 'noopener');
                 }
+                paymentWindowPending = false;
                 result.className = 'alert dedicated-payment-result';
                 result.innerHTML = '<div class="d-flex align-items-center justify-content-between flex-wrap"><span>支付页面已打开，完成支付后会自动刷新。</span><a class="btn btn-primary mt-2 mt-sm-0" target="_blank" rel="noopener">重新打开</a></div>';
                 result.style.display = 'block';
@@ -646,6 +648,7 @@
             window.dedicatedBuy = function (nodeId, nodeName, price) {
                 stopPolling();
                 paymentWindow = null;
+                paymentWindowPending = false;
                 dedicatedPaymentNodeId = parseInt(nodeId, 10);
                 dedicatedPaymentPrice = parseFloat(price);
                 title.textContent = '选择支付方式';
@@ -667,7 +670,13 @@
                 button.addEventListener('click', function () {
                     var paymentType = button.getAttribute('data-type');
                     var body = new URLSearchParams();
-                    paymentWindow = window.open('about:blank', '_blank');
+                    if (button.getAttribute('data-payment-mode') === 'url') {
+                        paymentWindow = window.open('about:blank', '_blank');
+                        paymentWindowPending = true;
+                    } else {
+                        paymentWindow = null;
+                        paymentWindowPending = false;
+                    }
                     body.set('price', dedicatedPaymentPrice);
                     body.set('type', paymentType);
                     body.set('shopid', '0');
@@ -708,10 +717,11 @@
                         }
                         button.textContent = '支付处理中';
                     }).catch(function (error) {
-                        if (paymentWindow && !paymentWindow.closed && paymentWindow.location.href === 'about:blank') {
+                        if (paymentWindowPending && paymentWindow && !paymentWindow.closed) {
                             paymentWindow.close();
                         }
                         paymentWindow = null;
+                        paymentWindowPending = false;
                         setResult(error.message || '创建支付订单失败', true, false);
                         Array.prototype.forEach.call(buttons, function (item) {
                             item.disabled = false;
