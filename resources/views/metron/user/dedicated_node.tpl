@@ -174,6 +174,12 @@
 
         .dedicated-node-state {
             flex: 0 0 auto;
+            min-width: 58px;
+            height: 28px;
+            padding: 0 10px !important;
+            border-radius: 6px !important;
+            font-size: 0.78rem;
+            text-align: center;
             white-space: nowrap;
         }
 
@@ -654,11 +660,11 @@
                                                 </div>
                                             </div>
                                             {if $access}
-                                                <span class="label label-success dedicated-node-state">已拥有</span>
+                                                <span class="label label-inline label-success dedicated-node-state">已拥有</span>
                                             {elseif $item['occupied']}
-                                                <span class="label label-secondary dedicated-node-state">已售出</span>
+                                                <span class="label label-inline label-secondary dedicated-node-state">已售出</span>
                                             {else}
-                                                <span class="label label-light-primary dedicated-node-state">可购买</span>
+                                                <span class="label label-inline label-light-primary dedicated-node-state">可购买</span>
                                             {/if}
                                         </div>
                                         <div class="dedicated-node-main">
@@ -710,7 +716,7 @@
                                                 </div>
                                             </div>
                                             {if $item['occupied']}
-                                                <span class="label label-secondary dedicated-node-state">已售出</span>
+                                                <span class="label label-inline label-secondary dedicated-node-state">已售出</span>
                                             {elseif !$access}
                                                 <button type="button" class="btn btn-primary dedicated-node-buy" onclick="dedicatedBuy({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}')">购买</button>
                                             {/if}
