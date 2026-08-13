@@ -494,10 +494,14 @@ class Metron
                 if ($price <= 0 || $balanceUsed < 0 || $balanceUsed > $price) {
                     throw new Exception('专用节点价格无效');
                 }
-                if (bccomp((string) $user->money, number_format($balanceUsed, 2, '.', ''), 2) < 0) {
+                $onlinePrice = number_format($price - $balanceUsed, 2, '.', '');
+                if (bccomp((string) $ps->total, $onlinePrice, 2) !== 0) {
+                    throw new Exception('专用节点支付金额不匹配，请联系客服');
+                }
+                if (bccomp((string) $user->money, number_format($price, 2, '.', ''), 2) < 0) {
                     throw new Exception('支付金额到账异常，请联系客服');
                 }
-                $user->money = bcsub((string) $user->money, number_format($balanceUsed, 2, '.', ''), 2);
+                $user->money = bcsub((string) $user->money, number_format($price, 2, '.', ''), 2);
                 $user->save();
 
                 $order = new DedicatedNodeOrder();
