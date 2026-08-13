@@ -338,16 +338,6 @@
             font-size: 0.9rem;
         }
 
-        .dedicated-node-access-meta {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 4px;
-            color: #7e899a;
-            font-size: 0.8rem;
-            text-align: right;
-        }
-
         .dedicated-node-buy {
             min-width: 108px;
             padding: 11px 22px;
@@ -576,10 +566,6 @@
                 flex-wrap: wrap;
             }
 
-            .dedicated-node-access-meta {
-                align-items: flex-start;
-                text-align: left;
-            }
         }
 
         @media (max-width: 479.98px) {
@@ -723,14 +709,9 @@
                                                     <span class="dedicated-node-term">/ {$node->dedicated_days} 天</span>
                                                 </div>
                                             </div>
-                                            {if $access}
-                                                <div class="dedicated-node-access-meta">
-                                                    <span>有效至 {$item['expire_text']}</span>
-                                                    <span>剩余专用流量 {$item['traffic_text']}</span>
-                                                </div>
-                                            {elseif $item['occupied']}
+                                            {if $item['occupied']}
                                                 <span class="label label-secondary dedicated-node-state">已售出</span>
-                                            {else}
+                                            {elseif !$access}
                                                 <button type="button" class="btn btn-primary dedicated-node-buy" onclick="dedicatedBuy({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}')">购买</button>
                                             {/if}
                                         </div>
