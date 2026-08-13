@@ -699,18 +699,45 @@ class UserController extends BaseController
     public function dedicatedNode($request, $response, $args)
     {
         NodeAccess::releaseStale();
-        $viewMode = $request->getQueryParam('view') === 'mine' ? 'mine' : 'all';
-        $myNodeIds = NodeAccess::forUser($this->user->id)->pluck('node_id')->all();
-        $items = [];
-        $nodes = Node::where('sale_type', 1)->where('type', 1);
-        if ($viewMode === 'mine') {
-            $nodes->whereIn('id', $myNodeIds);
-        } else {
-            $nodes->where('dedicated_status', 1)
-                ->where('dedicated_price', '>', 0)
-                ->where('dedicated_days', '>', 0);
+        $openOwnedModal = $request->getQueryParam('view') === 'mine';
+        $myAccesses = NodeAccess::forUser($this->user->id);
+        $myAccessByNodeId = [];
+        foreach ($myAccesses as $access) {
+            $myAccessByNodeId[(int) $access->node_id] = $access;
         }
-        $nodes = $nodes->orderBy('name')->get();
+        $myNodeIds = array_keys($myAccessByNodeId);
+        $ownedItems = [];
+        $ownedNodes = Node::where('sale_type', 1)
+            ->where('type', 1)
+            ->whereIn('id', $myNodeIds)
+            ->orderBy('name')->get();
+        foreach ($ownedNodes as $node) {
+            $access = $myAccessByNodeId[(int) $node->id];
+            $trafficLimit = max(0, (int) $access->traffic_limit);
+            $trafficUsed = max(0, (int) $access->traffic_used);
+            $trafficRemaining = $trafficLimit > 0 ? max(0, $trafficLimit - $trafficUsed) : 0;
+            $matches = [];
+            preg_match($_ENV['flag_regex'], $node->name, $matches);
+            $ownedItems[] = [
+                'node' => $node,
+                'access' => $access,
+                'flag' => $matches[0] ?? 'un',
+                'expire_text' => date('Y-m-d H:i', $access->expire_at),
+                'traffic_used_text' => Tools::flowAutoShow($trafficUsed),
+                'traffic_limit_text' => $trafficLimit > 0 ? Tools::flowAutoShow($trafficLimit) : '不限',
+                'traffic_remaining_text' => $trafficLimit > 0 ? Tools::flowAutoShow($trafficRemaining) : '不限',
+                'traffic_percent' => $trafficLimit > 0
+                    ? min(100, round($trafficUsed / $trafficLimit * 100, 1))
+                    : 0,
+            ];
+        }
+        $items = [];
+        $nodes = Node::where('sale_type', 1)
+            ->where('type', 1)
+            ->where('dedicated_status', 1)
+            ->where('dedicated_price', '>', 0)
+            ->where('dedicated_days', '>', 0)
+            ->orderBy('name')->get();
         foreach ($nodes as $node) {
             $access = NodeAccess::activeForNode($node->id);
             $myAccess = $access && (int) $access->user_id === (int) $this->user->id ? $access : null;
@@ -766,8 +793,9 @@ class UserController extends BaseController
 
         return $this->view()
             ->assign('dedicated_nodes', $items)
-            ->assign('dedicated_view', $viewMode)
-            ->assign('dedicated_owned_count', count($myNodeIds))
+            ->assign('dedicated_owned_nodes', $ownedItems)
+            ->assign('dedicated_owned_count', count($ownedItems))
+            ->assign('dedicated_open_owned', $openOwnedModal)
             ->display('user/dedicated_node.tpl');
     }
 

@@ -333,6 +333,206 @@
             font-weight: 700;
         }
 
+        .dedicated-owned-modal .modal-dialog {
+            max-width: 760px;
+        }
+
+        .dedicated-owned-modal .modal-content {
+            overflow: hidden;
+            border: 0;
+            box-shadow: 0 20px 48px rgba(31, 45, 61, 0.18);
+        }
+
+        .dedicated-owned-modal .modal-header {
+            align-items: center;
+            padding: 22px 26px 18px;
+            border-bottom: 1px solid #e9edf2;
+        }
+
+        .dedicated-owned-modal .modal-title {
+            color: #3f4960;
+            font-size: 1.2rem;
+        }
+
+        .dedicated-owned-count {
+            margin-left: 9px;
+            vertical-align: middle;
+        }
+
+        .dedicated-owned-modal .modal-body {
+            max-height: 68vh;
+            padding: 20px 26px 24px;
+            overflow-y: auto;
+            background: #f7f9fc;
+        }
+
+        .dedicated-owned-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .dedicated-owned-item {
+            padding: 18px;
+            background: #fff;
+            border: 1px solid #e5eaf0;
+            border-radius: 8px;
+        }
+
+        .dedicated-owned-node-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .dedicated-owned-node-identity {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            gap: 12px;
+        }
+
+        .dedicated-owned-flag {
+            flex: 0 0 auto;
+            width: 42px;
+            height: 42px;
+            box-shadow: 0 4px 10px rgba(31, 45, 61, 0.1);
+        }
+
+        .dedicated-owned-node-copy {
+            min-width: 0;
+        }
+
+        .dedicated-owned-node-name {
+            margin: 0 0 4px;
+            overflow: hidden;
+            color: #3f4960;
+            font-size: 1rem;
+            line-height: 1.35;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .dedicated-owned-node-ip {
+            overflow: hidden;
+            color: #8b95a5;
+            font-size: 0.82rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .dedicated-owned-expire {
+            flex: 0 0 auto;
+            color: #687386;
+            font-size: 0.82rem;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .dedicated-owned-expire strong {
+            display: block;
+            margin-top: 2px;
+            color: #4e596d;
+            font-weight: 600;
+        }
+
+        .dedicated-owned-remaining {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .dedicated-owned-remaining-label {
+            color: #7c8798;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .dedicated-owned-remaining-value {
+            color: #3699ff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .dedicated-owned-progress {
+            height: 7px;
+            margin-bottom: 14px;
+            overflow: hidden;
+            background: #e9edf3;
+            border-radius: 7px;
+        }
+
+        .dedicated-owned-progress-bar {
+            height: 100%;
+            background: #3699ff;
+            border-radius: inherit;
+        }
+
+        .dedicated-owned-traffic-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .dedicated-owned-traffic-metric {
+            min-width: 0;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+
+        .dedicated-owned-traffic-label {
+            display: block;
+            margin-bottom: 3px;
+            color: #9aa4b3;
+            font-size: 0.72rem;
+        }
+
+        .dedicated-owned-traffic-value {
+            display: block;
+            color: #556074;
+            font-size: 0.88rem;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .dedicated-owned-unlimited {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            color: #687386;
+            background: #f1f8ff;
+            border-radius: 7px;
+        }
+
+        .dedicated-owned-unlimited strong {
+            color: #3699ff;
+        }
+
+        .dedicated-owned-empty {
+            padding: 38px 20px;
+            color: #8993a4;
+            text-align: center;
+        }
+
+        .dedicated-owned-empty strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #556074;
+            font-size: 1rem;
+        }
+
+        .dedicated-owned-modal .modal-footer {
+            padding: 14px 26px 18px;
+            border-top: 1px solid #e9edf2;
+        }
+
         @media (max-width: 767.98px) {
             .dedicated-node-header,
             .dedicated-node-main,
@@ -373,6 +573,40 @@
                 margin-top: 8px;
                 padding: 10px 16px !important;
             }
+
+            .dedicated-owned-modal .modal-dialog {
+                margin: 10px;
+            }
+
+            .dedicated-owned-modal .modal-header,
+            .dedicated-owned-modal .modal-body,
+            .dedicated-owned-modal .modal-footer {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .dedicated-owned-node-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .dedicated-owned-node-name {
+                white-space: normal;
+            }
+
+            .dedicated-owned-expire {
+                padding-left: 54px;
+                text-align: left;
+            }
+
+            .dedicated-owned-expire strong {
+                display: inline;
+                margin-left: 4px;
+            }
+
+            .dedicated-owned-traffic-metric {
+                padding: 9px 8px;
+            }
         }
 
     </style>
@@ -386,17 +620,12 @@
                         <div class="container d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
                             <div class="d-flex align-items-center flex-wrap mr-2">
                                 <div class="d-flex flex-column">
-                                    <h2 class="text-white font-weight-bold my-2 mr-5">{if $dedicated_view == 'mine'}我的专用节点{else}专用节点{/if}</h2>
+                                    <h2 class="text-white font-weight-bold my-2 mr-5">专用节点</h2>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center">
-                                {if $dedicated_view == 'mine'}
-                                    <a href="/user/dedicated-node"
-                                       class="btn {$style[$theme_style]['global']['btn_subheader']} font-weight-bold py-3 px-6 dedicated-node-view-button">全部专用节点</a>
-                                {else}
-                                    <a href="/user/dedicated-node?view=mine"
-                                       class="btn {$style[$theme_style]['global']['btn_subheader']} font-weight-bold py-3 px-6 dedicated-node-view-button">我的专用节点{if $dedicated_owned_count > 0} · {$dedicated_owned_count}{/if}</a>
-                                {/if}
+                                <button type="button" data-toggle="modal" data-target="#dedicated-owned-modal"
+                                        class="btn {$style[$theme_style]['global']['btn_subheader']} font-weight-bold py-3 px-6 dedicated-node-view-button">我的专用节点{if $dedicated_owned_count > 0} · {$dedicated_owned_count}{/if}</button>
                             </div>
                         </div>
                     </div>
@@ -489,10 +718,7 @@
                         {foreachelse}
                             <div class="col-12">
                                 <div class="alert alert-light d-flex align-items-center justify-content-between flex-wrap py-5 px-6">
-                                    <span>{if $dedicated_view == 'mine'}您当前没有有效的专用节点{else}暂无可购买的专用节点{/if}</span>
-                                    {if $dedicated_view == 'mine'}
-                                        <a href="/user/dedicated-node" class="btn btn-sm btn-primary mt-3 mt-sm-0">查看全部节点</a>
-                                    {/if}
+                                    <span>暂无可购买的专用节点</span>
                                 </div>
                             </div>
                         {/foreach}
@@ -503,6 +729,81 @@
         </div>
     </div>
     {include file='include/global/scripts.tpl'}
+    <div class="modal fade dedicated-owned-modal" id="dedicated-owned-modal" data-auto-open="{if $dedicated_open_owned}1{else}0{/if}" tabindex="-1" role="dialog" aria-labelledby="dedicated-owned-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dedicated-owned-title">
+                        我的专用节点
+                        {if $dedicated_owned_count > 0}<span class="label label-light-primary dedicated-owned-count">{$dedicated_owned_count}</span>{/if}
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    {if $dedicated_owned_nodes}
+                        <div class="dedicated-owned-list">
+                            {foreach $dedicated_owned_nodes as $ownedItem}
+                                {$ownedNode = $ownedItem['node']} {$ownedAccess = $ownedItem['access']}
+                                <section class="dedicated-owned-item">
+                                    <div class="dedicated-owned-node-header">
+                                        <div class="dedicated-owned-node-identity">
+                                            <img alt="节点地区" class="rounded-circle dedicated-owned-flag"
+                                                 width="42" height="42"
+                                                 src="{$metron['assets_url']}/media/flags/1x1_zh_cn/{$ownedItem['flag']}.svg">
+                                            <div class="dedicated-owned-node-copy">
+                                                <h6 class="dedicated-owned-node-name">{$ownedNode->name}</h6>
+                                                <div class="dedicated-owned-node-ip">IP {$ownedNode->getMaskedIp()}</div>
+                                            </div>
+                                        </div>
+                                        <div class="dedicated-owned-expire">
+                                            有效期至
+                                            <strong>{$ownedItem['expire_text']}</strong>
+                                        </div>
+                                    </div>
+                                    <div class="dedicated-owned-remaining">
+                                        <span class="dedicated-owned-remaining-label">剩余专用流量</span>
+                                        <strong class="dedicated-owned-remaining-value">{$ownedItem['traffic_remaining_text']}</strong>
+                                    </div>
+                                    {if $ownedAccess->traffic_limit > 0}
+                                        <div class="dedicated-owned-progress" role="progressbar" aria-label="专用流量使用进度" aria-valuenow="{$ownedItem['traffic_percent']}" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="dedicated-owned-progress-bar" style="width: {$ownedItem['traffic_percent']}%;"></div>
+                                        </div>
+                                        <div class="dedicated-owned-traffic-metrics">
+                                            <div class="dedicated-owned-traffic-metric">
+                                                <span class="dedicated-owned-traffic-label">已用</span>
+                                                <span class="dedicated-owned-traffic-value">{$ownedItem['traffic_used_text']}</span>
+                                            </div>
+                                            <div class="dedicated-owned-traffic-metric">
+                                                <span class="dedicated-owned-traffic-label">总量</span>
+                                                <span class="dedicated-owned-traffic-value">{$ownedItem['traffic_limit_text']}</span>
+                                            </div>
+                                            <div class="dedicated-owned-traffic-metric">
+                                                <span class="dedicated-owned-traffic-label">剩余</span>
+                                                <span class="dedicated-owned-traffic-value">{$ownedItem['traffic_remaining_text']}</span>
+                                            </div>
+                                        </div>
+                                    {else}
+                                        <div class="dedicated-owned-unlimited">
+                                            <span>已用 {$ownedItem['traffic_used_text']}</span>
+                                            <strong>总量不限</strong>
+                                        </div>
+                                    {/if}
+                                </section>
+                            {/foreach}
+                        </div>
+                    {else}
+                        <div class="dedicated-owned-empty">
+                            <strong>暂无有效的专用节点</strong>
+                            <span>购买成功后，节点和独立流量会显示在这里。</span>
+                        </div>
+                    {/if}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade dedicated-payment-modal" id="dedicated-payment-modal" data-user-balance="{$user->money|escape:'htmlall'}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="dedicated-payment-title" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -565,6 +866,13 @@
             var pollTimer = null;
             var paymentWindow = null;
             var paymentWindowPending = false;
+
+            var ownedModal = document.getElementById('dedicated-owned-modal');
+            if (ownedModal && ownedModal.getAttribute('data-auto-open') === '1' && window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+                window.jQuery(function () {
+                    window.jQuery(ownedModal).modal('show');
+                });
+            }
 
             function setResult(message, isError, html) {
                 result.className = 'alert mt-3 ' + (isError ? 'alert-danger' : 'alert-light');
@@ -692,7 +1000,7 @@
                 showModal();
             };
 
-            Array.prototype.forEach.call(document.querySelectorAll('[data-dismiss="modal"]'), function (button) {
+            Array.prototype.forEach.call(modal.querySelectorAll('[data-dismiss="modal"]'), function (button) {
                 button.addEventListener('click', hideModal);
             });
 
