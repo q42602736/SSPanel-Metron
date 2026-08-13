@@ -699,14 +699,18 @@ class UserController extends BaseController
     public function dedicatedNode($request, $response, $args)
     {
         NodeAccess::releaseStale();
+        $viewMode = $request->getQueryParam('view') === 'mine' ? 'mine' : 'all';
+        $myNodeIds = NodeAccess::forUser($this->user->id)->pluck('node_id')->all();
         $items = [];
-        $nodes = Node::where('sale_type', 1)
-            ->where('type', 1)
-            ->where('dedicated_status', 1)
-            ->where('dedicated_price', '>', 0)
-            ->where('dedicated_days', '>', 0)
-            ->orderBy('name')
-            ->get();
+        $nodes = Node::where('sale_type', 1)->where('type', 1);
+        if ($viewMode === 'mine') {
+            $nodes->whereIn('id', $myNodeIds);
+        } else {
+            $nodes->where('dedicated_status', 1)
+                ->where('dedicated_price', '>', 0)
+                ->where('dedicated_days', '>', 0);
+        }
+        $nodes = $nodes->orderBy('name')->get();
         foreach ($nodes as $node) {
             $access = NodeAccess::activeForNode($node->id);
             $myAccess = $access && (int) $access->user_id === (int) $this->user->id ? $access : null;
@@ -760,7 +764,11 @@ class UserController extends BaseController
             ];
         }
 
-        return $this->view()->assign('dedicated_nodes', $items)->display('user/dedicated_node.tpl');
+        return $this->view()
+            ->assign('dedicated_nodes', $items)
+            ->assign('dedicated_view', $viewMode)
+            ->assign('dedicated_owned_count', count($myNodeIds))
+            ->display('user/dedicated_node.tpl');
     }
 
     public function dedicatedNodeBuy($request, $response, $args)

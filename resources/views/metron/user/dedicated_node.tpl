@@ -368,6 +368,11 @@
             .dedicated-node-unlock-grid {
                 grid-template-columns: 1fr;
             }
+
+            .dedicated-node-view-button {
+                margin-top: 8px;
+                padding: 10px 16px !important;
+            }
         }
 
     </style>
@@ -377,8 +382,23 @@
             <div class="d-flex flex-column flex-row-fluid wrapper" id="kt_wrapper">
                 {include file='include/global/menu.tpl'}
                 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-                    <div class="subheader min-h-lg-175px pt-5 pb-7 subheader-transparent">
-                        <div class="container"><h2 class="text-white font-weight-bold my-2">专用节点</h2></div>
+                    <div class="subheader min-h-lg-175px pt-5 pb-7 subheader-transparent" id="kt_subheader">
+                        <div class="container d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
+                            <div class="d-flex align-items-center flex-wrap mr-2">
+                                <div class="d-flex flex-column">
+                                    <h2 class="text-white font-weight-bold my-2 mr-5">{if $dedicated_view == 'mine'}我的专用节点{else}专用节点{/if}</h2>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                {if $dedicated_view == 'mine'}
+                                    <a href="/user/dedicated-node"
+                                       class="btn {$style[$theme_style]['global']['btn_subheader']} font-weight-bold py-3 px-6 dedicated-node-view-button">全部专用节点</a>
+                                {else}
+                                    <a href="/user/dedicated-node?view=mine"
+                                       class="btn {$style[$theme_style]['global']['btn_subheader']} font-weight-bold py-3 px-6 dedicated-node-view-button">我的专用节点{if $dedicated_owned_count > 0} · {$dedicated_owned_count}{/if}</a>
+                                {/if}
+                            </div>
+                        </div>
                     </div>
                     <div class="d-flex flex-column-fluid"><div class="container"><div class="row">
                         {foreach $dedicated_nodes as $item}
@@ -467,7 +487,14 @@
                                 </div>
                             </div>
                         {foreachelse}
-                            <div class="col-12"><div class="alert alert-light">暂无可购买的专用节点</div></div>
+                            <div class="col-12">
+                                <div class="alert alert-light d-flex align-items-center justify-content-between flex-wrap py-5 px-6">
+                                    <span>{if $dedicated_view == 'mine'}您当前没有有效的专用节点{else}暂无可购买的专用节点{/if}</span>
+                                    {if $dedicated_view == 'mine'}
+                                        <a href="/user/dedicated-node" class="btn btn-sm btn-primary mt-3 mt-sm-0">查看全部节点</a>
+                                    {/if}
+                                </div>
+                            </div>
                         {/foreach}
                     </div></div></div>
                 </div>
