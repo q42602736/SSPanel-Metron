@@ -489,11 +489,15 @@ class Metron
                     throw new Exception('该专用节点已被其他用户购买，支付金额已退回余额');
                 }
 
-                $price = (float) $ps->total;
-                if (bccomp((string) $user->money, (string) $price, 2) < 0) {
+                $price = (float) ($shopinfo['dedicated_price'] ?? $ps->total);
+                $balanceUsed = (float) ($shopinfo['dedicated_balance_used'] ?? 0);
+                if ($price <= 0 || $balanceUsed < 0 || $balanceUsed > $price) {
+                    throw new Exception('专用节点价格无效');
+                }
+                if (bccomp((string) $user->money, number_format($balanceUsed, 2, '.', ''), 2) < 0) {
                     throw new Exception('支付金额到账异常，请联系客服');
                 }
-                $user->money = bcsub((string) $user->money, (string) $price, 2);
+                $user->money = bcsub((string) $user->money, number_format($balanceUsed, 2, '.', ''), 2);
                 $user->save();
 
                 $order = new DedicatedNodeOrder();
@@ -527,6 +531,65 @@ class Metron
         }
 
         return ['ret' => 1, 'msg' => '专用节点购买成功'];
+    }
+
+    /**
+     * 使用账户余额购买专用节点。
+     */
+    public static function buy_dedicated_node_with_balance($userId, $nodeId): array
+    {
+        try {
+            DB::connection('default')->transaction(function () use ($userId, $nodeId) {
+                $user = User::where('id', (int) $userId)->lockForUpdate()->first();
+                $node = Node::where('id', (int) $nodeId)->lockForUpdate()->first();
+                if ($user === null || $node === null || !$node->isDedicatedForSale()) {
+                    throw new Exception('专用节点暂不可购买');
+                }
+
+                NodeAccess::releaseStale($node->id);
+                $access = NodeAccess::where('node_id', $node->id)
+                    ->whereRaw(NodeAccess::activeSql())
+                    ->lockForUpdate()
+                    ->first();
+                if ($access !== null) {
+                    throw new Exception('该专用节点已被购买');
+                }
+
+                $price = (float) $node->dedicated_price;
+                if ($price <= 0) {
+                    throw new Exception('专用节点价格必须大于 0 元');
+                }
+                if (bccomp((string) $user->money, (string) $price, 2) < 0) {
+                    throw new Exception('余额不足，请先充值');
+                }
+
+                $user->money = bcsub((string) $user->money, (string) $price, 2);
+                $user->save();
+
+                $order = new DedicatedNodeOrder();
+                $order->user_id = $user->id;
+                $order->node_id = $node->id;
+                $order->price = $price;
+                $order->days = (int) $node->dedicated_days;
+                $order->traffic_limit = (int) $node->dedicatedTrafficBytes();
+                $order->created_at = time();
+                $order->save();
+
+                NodeAccess::grant(
+                    $user->id,
+                    $node->id,
+                    $order->days,
+                    0,
+                    0,
+                    $order->traffic_limit,
+                    $price
+                );
+            });
+        } catch (Exception $e) {
+            return ['ret' => 0, 'msg' => $e->getMessage()];
+        }
+
+        return ['ret' => 1, 'msg' => '余额支付成功，专用节点已开通'];
     }
 
     /**

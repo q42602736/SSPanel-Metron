@@ -703,6 +703,8 @@ class UserController extends BaseController
         $nodes = Node::where('sale_type', 1)
             ->where('type', 1)
             ->where('dedicated_status', 1)
+            ->where('dedicated_price', '>', 0)
+            ->where('dedicated_days', '>', 0)
             ->orderBy('name')
             ->get();
         foreach ($nodes as $node) {
@@ -763,10 +765,12 @@ class UserController extends BaseController
 
     public function dedicatedNodeBuy($request, $response, $args)
     {
-        return $response->withJson([
-            'ret' => 0,
-            'msg' => '专用节点必须完成在线支付后才能购买'
-        ]);
+        $nodeId = (int) $request->getParam('node_id', 0);
+        if ($nodeId < 1) {
+            return $response->withJson(['ret' => 0, 'msg' => '专用节点参数无效']);
+        }
+
+        return $response->withJson(Metron::buy_dedicated_node_with_balance($this->user->id, $nodeId));
     }
 
     public function CouponCheck($request, $response, $args)

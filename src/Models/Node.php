@@ -194,7 +194,7 @@ class Node extends Model
         return $this->isDedicated()
             && (int) ($this->attributes['type'] ?? 0) === 1
             && (int) ($this->attributes['dedicated_status'] ?? 0) === 1
-            && (float) ($this->attributes['dedicated_price'] ?? 0) >= 0
+            && (float) ($this->attributes['dedicated_price'] ?? 0) > 0
             && (int) ($this->attributes['dedicated_days'] ?? 0) > 0;
     }
 

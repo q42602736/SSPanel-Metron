@@ -43,11 +43,24 @@ class MetronPay extends AbstractPayment
                 if ($price <= 0) {
                     return json_encode(['ret' => 0, 'msg' => '专用节点价格必须大于 0 元']);
                 }
+                $balance = max(0, (float) Auth::getUser()->money);
+                $balanceUsed = min($balance, $price);
+                $onlinePrice = (float) bcsub(
+                    number_format($price, 2, '.', ''),
+                    number_format($balanceUsed, 2, '.', ''),
+                    2
+                );
                 $shopinfo['id'] = -1;
                 $shopinfo['name'] = $node->name;
                 $shopinfo['dedicated_node_id'] = $node->id;
+                $shopinfo['dedicated_price'] = (float) $node->dedicated_price;
+                $shopinfo['dedicated_balance_used'] = number_format($balanceUsed, 2, '.', '');
                 $shopinfo['dedicated_days'] = (int) $node->dedicated_days;
                 $shopinfo['dedicated_traffic'] = (int) $node->dedicatedTrafficBytes();
+                if ($onlinePrice <= 0) {
+                    return json_encode(['ret' => 0, 'msg' => '余额已足够支付，请使用余额支付']);
+                }
+                $price = $onlinePrice;
             }
         } else {
             $type = $telegram['type'];

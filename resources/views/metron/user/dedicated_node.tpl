@@ -476,7 +476,7 @@
         </div>
     </div>
     {include file='include/global/scripts.tpl'}
-    <div class="modal fade dedicated-payment-modal" id="dedicated-payment-modal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="dedicated-payment-title" aria-hidden="true">
+    <div class="modal fade dedicated-payment-modal" id="dedicated-payment-modal" data-user-balance="{$user->money|escape:'htmlall'}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="dedicated-payment-title" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -513,6 +513,7 @@
                                 <div class="col-6 mb-3"><button type="button" class="btn btn-light-warning btn-block dedicated-pay-option" data-type="pay_crypto">数字货币</button></div>
                             {/if}
                         {/if}
+                        <div class="col-6 mb-3"><button type="button" class="btn btn-light-secondary btn-block dedicated-pay-option" data-type="balance" data-payment-mode="balance">余额支付（余额 {$user->money} 元）</button></div>
                     </div>
                     <div id="dedicated-payment-result" class="alert alert-light dedicated-payment-result" style="display: none;"></div>
                 </div>
@@ -529,6 +530,7 @@
             var dedicatedPaymentNodeId = 0;
             var dedicatedPaymentPrice = 0;
             var modal = document.getElementById('dedicated-payment-modal');
+            var dedicatedPaymentBalance = parseFloat(modal.getAttribute('data-user-balance')) || 0;
             var title = document.getElementById('dedicated-payment-title');
             var summary = document.getElementById('dedicated-payment-summary');
             var result = document.getElementById('dedicated-payment-result');
@@ -652,7 +654,9 @@
                 dedicatedPaymentNodeId = parseInt(nodeId, 10);
                 dedicatedPaymentPrice = parseFloat(price);
                 title.textContent = '选择支付方式';
-                summary.textContent = nodeName + '，应付 ' + dedicatedPaymentPrice.toFixed(2) + ' 元';
+                var balanceUsed = Math.min(Math.max(dedicatedPaymentBalance, 0), dedicatedPaymentPrice);
+                var onlineAmount = Math.max(0, dedicatedPaymentPrice - balanceUsed);
+                summary.textContent = nodeName + '，总价 ' + dedicatedPaymentPrice.toFixed(2) + ' 元；余额抵扣 ' + balanceUsed.toFixed(2) + ' 元，在线支付 ' + onlineAmount.toFixed(2) + ' 元';
                 clearResult();
                 Array.prototype.forEach.call(buttons, function (button) {
                     button.disabled = false;
@@ -670,24 +674,30 @@
                 button.addEventListener('click', function () {
                     var paymentType = button.getAttribute('data-type');
                     var body = new URLSearchParams();
-                    if (button.getAttribute('data-payment-mode') === 'url') {
+                    var isBalancePayment = paymentType === 'balance';
+                    if (!isBalancePayment && button.getAttribute('data-payment-mode') === 'url') {
                         paymentWindow = window.open('about:blank', '_blank');
                         paymentWindowPending = true;
-                    } else {
+                    } else if (isBalancePayment) {
                         paymentWindow = null;
                         paymentWindowPending = false;
                     }
-                    body.set('price', dedicatedPaymentPrice);
-                    body.set('type', paymentType);
-                    body.set('shopid', '0');
-                    body.set('dedicated_node_id', dedicatedPaymentNodeId);
+                    if (isBalancePayment) {
+                        body.set('node_id', dedicatedPaymentNodeId);
+                    } else {
+                        var balanceUsed = Math.min(Math.max(dedicatedPaymentBalance, 0), dedicatedPaymentPrice);
+                        body.set('price', Math.max(0, dedicatedPaymentPrice - balanceUsed).toFixed(2));
+                        body.set('type', paymentType);
+                        body.set('shopid', '0');
+                        body.set('dedicated_node_id', dedicatedPaymentNodeId);
+                    }
                     button.disabled = true;
                     button.textContent = '正在创建订单...';
                     Array.prototype.forEach.call(buttons, function (item) {
                         item.disabled = true;
                     });
 
-                    fetch('/user/payment/purchase', {
+                    fetch(isBalancePayment ? '/user/dedicated-node/buy' : '/user/payment/purchase', {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
@@ -697,13 +707,22 @@
                             var data = null;
                             try { data = JSON.parse(text); } catch (error) { data = null; }
                             if (!response.ok) {
-                                throw new Error('创建支付订单失败：' + response.status);
+                                throw new Error((isBalancePayment ? '余额支付失败：' : '创建支付订单失败：') + response.status);
                             }
                             return data;
                         });
                     }).then(function (data) {
                         if (!data || data.ret !== 1) {
-                            throw new Error((data && data.msg) || '创建支付订单失败');
+                            throw new Error((data && data.msg) || (isBalancePayment ? '余额支付失败' : '创建支付订单失败'));
+                        }
+                        if (isBalancePayment) {
+                            title.textContent = '购买成功';
+                            setResult(data.msg || '余额支付成功，专用节点已开通', false, false);
+                            button.textContent = '已开通';
+                            window.setTimeout(function () {
+                                window.location.reload();
+                            }, 1000);
+                            return;
                         }
                         title.textContent = '完成支付';
                         if (data.type === 'qrcode') {
@@ -722,7 +741,7 @@
                         }
                         paymentWindow = null;
                         paymentWindowPending = false;
-                        setResult(error.message || '创建支付订单失败', true, false);
+                        setResult(error.message || (isBalancePayment ? '余额支付失败' : '创建支付订单失败'), true, false);
                         Array.prototype.forEach.call(buttons, function (item) {
                             item.disabled = false;
                         });
