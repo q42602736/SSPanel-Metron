@@ -167,7 +167,10 @@
                                         {/if}
                                         <div class="mt-auto pt-4 dedicated-node-footer">
                                             <div class="d-flex justify-content-between align-items-end flex-wrap dedicated-node-footer-row">
-                                                <div class="dedicated-node-price"><strong class="font-size-h3">{$node->dedicated_price}</strong> 元 / {$node->dedicated_days} 天</div>
+                                                <div class="dedicated-node-price">
+                                                    <div><strong class="font-size-h3">{$node->dedicated_price}</strong> 元 / {$node->dedicated_days} 天</div>
+                                                    <div class="text-muted mt-2">专用流量 {$item['dedicated_traffic_text']}</div>
+                                                </div>
                                             {if $access}
                                                 <span class="label label-success dedicated-node-status">有效至 {$item['expire_text']}，专用流量 {$item['traffic_text']}</span>
                                             {elseif $item['occupied']}

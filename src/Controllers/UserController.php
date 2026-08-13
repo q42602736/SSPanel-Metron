@@ -749,6 +749,9 @@ class UserController extends BaseController
                 'flag' => $matches[0] ?? 'un',
                 'unlock_items' => $unlockItems,
                 'expire_text' => $myAccess ? date('Y-m-d', $myAccess->expire_at) : '',
+                'dedicated_traffic_text' => $node->dedicatedTrafficBytes() > 0
+                    ? Tools::flowAutoShow($node->dedicatedTrafficBytes())
+                    : '不限',
                 'traffic_text' => $myAccess && $myAccess->traffic_limit > 0
                     ? Tools::flowAutoShow(max(0, $myAccess->traffic_limit - $myAccess->traffic_used))
                     : '不限',
