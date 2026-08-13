@@ -94,40 +94,282 @@
             }
         }
 
-        .dedicated-node-footer {
-            min-width: 0;
+        .dedicated-node-card {
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            transition: transform 180ms ease, box-shadow 180ms ease;
         }
 
-        .dedicated-node-footer-row {
-            column-gap: 16px;
-            row-gap: 12px;
+        .dedicated-node-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(31, 45, 61, 0.12);
+        }
+
+        .dedicated-node-body {
+            padding: 0 !important;
+        }
+
+        .dedicated-node-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 22px 24px 20px;
+            background: rgba(247, 249, 252, 0.72);
+            border-bottom: 1px solid #edf0f4;
+        }
+
+        .dedicated-node-heading {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            gap: 14px;
+        }
+
+        .dedicated-node-flag {
+            flex: 0 0 auto;
+            width: 48px;
+            height: 48px;
+            box-shadow: 0 5px 12px rgba(31, 45, 61, 0.12);
+        }
+
+        .dedicated-node-title {
+            min-width: 0;
+            margin: 0;
+            color: #3f4960;
+            font-size: 1.35rem;
+            line-height: 1.25;
+            overflow-wrap: anywhere;
+        }
+
+        .dedicated-node-type {
+            margin-bottom: 4px;
+            color: #a6afbf;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
+        .dedicated-node-state {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+
+        .dedicated-node-main {
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: column;
+            padding: 22px 24px 0;
+        }
+
+        .dedicated-node-description {
+            min-height: 42px;
+            margin-bottom: 18px;
+            color: #677286;
+            line-height: 1.65;
+        }
+
+        .dedicated-node-empty-description {
+            color: #b1bac8;
+        }
+
+        .dedicated-node-facts {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .dedicated-node-fact {
+            min-width: 0;
+            padding: 12px 14px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .dedicated-node-fact-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #a0aaba;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .dedicated-node-fact-value {
+            display: block;
+            overflow: hidden;
+            color: #4e596d;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .dedicated-node-unlock {
+            padding-top: 18px;
+            border-top: 1px dashed #e4e9ef;
+        }
+
+        .dedicated-node-unlock-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .dedicated-node-unlock-title {
+            margin: 0;
+            color: #677286;
+            font-size: 0.86rem;
+            font-weight: 700;
+        }
+
+        .dedicated-node-unlock-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 18px;
+            padding-bottom: 22px;
+        }
+
+        .dedicated-node-unlock-item {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            gap: 7px;
+            color: #556074;
+            font-size: 0.88rem;
+        }
+
+        .dedicated-node-unlock-dot {
+            flex: 0 0 auto;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #aab4c2;
+        }
+
+        .dedicated-node-unlock-item.is-yes .dedicated-node-unlock-dot {
+            background: #1bc5bd;
+        }
+
+        .dedicated-node-unlock-item.is-no .dedicated-node-unlock-dot {
+            background: #f64e60;
+        }
+
+        .dedicated-node-unlock-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .dedicated-node-unlock-value {
+            flex: 0 0 auto;
+            font-weight: 600;
+        }
+
+        .dedicated-node-unlock-item.is-yes .dedicated-node-unlock-value {
+            color: #1baea7;
+        }
+
+        .dedicated-node-unlock-item.is-no .dedicated-node-unlock-value {
+            color: #e7475b;
+        }
+
+        .dedicated-node-unlock-item.is-neutral .dedicated-node-unlock-value {
+            color: #a17b00;
+        }
+
+        .dedicated-node-footer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 18px;
+            margin-top: auto;
+            padding: 18px 24px 22px;
+            border-top: 1px solid #edf0f4;
         }
 
         .dedicated-node-price {
-            flex: 0 0 auto;
+            min-width: 0;
         }
 
-        .dedicated-node-status {
-            flex: 1 1 240px;
-            min-width: 0;
-            max-width: 100%;
-            white-space: normal;
-            overflow-wrap: anywhere;
-            line-height: 1.6;
+        .dedicated-node-price-line {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            color: #596377;
+        }
+
+        .dedicated-node-price-value {
+            color: #3f4960;
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .dedicated-node-price-unit {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .dedicated-node-term {
+            color: #8993a4;
+            font-size: 0.9rem;
+        }
+
+        .dedicated-node-access-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            color: #7e899a;
+            font-size: 0.8rem;
             text-align: right;
         }
 
         .dedicated-node-buy {
-            flex: 0 0 auto;
-            min-width: 88px;
+            min-width: 108px;
+            padding: 11px 22px;
+            border-radius: 8px;
+            font-weight: 700;
         }
 
-        @media (max-width: 575.98px) {
-            .dedicated-node-status {
-                flex-basis: 100%;
+        @media (max-width: 767.98px) {
+            .dedicated-node-header,
+            .dedicated-node-main,
+            .dedicated-node-footer {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .dedicated-node-header {
+                align-items: flex-start;
+            }
+
+            .dedicated-node-facts {
+                grid-template-columns: 1fr;
+            }
+
+            .dedicated-node-footer {
+                align-items: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .dedicated-node-access-meta {
+                align-items: flex-start;
                 text-align: left;
             }
         }
+
+        @media (max-width: 479.98px) {
+            .dedicated-node-header {
+                flex-wrap: wrap;
+            }
+
+            .dedicated-node-unlock-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
     </style>
     {include file='include/global/head.tpl'}
     <div class="d-flex flex-column flex-root">
@@ -142,43 +384,84 @@
                         {foreach $dedicated_nodes as $item}
                             {$node = $item['node']} {$access = $item['access']}
                             <div class="col-md-6 col-xl-4 mb-6">
-                                <div class="card card-custom h-100">
-                                    <div class="card-body d-flex flex-column">
-                                        <div class="d-flex align-items-center mb-3">
-                                            <img alt="节点地区" class="mr-3 rounded-circle" width="42" height="42"
-                                                 src="{$metron['assets_url']}/media/flags/1x1_zh_cn/{$item['flag']}.svg">
-                                            <h3 class="font-weight-bolder mb-0">{$node->name}</h3>
+                                <div class="card card-custom h-100 dedicated-node-card">
+                                    <div class="card-body d-flex flex-column dedicated-node-body">
+                                        <div class="dedicated-node-header">
+                                            <div class="dedicated-node-heading">
+                                                <img alt="节点地区" class="rounded-circle dedicated-node-flag"
+                                                     width="48" height="48"
+                                                     src="{$metron['assets_url']}/media/flags/1x1_zh_cn/{$item['flag']}.svg">
+                                                <div class="min-w-0">
+                                                    <div class="dedicated-node-type">专用 IP 节点</div>
+                                                    <h3 class="font-weight-bolder dedicated-node-title">{$node->name}</h3>
+                                                </div>
+                                            </div>
+                                            {if $access}
+                                                <span class="label label-success dedicated-node-state">已拥有</span>
+                                            {elseif $item['occupied']}
+                                                <span class="label label-secondary dedicated-node-state">已售出</span>
+                                            {else}
+                                                <span class="label label-light-primary dedicated-node-state">可购买</span>
+                                            {/if}
                                         </div>
-                                        <div class="text-muted mb-3">IP：{$node->getMaskedIp()}</div>
-                                        <div class="mb-4">{$node->info}</div>
+                                        <div class="dedicated-node-main">
+                                            <div class="dedicated-node-description">
+                                                {if $node->info}
+                                                    {$node->info}
+                                                {else}
+                                                    <span class="dedicated-node-empty-description">暂无节点描述</span>
+                                                {/if}
+                                            </div>
+                                            <div class="dedicated-node-facts">
+                                                <div class="dedicated-node-fact">
+                                                    <span class="dedicated-node-fact-label">IP 地址</span>
+                                                    <span class="dedicated-node-fact-value" title="{$node->getMaskedIp()}">{$node->getMaskedIp()}</span>
+                                                </div>
+                                                <div class="dedicated-node-fact">
+                                                    <span class="dedicated-node-fact-label">专用流量</span>
+                                                    <span class="dedicated-node-fact-value">{$item['dedicated_traffic_text']}</span>
+                                                </div>
+                                                <div class="dedicated-node-fact">
+                                                    <span class="dedicated-node-fact-label">授权周期</span>
+                                                    <span class="dedicated-node-fact-value">{$node->dedicated_days} 天</span>
+                                                </div>
+                                            </div>
                                         {if $item['unlock_items']}
-                                            <div style="border-top: 2px dashed #ECF0F3;
-                                        border-bottom-right-radius: 0.42rem;
-                                        border-bottom-left-radius: 0.42rem;
-                                        margin-top: 20px;
-                                        margin-bottom: 10px;"></div>
-                                            <div style="padding: 15px; background-color: #f8f9fa; border-radius: 0.42rem; margin-bottom: 20px;">
-                                                <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.9rem;">
+                                            <div class="dedicated-node-unlock">
+                                                <div class="dedicated-node-unlock-heading">
+                                                    <h4 class="dedicated-node-unlock-title">流媒体与 AI 解锁</h4>
+                                                    <span class="text-muted font-size-sm">{$item['unlock_items']|count} 项</span>
+                                                </div>
+                                                <div class="dedicated-node-unlock-grid">
                                                     {foreach $item['unlock_items'] as $unlockItem}
-                                                        <span style="white-space: nowrap;"><strong>{$unlockItem['label']}:</strong> <span style="color: {if strpos($unlockItem['value'], 'Yes') !== false}#1BC5BD{elseif strpos($unlockItem['value'], 'No') !== false}#F64E60{else}#FFA800{/if};">{$unlockItem['value']}</span></span>
+                                                        <div class="dedicated-node-unlock-item {if strpos($unlockItem['value'], 'Yes') !== false}is-yes{elseif strpos($unlockItem['value'], 'No') !== false}is-no{else}is-neutral{/if}">
+                                                            <span class="dedicated-node-unlock-dot"></span>
+                                                            <span class="dedicated-node-unlock-label">{$unlockItem['label']}</span>
+                                                            <span class="dedicated-node-unlock-value">{$unlockItem['value']}</span>
+                                                        </div>
                                                     {/foreach}
                                                 </div>
                                             </div>
                                         {/if}
-                                        <div class="mt-auto pt-4 dedicated-node-footer">
-                                            <div class="d-flex justify-content-between align-items-end flex-wrap dedicated-node-footer-row">
-                                                <div class="dedicated-node-price">
-                                                    <div><strong class="font-size-h3">{$node->dedicated_price}</strong> 元 / {$node->dedicated_days} 天</div>
-                                                    <div class="text-muted mt-2">专用流量 {$item['dedicated_traffic_text']}</div>
+                                        </div>
+                                        <div class="dedicated-node-footer">
+                                            <div class="dedicated-node-price">
+                                                <div class="dedicated-node-price-line">
+                                                    <strong class="dedicated-node-price-value">{$node->dedicated_price}</strong>
+                                                    <span class="dedicated-node-price-unit">元</span>
+                                                    <span class="dedicated-node-term">/ {$node->dedicated_days} 天</span>
                                                 </div>
+                                            </div>
                                             {if $access}
-                                                <span class="label label-success dedicated-node-status">有效至 {$item['expire_text']}，专用流量 {$item['traffic_text']}</span>
+                                                <div class="dedicated-node-access-meta">
+                                                    <span>有效至 {$item['expire_text']}</span>
+                                                    <span>剩余专用流量 {$item['traffic_text']}</span>
+                                                </div>
                                             {elseif $item['occupied']}
-                                                <span class="label label-secondary dedicated-node-status">已售出</span>
+                                                <span class="label label-secondary dedicated-node-state">已售出</span>
                                             {else}
                                                 <button type="button" class="btn btn-primary dedicated-node-buy" onclick="dedicatedBuy({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}')">购买</button>
                                             {/if}
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
