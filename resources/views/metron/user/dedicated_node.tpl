@@ -53,6 +53,28 @@
             box-shadow: 0 5px 14px rgba(31, 45, 61, 0.12);
         }
 
+        .dedicated-pay-balance.btn {
+            color: #3f4960;
+            background: #eef2f6;
+            border: 1px solid #dce3eb;
+        }
+
+        .dedicated-pay-balance.btn:hover:not(:disabled),
+        .dedicated-pay-balance.btn:focus:not(:disabled) {
+            color: #263043;
+            background: #e3e9f0;
+            border-color: #cfd8e3;
+        }
+
+        .dedicated-pay-balance.btn:disabled {
+            color: #626c7d;
+            background: #eef1f4;
+            border-color: #dfe5eb;
+            box-shadow: none;
+            cursor: not-allowed;
+            opacity: 1;
+        }
+
         .dedicated-payment-result {
             margin-top: 8px;
             margin-bottom: 0;
@@ -841,7 +863,7 @@
                                 <div class="col-6 mb-3"><button type="button" class="btn btn-light-warning btn-block dedicated-pay-option" data-type="pay_crypto">数字货币</button></div>
                             {/if}
                         {/if}
-                        <div class="col-6 mb-3"><button type="button" class="btn btn-light-secondary btn-block dedicated-pay-option" data-type="balance" data-payment-mode="balance">余额支付（余额 {$user->money} 元）</button></div>
+                        <div class="col-6 mb-3"><button type="button" class="btn btn-block dedicated-pay-option dedicated-pay-balance" data-type="balance" data-payment-mode="balance">余额支付（余额 {$user->money} 元）</button></div>
                     </div>
                     <div id="dedicated-payment-result" class="alert alert-light dedicated-payment-result" style="display: none;"></div>
                 </div>
@@ -863,6 +885,7 @@
             var summary = document.getElementById('dedicated-payment-summary');
             var result = document.getElementById('dedicated-payment-result');
             var buttons = document.querySelectorAll('.dedicated-pay-option');
+            var balanceButton = modal.querySelector('[data-type="balance"]');
             var pollTimer = null;
             var paymentWindow = null;
             var paymentWindowPending = false;
@@ -888,6 +911,23 @@
                 result.className = 'alert dedicated-payment-result';
                 result.innerHTML = '';
                 result.style.display = 'none';
+            }
+
+            function resetPaymentButtons() {
+                Array.prototype.forEach.call(buttons, function (button) {
+                    button.disabled = false;
+                    button.textContent = button.getAttribute('data-label');
+                });
+                if (!balanceButton) {
+                    return;
+                }
+                if (dedicatedPaymentBalance + 0.001 < dedicatedPaymentPrice) {
+                    balanceButton.disabled = true;
+                    balanceButton.textContent = '余额不足（当前 ' + dedicatedPaymentBalance.toFixed(2) + ' 元）';
+                    balanceButton.setAttribute('title', '请选择在线支付，现有余额会自动抵扣');
+                    return;
+                }
+                balanceButton.removeAttribute('title');
             }
 
             function stopPolling() {
@@ -993,10 +1033,7 @@
                 var onlineAmount = Math.max(0, dedicatedPaymentPrice - balanceUsed);
                 summary.textContent = nodeName + '，总价 ' + dedicatedPaymentPrice.toFixed(2) + ' 元；余额抵扣 ' + balanceUsed.toFixed(2) + ' 元，在线支付 ' + onlineAmount.toFixed(2) + ' 元';
                 clearResult();
-                Array.prototype.forEach.call(buttons, function (button) {
-                    button.disabled = false;
-                    button.textContent = button.getAttribute('data-label');
-                });
+                resetPaymentButtons();
                 showModal();
             };
 
@@ -1077,10 +1114,10 @@
                         paymentWindow = null;
                         paymentWindowPending = false;
                         setResult(error.message || (isBalancePayment ? '余额支付失败' : '创建支付订单失败'), true, false);
-                        Array.prototype.forEach.call(buttons, function (item) {
-                            item.disabled = false;
-                        });
-                        button.textContent = '重新支付';
+                        resetPaymentButtons();
+                        if (!button.disabled) {
+                            button.textContent = '重新支付';
+                        }
                     });
                 });
             });
