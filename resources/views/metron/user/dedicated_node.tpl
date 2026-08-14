@@ -220,15 +220,24 @@
         }
 
         .dedicated-node-fact {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             min-width: 0;
+            min-height: 116px;
             padding: 12px 14px;
+            overflow: hidden;
             background: #f8fafc;
             border-radius: 8px;
+            box-sizing: border-box;
         }
 
         .dedicated-node-fact-heading {
             display: flex;
             align-items: center;
+            justify-content: center;
+            width: 100%;
             gap: 7px;
             margin-bottom: 5px;
         }
@@ -255,11 +264,13 @@
 
         .dedicated-node-fact-value {
             display: block;
+            width: 100%;
             overflow: hidden;
             color: #4e596d;
             font-size: 0.95rem;
             font-weight: 600;
             text-overflow: ellipsis;
+            text-align: center;
             white-space: nowrap;
         }
 
