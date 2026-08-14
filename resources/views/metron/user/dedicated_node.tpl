@@ -225,7 +225,6 @@
             align-items: center;
             justify-content: center;
             min-width: 0;
-            min-height: 116px;
             padding: 12px 14px;
             overflow: hidden;
             background: #f8fafc;
