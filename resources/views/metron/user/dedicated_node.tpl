@@ -243,7 +243,7 @@
             border-radius: 7px;
             background: #e9f0ff;
             color: #5d7fe8;
-            font-size: 17px;
+            font-size: 14px;
         }
 
         .dedicated-node-fact-label {
@@ -713,21 +713,21 @@
                                             <div class="dedicated-node-facts">
                                                 <div class="dedicated-node-fact">
                                                     <div class="dedicated-node-fact-heading">
-                                                        <span class="material-icons dedicated-node-fact-icon" aria-hidden="true">public</span>
+                                                        <i class="fas fa-globe dedicated-node-fact-icon" aria-hidden="true"></i>
                                                         <span class="dedicated-node-fact-label">IP 地址</span>
                                                     </div>
                                                     <span class="dedicated-node-fact-value" title="{$node->getMaskedIp()}">{$node->getMaskedIp()}</span>
                                                 </div>
                                                 <div class="dedicated-node-fact">
                                                     <div class="dedicated-node-fact-heading">
-                                                        <span class="material-icons dedicated-node-fact-icon" aria-hidden="true">data_usage</span>
+                                                        <i class="fas fa-database dedicated-node-fact-icon" aria-hidden="true"></i>
                                                         <span class="dedicated-node-fact-label">专用流量</span>
                                                     </div>
                                                     <span class="dedicated-node-fact-value">{$item['dedicated_traffic_text']}</span>
                                                 </div>
                                                 <div class="dedicated-node-fact">
                                                     <div class="dedicated-node-fact-heading">
-                                                        <span class="material-icons dedicated-node-fact-icon" aria-hidden="true">event</span>
+                                                        <i class="fas fa-calendar-alt dedicated-node-fact-icon" aria-hidden="true"></i>
                                                         <span class="dedicated-node-fact-label">授权周期</span>
                                                     </div>
                                                     <span class="dedicated-node-fact-value">{$node->dedicated_days} 天</span>
