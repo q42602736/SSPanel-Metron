@@ -31,7 +31,7 @@ class NodeController extends UserController
     public function node($request, $response, $args): ResponseInterface
     {
         $user        = $this->user;
-        $nodes       = Node::where('type', 1)->orderBy('node_class')->orderBy('name')->get();
+        $nodes       = Node::where('type', 1)->where('sale_type', 0)->orderBy('node_class')->orderBy('name')->get();
         $relay_rules = Relay::where('user_id', $this->user->id)->orwhere('user_id', 0)->orderBy('id', 'asc')->get();
 
         if (!Tools::is_protocol_relay($user)) {
