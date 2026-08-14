@@ -226,9 +226,28 @@
             border-radius: 8px;
         }
 
-        .dedicated-node-fact-label {
-            display: block;
+        .dedicated-node-fact-heading {
+            display: flex;
+            align-items: center;
+            gap: 7px;
             margin-bottom: 5px;
+        }
+
+        .dedicated-node-fact-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            flex: 0 0 26px;
+            border-radius: 7px;
+            background: #e9f0ff;
+            color: #5d7fe8;
+            font-size: 17px;
+        }
+
+        .dedicated-node-fact-label {
+            display: inline-block;
             color: #a0aaba;
             font-size: 0.75rem;
             font-weight: 600;
@@ -693,15 +712,24 @@
                                             </div>
                                             <div class="dedicated-node-facts">
                                                 <div class="dedicated-node-fact">
-                                                    <span class="dedicated-node-fact-label">IP 地址</span>
+                                                    <div class="dedicated-node-fact-heading">
+                                                        <span class="material-icons dedicated-node-fact-icon" aria-hidden="true">public</span>
+                                                        <span class="dedicated-node-fact-label">IP 地址</span>
+                                                    </div>
                                                     <span class="dedicated-node-fact-value" title="{$node->getMaskedIp()}">{$node->getMaskedIp()}</span>
                                                 </div>
                                                 <div class="dedicated-node-fact">
-                                                    <span class="dedicated-node-fact-label">专用流量</span>
+                                                    <div class="dedicated-node-fact-heading">
+                                                        <span class="material-icons dedicated-node-fact-icon" aria-hidden="true">data_usage</span>
+                                                        <span class="dedicated-node-fact-label">专用流量</span>
+                                                    </div>
                                                     <span class="dedicated-node-fact-value">{$item['dedicated_traffic_text']}</span>
                                                 </div>
                                                 <div class="dedicated-node-fact">
-                                                    <span class="dedicated-node-fact-label">授权周期</span>
+                                                    <div class="dedicated-node-fact-heading">
+                                                        <span class="material-icons dedicated-node-fact-icon" aria-hidden="true">event</span>
+                                                        <span class="dedicated-node-fact-label">授权周期</span>
+                                                    </div>
                                                     <span class="dedicated-node-fact-value">{$node->dedicated_days} 天</span>
                                                 </div>
                                             </div>
