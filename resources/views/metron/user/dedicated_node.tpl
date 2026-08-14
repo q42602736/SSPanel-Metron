@@ -164,6 +164,17 @@
             overflow-wrap: anywhere;
         }
 
+        .dedicated-node-title-line {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            gap: 8px;
+        }
+
+        .dedicated-node-online-dot {
+            flex: 0 0 auto;
+        }
+
         .dedicated-node-type {
             margin-bottom: 4px;
             color: #a6afbf;
@@ -656,7 +667,12 @@
                                                      src="{$metron['assets_url']}/media/flags/1x1_zh_cn/{$item['flag']}.svg">
                                                 <div class="min-w-0">
                                                     <div class="dedicated-node-type">专用 IP 节点</div>
-                                                    <h3 class="font-weight-bolder dedicated-node-title">{$node->name}</h3>
+                                                    <div class="dedicated-node-title-line">
+                                                        <span class="label label-dot label-xl dedicated-node-online-dot {if $item['online']}label-success{else}label-danger{/if}"
+                                                              title="{if $item['online']}在线{else}离线{/if}"
+                                                              aria-label="{if $item['online']}在线{else}离线{/if}"></span>
+                                                        <h3 class="font-weight-bolder dedicated-node-title">{$node->name}</h3>
+                                                    </div>
                                                 </div>
                                             </div>
                                             {if $access}

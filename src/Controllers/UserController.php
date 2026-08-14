@@ -780,6 +780,7 @@ class UserController extends BaseController
                 'access' => $myAccess,
                 'occupied' => $access !== null && $myAccess === null,
                 'flag' => $matches[0] ?? 'un',
+                'online' => $node->isNodeOnline() === true,
                 'unlock_items' => $unlockItems,
                 'dedicated_traffic_text' => $node->dedicatedTrafficBytes() > 0
                     ? Tools::flowAutoShow($node->dedicatedTrafficBytes())
