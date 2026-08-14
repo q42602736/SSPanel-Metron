@@ -290,6 +290,11 @@
                                                 <p class="form-control-guide"><i class="material-icons">info</i>0 表示不限专用流量</p>
                                             </div>
                                             <div class="form-group form-group-label">
+                                                <label class="floating-label" for="dedicated_traffic_rate">专用流量倍率</label>
+                                                <input class="form-control maxwidth-edit" id="dedicated_traffic_rate" type="number" min="0.01" step="0.01" value="1" name="dedicated_traffic_rate">
+                                                <p class="form-control-guide"><i class="material-icons">info</i>上报流量 × 此倍率，默认 1</p>
+                                            </div>
+                                            <div class="form-group form-group-label">
                                                 <label class="floating-label" for="dedicated_status">专用节点上架</label>
                                                 <select class="form-control maxwidth-edit" id="dedicated_status" name="dedicated_status">
                                                     <option value="1">上架，可购买</option>
@@ -519,7 +524,8 @@
             bandwidthlimit_resetday: {required: true},
             dedicated_price: {required: true, min: 0},
             dedicated_days: {required: true, min: 1},
-            dedicated_traffic: {required: true, min: 0}
+            dedicated_traffic: {required: true, min: 0},
+            dedicated_traffic_rate: {required: true, min: 0.01}
         },
 
         submitHandler: () => {
@@ -601,6 +607,7 @@
                     dedicated_price: $$getValue('dedicated_price'),
                     dedicated_days: $$getValue('dedicated_days'),
                     dedicated_traffic: $$getValue('dedicated_traffic'),
+                    dedicated_traffic_rate: $$getValue('dedicated_traffic_rate'),
                     dedicated_status: $$getValue('dedicated_status'),
                     custom_rss,
                     mu_only: $$getValue('mu_only')

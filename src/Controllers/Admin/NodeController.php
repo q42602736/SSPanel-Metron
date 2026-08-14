@@ -49,6 +49,7 @@ class NodeController extends AdminController
             'dedicated_price'         => '专用价格',
             'dedicated_days'          => '专用天数',
             'dedicated_traffic'       => '专用流量/GB',
+            'dedicated_traffic_rate'  => '专用流量倍率',
             'dedicated_status'        => '专用上架',
             'bandwidthlimit_resetday' => '流量重置日',
             'node_heartbeat'          => '上一次活跃时间',
@@ -104,6 +105,7 @@ class NodeController extends AdminController
         $node->dedicated_price  = max(0, (float) $request->getParam('dedicated_price', 0));
         $node->dedicated_days   = max(1, (int) $request->getParam('dedicated_days', 30));
         $node->dedicated_traffic = max(0, (int) $request->getParam('dedicated_traffic', 0));
+        $node->dedicated_traffic_rate = max(0.01, (float) $request->getParam('dedicated_traffic_rate', 1));
         $node->dedicated_status  = (int) $request->getParam('dedicated_status', 0);
         $node->node_group       = $request->getParam('group');
         $node->node_speedlimit  = $request->getParam('node_speedlimit');
@@ -207,6 +209,7 @@ class NodeController extends AdminController
         $node->dedicated_price  = max(0, (float) $request->getParam('dedicated_price', 0));
         $node->dedicated_days   = max(1, (int) $request->getParam('dedicated_days', 30));
         $node->dedicated_traffic = max(0, (int) $request->getParam('dedicated_traffic', 0));
+        $node->dedicated_traffic_rate = max(0.01, (float) $request->getParam('dedicated_traffic_rate', 1));
         $node->dedicated_status  = (int) $request->getParam('dedicated_status', 0);
         $node->node_group       = $request->getParam('group');
         $node->server           = trim($request->getParam('server'));
@@ -310,12 +313,14 @@ class NodeController extends AdminController
             $node->bandwidthlimit_resetday = 1;
             $node->node_speedlimit = 0;
             $node->traffic_rate = 1;
+            $node->dedicated_traffic_rate = max(0.01, (float) ($node->dedicated_traffic_rate ?: 1));
             return;
         }
 
         $node->dedicated_price = 0;
         $node->dedicated_days = 30;
         $node->dedicated_traffic = 0;
+        $node->dedicated_traffic_rate = 1;
         $node->dedicated_status = 0;
     }
 
@@ -442,6 +447,7 @@ class NodeController extends AdminController
                 ->orwhere('dedicated_price', 'LIKE', "%$search%")
                 ->orwhere('dedicated_days', 'LIKE', "%$search%")
                 ->orwhere('dedicated_traffic', 'LIKE', "%$search%")
+                ->orwhere('dedicated_traffic_rate', 'LIKE', "%$search%")
                 ->orwhere('bandwidthlimit_resetday', 'LIKE', "%$search%")
                 ->orwhere('node_heartbeat', $like_str, "%$search%")
                 ->orwhere('custom_method', 'LIKE', "%$search%")
@@ -511,6 +517,7 @@ class NodeController extends AdminController
             $tempdata['dedicated_price']            = $node->dedicated_price;
             $tempdata['dedicated_days']             = $node->dedicated_days;
             $tempdata['dedicated_traffic']          = $node->dedicated_traffic;
+            $tempdata['dedicated_traffic_rate']     = $node->dedicated_traffic_rate;
             $tempdata['dedicated_status']           = $node->dedicated_status ? '上架' : '下架';
             $tempdata['bandwidthlimit_resetday']    = $node->bandwidthlimit_resetday;
             $tempdata['node_heartbeat']             = date('Y-m-d H:i:s', $node->node_heartbeat);

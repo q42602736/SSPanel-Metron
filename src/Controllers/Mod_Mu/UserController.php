@@ -192,13 +192,14 @@ class UserController extends BaseController
                 }
 
                 $user->t = time();
+                $trafficRate = $node->isDedicated() ? $node->dedicatedTrafficRate() : $node->traffic_rate;
                 if ($node->isDedicated()) {
                     $access = NodeAccess::where('node_id', $node->id)
                         ->where('user_id', $user_id)
                         ->whereRaw(NodeAccess::activeSql())
                         ->first();
                     if ($access !== null) {
-                        NodeAccess::where('id', $access->id)->increment('traffic_used', (int) (($u + $d) * $node->traffic_rate));
+                        NodeAccess::where('id', $access->id)->increment('traffic_used', (int) (($u + $d) * $trafficRate));
                         NodeAccess::releaseStale($node->id);
                     }
                 } else {
@@ -220,8 +221,8 @@ class UserController extends BaseController
                 $traffic->u = $u;
                 $traffic->d = $d;
                 $traffic->node_id = $node_id;
-                $traffic->rate = $node->traffic_rate;
-                $traffic->traffic = Tools::flowAutoShow(($u + $d) * $node->traffic_rate);
+                $traffic->rate = $trafficRate;
+                $traffic->traffic = Tools::flowAutoShow(($u + $d) * $trafficRate);
                 $traffic->log_time = time();
                 $traffic->save();
             }

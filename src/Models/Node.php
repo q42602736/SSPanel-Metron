@@ -38,6 +38,7 @@ class Node extends Model
         'dedicated_price' => 'float',
         'dedicated_days'  => 'int',
         'dedicated_traffic' => 'int',
+        'dedicated_traffic_rate' => 'float',
         'dedicated_status' => 'int',
     ];
 
@@ -201,6 +202,11 @@ class Node extends Model
     public function dedicatedTrafficBytes(): int
     {
         return max(0, (int) ($this->attributes['dedicated_traffic'] ?? 0)) * 1024 * 1024 * 1024;
+    }
+
+    public function dedicatedTrafficRate(): float
+    {
+        return max(0.01, (float) ($this->attributes['dedicated_traffic_rate'] ?? 1));
     }
 
     public function canAccess(User $user): bool
