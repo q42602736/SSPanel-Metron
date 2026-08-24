@@ -52,7 +52,10 @@ class UserController extends BaseController
                 ->pluck('user_id')
                 ->all();
             if (empty($dedicatedUserIds)) {
-                return $this->echoJson($response, ['ret' => 1, 'data' => []]);
+                return $this->echoJson($response, [
+                    'ret' => 1,
+                    'data' => [$this->dedicatedBootstrapUser($node)],
+                ]);
             }
         }
 
@@ -103,6 +106,12 @@ class UserController extends BaseController
 
         if ($node->isDedicated()) {
             $users_raw = User::whereIn('id', $dedicatedUserIds)->where('enable', 1)->get();
+            if ($users_raw->isEmpty()) {
+                return $this->echoJson($response, [
+                    'ret' => 1,
+                    'data' => [$this->dedicatedBootstrapUser($node)],
+                ]);
+            }
         } else {
             $users_raw = $users_raw->where('expire_in', '>', date('Y-m-d H:i:s'))->get();
         }
@@ -158,6 +167,32 @@ class UserController extends BaseController
         return $this->echoJson($response, $res);
     }
 
+    /**
+     * 专用节点无人购买时返回一个仅用于启动节点的引导用户。
+     * 用户 ID 为 0，不对应真实账户，也不会进入订阅列表。
+     */
+    private function dedicatedBootstrapUser(Node $node): array
+    {
+        $secret = (string) ($_ENV['key'] ?? $_ENV['muKey'] ?? 'dedicated-node-bootstrap');
+        $hex = hash_hmac('sha256', 'dedicated-node-bootstrap:' . (int) $node->id, $secret);
+        $hex[12] = '5';
+        $hex[16] = dechex((hexdec($hex[16]) & 3) | 8);
+
+        return [
+            'id' => 0,
+            'uuid' => sprintf(
+                '%s-%s-%s-%s-%s',
+                substr($hex, 0, 8),
+                substr($hex, 8, 4),
+                substr($hex, 12, 4),
+                substr($hex, 16, 4),
+                substr($hex, 20, 12)
+            ),
+            'node_speedlimit' => 0,
+            'node_connector' => 0,
+        ];
+    }
+
     //   Update Traffic
     public function addTraffic($request, $response, $args)
     {
@@ -177,6 +212,12 @@ class UserController extends BaseController
                 'ret' => 0
             ];
             return $this->echoJson($response, $res);
+        }
+
+        if ($node->isDedicated() && is_array($data)) {
+            $data = array_values(array_filter($data, static function ($log) {
+                return (int) ($log['user_id'] ?? 0) > 0;
+            }));
         }
 
         if (count($data) > 0) {
@@ -262,6 +303,12 @@ class UserController extends BaseController
             ];
             return $this->echoJson($response, $res);
         }
+        if ($node->isDedicated() && is_array($data)) {
+            $data = array_values(array_filter($data, static function ($log) {
+                return (int) ($log['user_id'] ?? 0) > 0;
+            }));
+        }
+
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $log) {
                 $ip = $log['ip'];
