@@ -346,7 +346,53 @@ class NodeController extends AdminController
             $query->where('id', '<>', $excludeId);
         }
 
-        return $query->first();
+        $endpointPort = $this->dedicatedEndpointPort($node);
+        foreach ($query->get() as $candidate) {
+            if ((string) $candidate->server === (string) $node->server
+                && $this->dedicatedEndpointPort($candidate) === $endpointPort) {
+                return $candidate;
+            }
+
+            if ($this->dedicatedEndpointKey($candidate) === $this->dedicatedEndpointKey($node)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private function dedicatedEndpointKey(Node $node): string
+    {
+        $serverParts = explode(';', (string) $node->server);
+        $address = trim((string) $node->node_ip);
+        if ($address !== '') {
+            $address = trim(explode(',', $address)[0]);
+        } else {
+            $address = strtolower(rtrim(trim($serverParts[0] ?? ''), '.'));
+        }
+
+        return $address . ':' . $this->dedicatedEndpointPort($node, $serverParts);
+    }
+
+    private function dedicatedEndpointPort(Node $node, ?array $serverParts = null): int
+    {
+        $serverParts = $serverParts ?? explode(';', (string) $node->server);
+        $sort = (int) $node->sort;
+        $port = 0;
+
+        if (in_array($sort, [17, 18], true)) {
+            $params = [];
+            parse_str(str_replace('|', '&', (string) ($serverParts[1] ?? '')), $params);
+            $port = (int) ($params['port'] ?? 0);
+        } elseif (in_array($sort, [15, 16], true)) {
+            $port = (int) ($serverParts[1] ?? 0);
+        }
+
+        if ($port <= 0 && !in_array($sort, [15, 16, 17, 18], true)) {
+            $port = (int) $node->port;
+        }
+
+        return $port > 0 ? $port : 443;
     }
 
     /**
