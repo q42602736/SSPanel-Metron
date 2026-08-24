@@ -693,7 +693,7 @@
                                             <div class="dedicated-node-heading">
                                                 <img alt="节点地区" class="rounded-circle dedicated-node-flag"
                                                      width="48" height="48"
-                                                     src="{$metron['assets_url']}/media/flags/1x1_zh_cn/{$item['flag']}.svg">
+                                                     src="{$metron['assets_url']}/media/flags/1x1/{$item['flag']}.svg">
                                                 <div class="min-w-0">
                                                     <div class="dedicated-node-type">专用 IP 节点</div>
                                                     <div class="dedicated-node-title-line">
@@ -812,7 +812,7 @@
                                         <div class="dedicated-owned-node-identity">
                                             <img alt="节点地区" class="rounded-circle dedicated-owned-flag"
                                                  width="42" height="42"
-                                                 src="{$metron['assets_url']}/media/flags/1x1_zh_cn/{$ownedItem['flag']}.svg">
+                                                 src="{$metron['assets_url']}/media/flags/1x1/{$ownedItem['flag']}.svg">
                                             <div class="dedicated-owned-node-copy">
                                                 <h6 class="dedicated-owned-node-name">{$ownedNode->name}</h6>
                                                 <div class="dedicated-owned-node-ip">IP {$ownedNode->getMaskedIp()}</div>

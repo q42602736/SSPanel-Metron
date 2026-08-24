@@ -716,12 +716,10 @@ class UserController extends BaseController
             $trafficLimit = max(0, (int) $access->traffic_limit);
             $trafficUsed = max(0, (int) $access->traffic_used);
             $trafficRemaining = $trafficLimit > 0 ? max(0, $trafficLimit - $trafficUsed) : 0;
-            $matches = [];
-            preg_match($_ENV['flag_regex'], $node->name, $matches);
             $ownedItems[] = [
                 'node' => $node,
                 'access' => $access,
-                'flag' => $matches[0] ?? 'un',
+                'flag' => $this->dedicatedFlagCode($node->name),
                 'expire_text' => date('Y-m-d H:i', $access->expire_at),
                 'traffic_used_text' => Tools::flowAutoShow($trafficUsed),
                 'traffic_limit_text' => $trafficLimit > 0 ? Tools::flowAutoShow($trafficLimit) : '不限',
@@ -773,13 +771,11 @@ class UserController extends BaseController
                     }
                 }
             }
-            $matches = [];
-            preg_match($_ENV['flag_regex'], $node->name, $matches);
             $items[] = [
                 'node' => $node,
                 'access' => $myAccess,
                 'occupied' => $access !== null && $myAccess === null,
-                'flag' => $matches[0] ?? 'un',
+                'flag' => $this->dedicatedFlagCode($node->name),
                 'online' => $node->isNodeOnline() === true,
                 'unlock_items' => $unlockItems,
                 'dedicated_traffic_text' => $node->dedicatedTrafficBytes() > 0
@@ -794,6 +790,28 @@ class UserController extends BaseController
             ->assign('dedicated_owned_count', count($ownedItems))
             ->assign('dedicated_open_owned', $openOwnedModal)
             ->display('user/dedicated_node.tpl');
+    }
+
+    private function dedicatedFlagCode(string $nodeName): string
+    {
+        $matches = [];
+        preg_match($_ENV['flag_regex'], $nodeName, $matches);
+
+        return [
+            '香港' => 'hk',
+            '美国' => 'us',
+            '日本' => 'jp',
+            '中国' => 'cn',
+            '俄罗斯' => 'ru',
+            '韩国' => 'kr',
+            '英国' => 'gb',
+            '新加坡' => 'sg',
+            '马来西亚' => 'my',
+            '台湾' => 'tw',
+            '加拿大' => 'ca',
+            '菲律宾' => 'ph',
+            '德国' => 'de',
+        ][$matches[0] ?? ''] ?? 'un';
     }
 
     public function dedicatedNodeBuy($request, $response, $args)
