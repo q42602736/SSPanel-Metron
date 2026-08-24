@@ -254,6 +254,14 @@
             font-size: 14px;
         }
 
+        .dedicated-node-fact-heading > .dedicated-node-fact-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            text-align: center;
+        }
+
         .dedicated-node-fact-label {
             display: inline-block;
             color: #a0aaba;
