@@ -743,6 +743,21 @@ class UserController extends BaseController
                 ->where('created_at', '>', time() - 86460)
                 ->orderBy('id', 'desc')
                 ->first();
+
+            $unlockMultiplexing = MetronSetting::get('streaming_media_unlock_multiplexing');
+            if (is_array($unlockMultiplexing) && array_key_exists($node->id, $unlockMultiplexing)) {
+                $sourceNodeId = (int) $unlockMultiplexing[$node->id];
+                if ($sourceNodeId > 0) {
+                    $multiplexedUnlock = StreamMedia::where('node_id', $sourceNodeId)
+                        ->where('created_at', '>', time() - 86460)
+                        ->orderBy('id', 'desc')
+                        ->first();
+                    if ($multiplexedUnlock !== null) {
+                        $unlock = $multiplexedUnlock;
+                    }
+                }
+            }
+
             $unlockItems = [];
             if ($unlock !== null) {
                 $unlockData = json_decode($unlock->result, true);
