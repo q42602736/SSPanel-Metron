@@ -399,6 +399,106 @@
             font-weight: 700;
         }
 
+        .dedicated-node-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 14px 16px;
+            background: rgba(247, 249, 252, 0.86);
+            border: 1px solid #e6ebf1;
+            border-radius: 8px;
+        }
+
+        .dedicated-node-filter-controls {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .dedicated-node-filter-label {
+            margin: 0 2px 0 0;
+            color: #7b8697;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .dedicated-node-country-filter {
+            min-width: 150px;
+            height: 40px;
+            color: #4e596d;
+            border-color: #dfe5ec;
+            border-radius: 6px;
+        }
+
+        .dedicated-node-owned-filter {
+            height: 40px;
+            color: #5d6a7c;
+            background: #fff;
+            border: 1px solid #dfe5ec;
+            border-radius: 6px;
+            font-size: 0.84rem;
+            font-weight: 600;
+        }
+
+        .dedicated-node-owned-filter:hover,
+        .dedicated-node-owned-filter:focus {
+            color: #4269c4;
+            background: #f2f6ff;
+            border-color: #b9c9f4;
+        }
+
+        .dedicated-node-owned-filter.is-active {
+            color: #fff;
+            background: #5d7fe8;
+            border-color: #5d7fe8;
+        }
+
+        .dedicated-node-owned-filter i {
+            margin-right: 6px;
+        }
+
+        .dedicated-node-filter-reset {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            color: #7b8697;
+            background: #fff;
+            border: 1px solid #dfe5ec;
+            border-radius: 6px;
+        }
+
+        .dedicated-node-filter-reset:hover,
+        .dedicated-node-filter-reset:focus {
+            color: #4269c4;
+            background: #f2f6ff;
+            border-color: #b9c9f4;
+        }
+
+        .dedicated-node-filter-summary {
+            flex: 0 0 auto;
+            color: #9aa4b3;
+            font-size: 0.82rem;
+        }
+
+        .dedicated-node-filter-empty {
+            padding: 42px 20px;
+            color: #8993a4;
+            text-align: center;
+        }
+
+        .dedicated-node-filter-empty strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #556074;
+            font-size: 1rem;
+        }
+
         .dedicated-owned-modal .modal-dialog {
             max-width: 760px;
         }
@@ -620,6 +720,19 @@
                 flex-wrap: wrap;
             }
 
+            .dedicated-node-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .dedicated-node-filter-controls {
+                width: 100%;
+            }
+
+            .dedicated-node-country-filter {
+                flex: 1 1 150px;
+            }
+
         }
 
         @media (max-width: 479.98px) {
@@ -691,10 +804,33 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex flex-column-fluid"><div class="container"><div class="row">
+                    <div class="d-flex flex-column-fluid">
+                        <div class="container">
+                            <div class="dedicated-node-toolbar" role="region" aria-label="专用节点筛选">
+                                <div class="dedicated-node-filter-controls">
+                                    <label class="dedicated-node-filter-label" for="dedicated-country-filter">国家/地区</label>
+                                    <select id="dedicated-country-filter" class="form-control dedicated-node-country-filter">
+                                        <option value="">全部国家/地区</option>
+                                        {foreach $dedicated_countries as $countryCode => $countryName}
+                                            <option value="{$countryCode|escape:'htmlall'}">{$countryName|escape:'htmlall'}</option>
+                                        {/foreach}
+                                    </select>
+                                    <button type="button" id="dedicated-owned-filter" class="btn dedicated-node-owned-filter" aria-pressed="false">
+                                        <i class="fas fa-user-check" aria-hidden="true"></i>已拥有
+                                    </button>
+                                    <button type="button" id="dedicated-filter-reset" class="dedicated-node-filter-reset" title="重置筛选" aria-label="重置筛选">
+                                        <i class="fas fa-undo-alt" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <span id="dedicated-filter-summary" class="dedicated-node-filter-summary" aria-live="polite"></span>
+                            </div>
+                            <div class="row" id="dedicated-node-grid">
                         {foreach $dedicated_nodes as $item}
                             {$node = $item['node']} {$access = $item['access']}
-                            <div class="col-md-6 col-xl-4 mb-6">
+                            <div class="col-md-6 col-xl-4 mb-6 dedicated-node-card-wrap"
+                                 data-country="{$item['country_code']|escape:'htmlall'}"
+                                 data-owned="{if $access}1{else}0{/if}"
+                                 data-occupied="{if $item['occupied']}1{else}0{/if}">
                                 <div class="card card-custom h-100 dedicated-node-card">
                                     <div class="card-body d-flex flex-column dedicated-node-body">
                                         <div class="dedicated-node-header">
@@ -793,7 +929,13 @@
                                 </div>
                             </div>
                         {/foreach}
-                    </div></div></div>
+                                <div class="col-12 dedicated-node-filter-empty" id="dedicated-filter-empty" style="display: none;">
+                                    <strong>暂无符合条件的专用节点</strong>
+                                    <span>可以更换国家/地区或关闭“已拥有”筛选。</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 {include file='include/global/footer.tpl'}
             </div>
@@ -925,6 +1067,70 @@
     <script src="/assets/js/qrcode.min.js"></script>
     {literal}
     <script>
+        (function () {
+            var grid = document.getElementById('dedicated-node-grid');
+            if (!grid) {
+                return;
+            }
+
+            var cards = grid.querySelectorAll('.dedicated-node-card-wrap');
+            var countryFilter = document.getElementById('dedicated-country-filter');
+            var ownedFilter = document.getElementById('dedicated-owned-filter');
+            var resetFilter = document.getElementById('dedicated-filter-reset');
+            var summary = document.getElementById('dedicated-filter-summary');
+            var emptyState = document.getElementById('dedicated-filter-empty');
+
+            function applyFilters() {
+                var country = countryFilter ? countryFilter.value : '';
+                var ownedOnly = ownedFilter && ownedFilter.getAttribute('aria-pressed') === 'true';
+                var visibleCount = 0;
+
+                Array.prototype.forEach.call(cards, function (card) {
+                    var matchesCountry = !country || card.getAttribute('data-country') === country;
+                    var matchesOwned = !ownedOnly || card.getAttribute('data-owned') === '1';
+                    var visible = matchesCountry && matchesOwned;
+                    card.classList.toggle('d-none', !visible);
+                    card.setAttribute('aria-hidden', visible ? 'false' : 'true');
+                    if (visible) {
+                        visibleCount += 1;
+                    }
+                });
+
+                if (summary) {
+                    summary.textContent = '显示 ' + visibleCount + ' / ' + cards.length + ' 个节点';
+                }
+                if (emptyState) {
+                    emptyState.style.display = cards.length > 0 && visibleCount === 0 ? '' : 'none';
+                }
+            }
+
+            if (countryFilter) {
+                countryFilter.addEventListener('change', applyFilters);
+            }
+            if (ownedFilter) {
+                ownedFilter.addEventListener('click', function () {
+                    var active = ownedFilter.getAttribute('aria-pressed') !== 'true';
+                    ownedFilter.setAttribute('aria-pressed', active ? 'true' : 'false');
+                    ownedFilter.classList.toggle('is-active', active);
+                    applyFilters();
+                });
+            }
+            if (resetFilter) {
+                resetFilter.addEventListener('click', function () {
+                    if (countryFilter) {
+                        countryFilter.value = '';
+                    }
+                    if (ownedFilter) {
+                        ownedFilter.setAttribute('aria-pressed', 'false');
+                        ownedFilter.classList.remove('is-active');
+                    }
+                    applyFilters();
+                });
+            }
+
+            applyFilters();
+        }());
+
         (function () {
             var dedicatedPaymentNodeId = 0;
             var dedicatedPaymentPrice = 0;

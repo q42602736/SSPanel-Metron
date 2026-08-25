@@ -730,6 +730,7 @@ class UserController extends BaseController
             ];
         }
         $items = [];
+        $countryOptions = [];
         $nodes = Node::where('sale_type', 1)
             ->where('type', 1)
             ->where('dedicated_status', 1)
@@ -786,11 +787,15 @@ class UserController extends BaseController
                     }
                 }
             }
+            $flagCode = $this->dedicatedFlagCode($node->name);
+            $countryName = $this->dedicatedCountryName($flagCode);
+            $countryOptions[$flagCode] = $countryName;
             $items[] = [
                 'node' => $node,
                 'access' => $myAccess,
                 'occupied' => $access !== null && $myAccess === null,
-                'flag' => $this->dedicatedFlagCode($node->name),
+                'flag' => $flagCode,
+                'country_code' => $flagCode,
                 'online' => $node->isNodeOnline() === true,
                 'unlock_items' => $unlockItems,
                 'dedicated_traffic_text' => $node->dedicatedTrafficBytes() > 0
@@ -799,8 +804,18 @@ class UserController extends BaseController
             ];
         }
 
+        usort($items, static function (array $left, array $right): int {
+            if ($left['occupied'] !== $right['occupied']) {
+                return $left['occupied'] ? 1 : -1;
+            }
+
+            return strnatcasecmp((string) $left['node']->name, (string) $right['node']->name);
+        });
+        asort($countryOptions, SORT_STRING);
+
         return $this->view()
             ->assign('dedicated_nodes', $items)
+            ->assign('dedicated_countries', $countryOptions)
             ->assign('dedicated_owned_nodes', $ownedItems)
             ->assign('dedicated_owned_count', count($ownedItems))
             ->assign('dedicated_open_owned', $openOwnedModal)
@@ -827,6 +842,25 @@ class UserController extends BaseController
             '菲律宾' => 'ph',
             '德国' => 'de',
         ][$matches[0] ?? ''] ?? 'un';
+    }
+
+    private function dedicatedCountryName(string $flagCode): string
+    {
+        return [
+            'hk' => '香港',
+            'us' => '美国',
+            'jp' => '日本',
+            'cn' => '中国',
+            'ru' => '俄罗斯',
+            'kr' => '韩国',
+            'gb' => '英国',
+            'sg' => '新加坡',
+            'my' => '马来西亚',
+            'tw' => '台湾',
+            'ca' => '加拿大',
+            'ph' => '菲律宾',
+            'de' => '德国',
+        ][$flagCode] ?? '其他';
     }
 
     public function dedicatedNodeBuy($request, $response, $args)
