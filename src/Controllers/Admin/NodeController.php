@@ -3,7 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
-use App\Models\Node;
+use App\Models\{Node, NodeAccess, User};
 use App\Utils\{
     Tools,
     Radius,
@@ -34,6 +34,7 @@ class NodeController extends AdminController
             'type'                    => '显示与隐藏',
             'sort'                    => '类型',
             'sale_type'               => '节点用途',
+            'dedicated_buyer'         => '专用购买用户',
             'server'                  => '节点地址',
             'outaddress'              => '出口地址',
             'node_ip'                 => '节点IP',
@@ -57,7 +58,7 @@ class NodeController extends AdminController
             'custom_rss'              => '自定义协议以及混淆',
             'mu_only'                 => '只启用单端口多用户',
         );
-        $table_config['default_show_column'] = array('op', 'id', 'name', 'sort');
+        $table_config['default_show_column'] = array('op', 'id', 'name', 'sort', 'dedicated_buyer');
         $table_config['ajax_url'] = 'node/ajax';
 
         return $response->write(
@@ -467,7 +468,7 @@ class NodeController extends AdminController
         $limit_length = $request->getParam('length');
         $search       = $request->getParam('search')['value'];
 
-        if ($order_field == 'outaddress' || $order_field == 'op') {
+        if ($order_field == 'outaddress' || $order_field == 'op' || $order_field == 'dedicated_buyer') {
             $order_field = 'server';
         }
 
@@ -505,6 +506,35 @@ class NodeController extends AdminController
             ->skip($limit_start)->limit($limit_length)
             ->get();
         $count_filtered = $query_count->count();
+
+        $ownerAccessByNodeId = [];
+        $ownerUserById = [];
+        $nodeIds = [];
+        foreach ($nodes as $node) {
+            if ($node->isDedicated()) {
+                $nodeIds[] = (int) $node->id;
+            }
+        }
+        if (!empty($nodeIds)) {
+            $ownerAccesses = NodeAccess::whereIn('node_id', $nodeIds)
+                ->whereRaw(NodeAccess::activeSql())
+                ->orderBy('id', 'desc')
+                ->get();
+            $ownerUserIds = [];
+            foreach ($ownerAccesses as $access) {
+                if (isset($ownerAccessByNodeId[(int) $access->node_id])) {
+                    continue;
+                }
+                $ownerAccessByNodeId[(int) $access->node_id] = $access;
+                $ownerUserIds[] = (int) $access->user_id;
+            }
+            if (!empty($ownerUserIds)) {
+                $ownerUserById = User::whereIn('id', array_unique($ownerUserIds))
+                    ->get()
+                    ->keyBy('id')
+                    ->all();
+            }
+        }
 
         $data = [];
         foreach ($nodes as $node) {
@@ -548,6 +578,21 @@ class NodeController extends AdminController
             }
             $tempdata['sort']                       = $sort;
             $tempdata['sale_type']                  = $node->isDedicated() ? '专用节点' : '普通节点';
+            if (!$node->isDedicated()) {
+                $tempdata['dedicated_buyer'] = '—';
+            } elseif (!isset($ownerAccessByNodeId[(int) $node->id])) {
+                $tempdata['dedicated_buyer'] = '未售出';
+            } else {
+                $access = $ownerAccessByNodeId[(int) $node->id];
+                $buyer = $ownerUserById[(int) $access->user_id] ?? null;
+                if ($buyer === null) {
+                    $tempdata['dedicated_buyer'] = '用户已删除';
+                } else {
+                    $buyerEmail = htmlspecialchars((string) $buyer->email, ENT_QUOTES, 'UTF-8');
+                    $tempdata['dedicated_buyer'] = '<a href="/admin/user/' . (int) $buyer->id . '/edit">'
+                        . $buyerEmail . '</a>';
+                }
+            }
             $tempdata['server']                     = $node->server;
             $tempdata['outaddress']                 = $node->getOutServer();
             $tempdata['node_ip']                    = $node->node_ip;
