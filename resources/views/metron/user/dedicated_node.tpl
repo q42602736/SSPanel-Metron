@@ -484,26 +484,6 @@
             margin-right: 6px;
         }
 
-        .dedicated-node-filter-reset {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            padding: 0;
-            color: #7b8697;
-            background: #fff;
-            border: 1px solid #dfe5ec;
-            border-radius: 6px;
-        }
-
-        .dedicated-node-filter-reset:hover,
-        .dedicated-node-filter-reset:focus {
-            color: #4269c4;
-            background: #f2f6ff;
-            border-color: #b9c9f4;
-        }
-
         .dedicated-node-filter-summary {
             flex: 0 0 auto;
             color: #9aa4b3;
@@ -846,9 +826,6 @@
                                     <button type="button" id="dedicated-owned-filter" class="btn dedicated-node-owned-filter" aria-pressed="false">
                                         <i class="fas fa-user-check" aria-hidden="true"></i>已拥有
                                     </button>
-                                    <button type="button" id="dedicated-filter-reset" class="dedicated-node-filter-reset" title="重置筛选" aria-label="重置筛选">
-                                        <i class="fas fa-undo-alt" aria-hidden="true"></i>
-                                    </button>
                                 </div>
                                 <span id="dedicated-filter-summary" class="dedicated-node-filter-summary" aria-live="polite"></span>
                             </div>
@@ -1104,7 +1081,6 @@
             var cards = grid.querySelectorAll('.dedicated-node-card-wrap');
             var countryFilters = document.querySelectorAll('[data-country-filter]');
             var ownedFilter = document.getElementById('dedicated-owned-filter');
-            var resetFilter = document.getElementById('dedicated-filter-reset');
             var summary = document.getElementById('dedicated-filter-summary');
             var emptyState = document.getElementById('dedicated-filter-empty');
             var selectedCountry = '';
@@ -1152,22 +1128,6 @@
                     applyFilters();
                 });
             }
-            if (resetFilter) {
-                resetFilter.addEventListener('click', function () {
-                    selectedCountry = '';
-                    Array.prototype.forEach.call(countryFilters, function (item) {
-                        var active = item.getAttribute('data-country-filter') === '';
-                        item.setAttribute('aria-pressed', active ? 'true' : 'false');
-                        item.classList.toggle('is-active', active);
-                    });
-                    if (ownedFilter) {
-                        ownedFilter.setAttribute('aria-pressed', 'false');
-                        ownedFilter.classList.remove('is-active');
-                    }
-                    applyFilters();
-                });
-            }
-
             applyFilters();
         }());
 
