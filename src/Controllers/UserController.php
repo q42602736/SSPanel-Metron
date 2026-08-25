@@ -731,6 +731,7 @@ class UserController extends BaseController
         }
         $items = [];
         $countryOptions = [];
+        $countryCounts = [];
         $nodes = Node::where('sale_type', 1)
             ->where('type', 1)
             ->where('dedicated_status', 1)
@@ -790,6 +791,7 @@ class UserController extends BaseController
             $flagCode = $this->dedicatedFlagCode($node->name);
             $countryName = $this->dedicatedCountryName($flagCode);
             $countryOptions[$flagCode] = $countryName;
+            $countryCounts[$flagCode] = ($countryCounts[$flagCode] ?? 0) + 1;
             $items[] = [
                 'node' => $node,
                 'access' => $myAccess,
@@ -816,6 +818,7 @@ class UserController extends BaseController
         return $this->view()
             ->assign('dedicated_nodes', $items)
             ->assign('dedicated_countries', $countryOptions)
+            ->assign('dedicated_country_counts', $countryCounts)
             ->assign('dedicated_owned_nodes', $ownedItems)
             ->assign('dedicated_owned_count', count($ownedItems))
             ->assign('dedicated_open_owned', $openOwnedModal)

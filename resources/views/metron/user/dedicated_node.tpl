@@ -425,16 +425,20 @@
             font-weight: 600;
         }
 
-        .dedicated-node-country-filter {
-            min-width: 150px;
-            height: 40px;
-            color: #4e596d;
-            border-color: #dfe5ec;
-            border-radius: 6px;
+        .dedicated-node-country-filters {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
+        .dedicated-node-filter-chip,
         .dedicated-node-owned-filter {
-            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            padding: 0 13px;
             color: #5d6a7c;
             background: #fff;
             border: 1px solid #dfe5ec;
@@ -443,6 +447,8 @@
             font-weight: 600;
         }
 
+        .dedicated-node-filter-chip:hover,
+        .dedicated-node-filter-chip:focus,
         .dedicated-node-owned-filter:hover,
         .dedicated-node-owned-filter:focus {
             color: #4269c4;
@@ -450,10 +456,28 @@
             border-color: #b9c9f4;
         }
 
+        .dedicated-node-filter-chip.is-active,
         .dedicated-node-owned-filter.is-active {
             color: #fff;
             background: #5d7fe8;
             border-color: #5d7fe8;
+        }
+
+        .dedicated-node-filter-chip-count {
+            min-width: 20px;
+            margin-left: 6px;
+            padding: 2px 5px;
+            color: #8490a1;
+            background: #eef2f7;
+            border-radius: 10px;
+            font-size: 0.72rem;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        .dedicated-node-filter-chip.is-active .dedicated-node-filter-chip-count {
+            color: #5d7fe8;
+            background: rgba(255, 255, 255, 0.9);
         }
 
         .dedicated-node-owned-filter i {
@@ -729,8 +753,8 @@
                 width: 100%;
             }
 
-            .dedicated-node-country-filter {
-                flex: 1 1 150px;
+            .dedicated-node-country-filters {
+                width: 100%;
             }
 
         }
@@ -808,13 +832,17 @@
                         <div class="container">
                             <div class="dedicated-node-toolbar" role="region" aria-label="专用节点筛选">
                                 <div class="dedicated-node-filter-controls">
-                                    <label class="dedicated-node-filter-label" for="dedicated-country-filter">国家/地区</label>
-                                    <select id="dedicated-country-filter" class="form-control dedicated-node-country-filter">
-                                        <option value="">全部国家/地区</option>
+                                    <span class="dedicated-node-filter-label">国家/地区</span>
+                                    <div id="dedicated-country-filters" class="dedicated-node-country-filters" role="group" aria-label="国家/地区筛选">
+                                        <button type="button" class="dedicated-node-filter-chip is-active" data-country-filter="" aria-pressed="true">
+                                            全部<span class="dedicated-node-filter-chip-count">{$dedicated_nodes|count}</span>
+                                        </button>
                                         {foreach $dedicated_countries as $countryCode => $countryName}
-                                            <option value="{$countryCode|escape:'htmlall'}">{$countryName|escape:'htmlall'}</option>
+                                            <button type="button" class="dedicated-node-filter-chip" data-country-filter="{$countryCode|escape:'htmlall'}" aria-pressed="false">
+                                                {$countryName|escape:'htmlall'}<span class="dedicated-node-filter-chip-count">{$dedicated_country_counts[$countryCode]}</span>
+                                            </button>
                                         {/foreach}
-                                    </select>
+                                    </div>
                                     <button type="button" id="dedicated-owned-filter" class="btn dedicated-node-owned-filter" aria-pressed="false">
                                         <i class="fas fa-user-check" aria-hidden="true"></i>已拥有
                                     </button>
@@ -1074,14 +1102,15 @@
             }
 
             var cards = grid.querySelectorAll('.dedicated-node-card-wrap');
-            var countryFilter = document.getElementById('dedicated-country-filter');
+            var countryFilters = document.querySelectorAll('[data-country-filter]');
             var ownedFilter = document.getElementById('dedicated-owned-filter');
             var resetFilter = document.getElementById('dedicated-filter-reset');
             var summary = document.getElementById('dedicated-filter-summary');
             var emptyState = document.getElementById('dedicated-filter-empty');
+            var selectedCountry = '';
 
             function applyFilters() {
-                var country = countryFilter ? countryFilter.value : '';
+                var country = selectedCountry;
                 var ownedOnly = ownedFilter && ownedFilter.getAttribute('aria-pressed') === 'true';
                 var visibleCount = 0;
 
@@ -1104,9 +1133,17 @@
                 }
             }
 
-            if (countryFilter) {
-                countryFilter.addEventListener('change', applyFilters);
-            }
+            Array.prototype.forEach.call(countryFilters, function (filter) {
+                filter.addEventListener('click', function () {
+                    selectedCountry = filter.getAttribute('data-country-filter') || '';
+                    Array.prototype.forEach.call(countryFilters, function (item) {
+                        var active = item === filter;
+                        item.setAttribute('aria-pressed', active ? 'true' : 'false');
+                        item.classList.toggle('is-active', active);
+                    });
+                    applyFilters();
+                });
+            });
             if (ownedFilter) {
                 ownedFilter.addEventListener('click', function () {
                     var active = ownedFilter.getAttribute('aria-pressed') !== 'true';
@@ -1117,9 +1154,12 @@
             }
             if (resetFilter) {
                 resetFilter.addEventListener('click', function () {
-                    if (countryFilter) {
-                        countryFilter.value = '';
-                    }
+                    selectedCountry = '';
+                    Array.prototype.forEach.call(countryFilters, function (item) {
+                        var active = item.getAttribute('data-country-filter') === '';
+                        item.setAttribute('aria-pressed', active ? 'true' : 'false');
+                        item.classList.toggle('is-active', active);
+                    });
                     if (ownedFilter) {
                         ownedFilter.setAttribute('aria-pressed', 'false');
                         ownedFilter.classList.remove('is-active');
