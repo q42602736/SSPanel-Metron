@@ -144,6 +144,10 @@ class UserController extends BaseController
                     $user_raw->port = ($user_raw->port + $muPort['type']);
                 }
             }
+            if ($node->isDedicated()) {
+                // 专用节点使用节点级限制，不依赖用户是否购买普通套餐。
+                $user_raw->node_connector = $node->dedicatedConnector();
+            }
             $user_raw = Tools::keyFilter($user_raw, $key_list);
             if ($node->sort == 14) {
                 $user_raw->sha224uuid = hash('sha224', $user_raw->uuid);

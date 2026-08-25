@@ -39,6 +39,7 @@ class Node extends Model
         'dedicated_days'  => 'int',
         'dedicated_traffic' => 'int',
         'dedicated_traffic_rate' => 'float',
+        'dedicated_connector' => 'int',
         'dedicated_status' => 'int',
     ];
 
@@ -207,6 +208,11 @@ class Node extends Model
     public function dedicatedTrafficRate(): float
     {
         return max(0.01, (float) ($this->attributes['dedicated_traffic_rate'] ?? 1));
+    }
+
+    public function dedicatedConnector(): int
+    {
+        return max(0, (int) ($this->attributes['dedicated_connector'] ?? 0));
     }
 
     public function canAccess(User $user): bool

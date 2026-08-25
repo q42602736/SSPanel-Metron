@@ -300,6 +300,11 @@
                                                 <p class="form-control-guide"><i class="material-icons">info</i>不限速填0，对专用节点上的每个用户端口生效</p>
                                             </div>
                                             <div class="form-group form-group-label">
+                                                <label class="floating-label" for="dedicated_connector">专用节点 IP 限制（个）</label>
+                                                <input class="form-control maxwidth-edit" id="dedicated_connector" type="number" min="0" step="1" value="0" name="dedicated_connector">
+                                                <p class="form-control-guide"><i class="material-icons">info</i>限制该专用节点同时使用的公网 IP 数，填0表示不限</p>
+                                            </div>
+                                            <div class="form-group form-group-label">
                                                 <label class="floating-label" for="dedicated_status">专用节点上架</label>
                                                 <select class="form-control maxwidth-edit" id="dedicated_status" name="dedicated_status">
                                                     <option value="1">上架，可购买</option>
@@ -531,7 +536,8 @@
             dedicated_days: {required: true, min: 1},
             dedicated_traffic: {required: true, min: 0},
             dedicated_traffic_rate: {required: true, min: 0.01},
-            dedicated_node_speedlimit: {required: true, min: 0}
+            dedicated_node_speedlimit: {required: true, min: 0},
+            dedicated_connector: {required: true, min: 0}
         },
 
         submitHandler: () => {
@@ -616,6 +622,7 @@
                     dedicated_days: $$getValue('dedicated_days'),
                     dedicated_traffic: $$getValue('dedicated_traffic'),
                     dedicated_traffic_rate: $$getValue('dedicated_traffic_rate'),
+                    dedicated_connector: $$getValue('dedicated_connector'),
                     dedicated_status: $$getValue('dedicated_status'),
                     custom_rss,
                     mu_only: $$getValue('mu_only')

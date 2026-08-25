@@ -280,11 +280,18 @@ class Job extends Command
         $full_alive_ips = Ip::where('datetime', '>=', time() - 60)->orderBy('ip')->get();
 
         $alive_ipset = array();
+        $nodes = Node::all()->keyBy('id');
 
         foreach ($full_alive_ips as $full_alive_ip) {
             $full_alive_ip->ip = Tools::getRealIp($full_alive_ip->ip);
             $is_node = Node::where('node_ip', $full_alive_ip->ip)->first();
             if ($is_node) {
+                continue;
+            }
+
+            // 专用节点使用节点自己的 IP 限制，不占用普通套餐的 IP 配额。
+            $alive_node = $nodes->get((int) $full_alive_ip->nodeid);
+            if ($alive_node !== null && $alive_node->isDedicated()) {
                 continue;
             }
 
