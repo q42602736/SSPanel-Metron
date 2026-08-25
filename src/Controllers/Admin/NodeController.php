@@ -109,7 +109,7 @@ class NodeController extends AdminController
         $node->dedicated_traffic_rate = max(0.01, (float) $request->getParam('dedicated_traffic_rate', 1));
         $node->dedicated_status  = (int) $request->getParam('dedicated_status', 0);
         $node->node_group       = $request->getParam('group');
-        $node->node_speedlimit  = $request->getParam('node_speedlimit');
+        $node->node_speedlimit  = max(0, (float) $request->getParam('node_speedlimit', 0));
         $node->status           = $request->getParam('status');
         $node->sort             = $request->getParam('sort');
 
@@ -224,7 +224,7 @@ class NodeController extends AdminController
         $node->mu_only          = $request->getParam('mu_only');
         $node->traffic_rate     = $request->getParam('rate');
         $node->info             = $request->getParam('info');
-        $node->node_speedlimit  = $request->getParam('node_speedlimit');
+        $node->node_speedlimit  = max(0, (float) $request->getParam('node_speedlimit', 0));
         $node->type             = $request->getParam('type');
         $node->sort             = $request->getParam('sort');
 
@@ -312,7 +312,6 @@ class NodeController extends AdminController
             $node->node_group = 0;
             $node->node_bandwidth_limit = 0;
             $node->bandwidthlimit_resetday = 1;
-            $node->node_speedlimit = 0;
             $node->traffic_rate = 1;
             $node->dedicated_traffic_rate = max(0.01, (float) ($node->dedicated_traffic_rate ?: 1));
             return;

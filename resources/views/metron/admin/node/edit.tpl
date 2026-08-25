@@ -300,6 +300,11 @@
                                                 <p class="form-control-guide"><i class="material-icons">info</i>上报流量 × 此倍率，默认 1</p>
                                             </div>
                                             <div class="form-group form-group-label">
+                                                <label class="floating-label" for="dedicated_node_speedlimit">专用节点限速（Mbps）</label>
+                                                <input class="form-control maxwidth-edit" id="dedicated_node_speedlimit" type="number" min="0" step="0.01" value="{$node->node_speedlimit|default:0}" name="dedicated_node_speedlimit">
+                                                <p class="form-control-guide"><i class="material-icons">info</i>不限速填0，对专用节点上的每个用户端口生效</p>
+                                            </div>
+                                            <div class="form-group form-group-label">
                                                 <label class="floating-label" for="dedicated_status">专用节点上架</label>
                                                 <select class="form-control maxwidth-edit" id="dedicated_status" name="dedicated_status">
                                                     <option value="1" {if $node->dedicated_status==1}selected{/if}>上架，可购买</option>
@@ -573,7 +578,8 @@
             dedicated_price: {required: true, min: 0},
             dedicated_days: {required: true, min: 1},
             dedicated_traffic: {required: true, min: 0},
-            dedicated_traffic_rate: {required: true, min: 0.01}
+            dedicated_traffic_rate: {required: true, min: 0.01},
+            dedicated_node_speedlimit: {required: true, min: 0}
         },
 
 
@@ -655,7 +661,9 @@
                     group: $$getValue('group'),
                     status: $$getValue('status'),
                     sort: $$getValue('sort'),
-                    node_speedlimit: $$getValue('node_speedlimit'),
+                    node_speedlimit: $$getValue('sale_type') === '1'
+                        ? $$getValue('dedicated_node_speedlimit')
+                        : $$getValue('node_speedlimit'),
                     node_sort: $$getValue('node_sort'),
                     class: $$getValue('class'),
                     node_bandwidth_limit: $$getValue('node_bandwidth_limit'),
