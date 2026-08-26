@@ -217,6 +217,12 @@ class Node extends Model
 
     public function canAccess(User $user): bool
     {
+        // 专用节点必须绑定有效购买授权，管理员也不能绕过购买状态。
+        if ($this->isDedicated()) {
+            return (int) $user->enable === 1
+                && NodeAccess::validFor($user->id, $this->id);
+        }
+
         if ($user->is_admin) {
             return true;
         }
@@ -225,13 +231,9 @@ class Node extends Model
             return false;
         }
 
-        if (!$this->isDedicated()) {
-            return $user->hasActiveRegularService()
-                && (int) $user->class >= (int) $this->node_class
-                && ((int) $this->node_group === 0 || (int) $this->node_group === (int) $user->node_group);
-        }
-
-        return NodeAccess::validFor($user->id, $this->id);
+        return $user->hasActiveRegularService()
+            && (int) $user->class >= (int) $this->node_class
+            && ((int) $this->node_group === 0 || (int) $this->node_group === (int) $user->node_group);
     }
 
     public function getMaskedIp(): string
