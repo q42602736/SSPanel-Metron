@@ -4,8 +4,7 @@ ALTER TABLE `ss_node`
     ADD COLUMN `dedicated_price` DECIMAL(12,2) NOT NULL DEFAULT 0 COMMENT '专用节点售价' AFTER `sale_type`,
     ADD COLUMN `dedicated_days` INT NOT NULL DEFAULT 30 COMMENT '专用节点授权天数' AFTER `dedicated_price`,
     ADD COLUMN `dedicated_traffic` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '专用节点流量GB，0不限' AFTER `dedicated_days`,
-    ADD COLUMN `dedicated_traffic_rate` DECIMAL(8,2) NOT NULL DEFAULT 1.00 COMMENT '专用节点流量倍率' AFTER `dedicated_traffic`,
-    ADD COLUMN `dedicated_status` TINYINT NOT NULL DEFAULT 0 COMMENT '专用节点是否上架' AFTER `dedicated_traffic_rate`;
+    ADD COLUMN `dedicated_traffic_rate` DECIMAL(8,2) NOT NULL DEFAULT 1.00 COMMENT '专用节点流量倍率' AFTER `dedicated_traffic`;
 
 CREATE TABLE IF NOT EXISTS `user_node_access` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,

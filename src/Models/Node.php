@@ -40,7 +40,6 @@ class Node extends Model
         'dedicated_traffic' => 'int',
         'dedicated_traffic_rate' => 'float',
         'dedicated_connector' => 'int',
-        'dedicated_status' => 'int',
     ];
 
     public function getLastNodeInfoLog()
@@ -195,7 +194,6 @@ class Node extends Model
     {
         return $this->isDedicated()
             && (int) ($this->attributes['type'] ?? 0) === 1
-            && (int) ($this->attributes['dedicated_status'] ?? 0) === 1
             && (float) ($this->attributes['dedicated_price'] ?? 0) > 0
             && (int) ($this->attributes['dedicated_days'] ?? 0) > 0;
     }

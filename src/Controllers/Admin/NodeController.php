@@ -52,7 +52,6 @@ class NodeController extends AdminController
             'dedicated_traffic'       => '专用流量/GB',
             'dedicated_traffic_rate'  => '专用流量倍率',
             'dedicated_connector'     => '专用 IP 限制',
-            'dedicated_status'        => '专用上架',
             'bandwidthlimit_resetday' => '流量重置日',
             'node_heartbeat'          => '上一次活跃时间',
             'custom_method'           => '自定义加密',
@@ -109,7 +108,6 @@ class NodeController extends AdminController
         $node->dedicated_traffic = max(0, (int) $request->getParam('dedicated_traffic', 0));
         $node->dedicated_traffic_rate = max(0.01, (float) $request->getParam('dedicated_traffic_rate', 1));
         $node->dedicated_connector = max(0, (int) $request->getParam('dedicated_connector', 0));
-        $node->dedicated_status  = (int) $request->getParam('dedicated_status', 0);
         $node->node_group       = $request->getParam('group');
         $node->node_speedlimit  = max(0, (float) $request->getParam('node_speedlimit', 0));
         $node->status           = $request->getParam('status');
@@ -214,7 +212,6 @@ class NodeController extends AdminController
         $node->dedicated_traffic = max(0, (int) $request->getParam('dedicated_traffic', 0));
         $node->dedicated_traffic_rate = max(0.01, (float) $request->getParam('dedicated_traffic_rate', 1));
         $node->dedicated_connector = max(0, (int) $request->getParam('dedicated_connector', 0));
-        $node->dedicated_status  = (int) $request->getParam('dedicated_status', 0);
         $node->node_group       = $request->getParam('group');
         $node->server           = trim($request->getParam('server'));
         $node->method           = $request->getParam('method');
@@ -325,7 +322,6 @@ class NodeController extends AdminController
         $node->dedicated_traffic = 0;
         $node->dedicated_traffic_rate = 1;
         $node->dedicated_connector = 0;
-        $node->dedicated_status = 0;
     }
 
     /**
@@ -614,7 +610,6 @@ class NodeController extends AdminController
             $tempdata['dedicated_traffic']          = $node->dedicated_traffic;
             $tempdata['dedicated_traffic_rate']     = $node->dedicated_traffic_rate;
             $tempdata['dedicated_connector']        = $node->dedicated_connector;
-            $tempdata['dedicated_status']           = $node->dedicated_status ? '上架' : '下架';
             $tempdata['bandwidthlimit_resetday']    = $node->bandwidthlimit_resetday;
             $tempdata['node_heartbeat']             = date('Y-m-d H:i:s', $node->node_heartbeat);
             $tempdata['custom_method']              = ((bool) $node->custom_method ? '启用' : '关闭');

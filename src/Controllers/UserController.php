@@ -735,7 +735,6 @@ class UserController extends BaseController
         $countryCounts = [];
         $nodes = Node::where('sale_type', 1)
             ->where('type', 1)
-            ->where('dedicated_status', 1)
             ->where('dedicated_price', '>', 0)
             ->where('dedicated_days', '>', 0)
             ->orderBy('node_sort', 'desc')
