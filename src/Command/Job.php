@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Models\EmailQueue;
 use App\Models\Ip;
 use App\Models\Node;
+use App\Models\NodeAccess;
 use App\Models\User;
 use App\Models\Shop;
 use App\Models\Token;
@@ -671,8 +672,18 @@ class Job extends Command
      */
     public function UserJob()
     {
+        $cleanupEnabled = $_ENV['account_expire_delete_days'] >= 0
+            || $_ENV['auto_clean_uncheck_days'] > 0
+            || $_ENV['auto_clean_unused_days'] > 0;
+        $dedicatedUserIds = $cleanupEnabled
+            ? array_fill_keys(array_map('intval', NodeAccess::pluck('user_id')->all()), true)
+            : [];
+
         $users = User::all();
         foreach ($users as $user) {
+            // 有过专用节点授权的用户按专用客户保留，不受普通用户自动清理影响。
+            $hasDedicatedNode = isset($dedicatedUserIds[(int) $user->id]);
+
             //余量不足检测
             if ($_ENV['notify_limit_mode'] != false) {
                 $user_traffic_left = $user->transfer_enable - $user->u - $user->d;
@@ -717,7 +728,8 @@ class Job extends Command
             if (
                 $_ENV['account_expire_delete_days'] >= 0 &&
                 strtotime($user->expire_in) + $_ENV['account_expire_delete_days'] * 86400 < time() &&
-                $user->money <= $_ENV['auto_clean_min_money']
+                $user->money <= $_ENV['auto_clean_min_money'] &&
+                !$hasDedicatedNode
             ) {
                 $user->sendMail(
                     $_ENV['appName'] . '-您的用户账户已经被删除了',
@@ -739,7 +751,8 @@ class Job extends Command
                     strtotime($user->reg_date)
                 ) + ($_ENV['auto_clean_uncheck_days'] * 86400) < time() &&
                 $user->class == 0 &&
-                $user->money <= $_ENV['auto_clean_min_money']
+                $user->money <= $_ENV['auto_clean_min_money'] &&
+                !$hasDedicatedNode
             ) {
                 $user->sendMail(
                     $_ENV['appName'] . '-您的用户账户已经被删除了',
@@ -758,7 +771,8 @@ class Job extends Command
                 $_ENV['auto_clean_unused_days'] > 0 &&
                 max($user->t, strtotime($user->reg_date)) + ($_ENV['auto_clean_unused_days'] * 86400) < time() &&
                 $user->class == 0 &&
-                $user->money <= $_ENV['auto_clean_min_money']
+                $user->money <= $_ENV['auto_clean_min_money'] &&
+                !$hasDedicatedNode
             ) {
                 $user->sendMail(
                     $_ENV['appName'] . '-您的用户账户已经被删除了',

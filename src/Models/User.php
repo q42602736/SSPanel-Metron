@@ -405,6 +405,8 @@ class User extends Model
         UserSubscribeLog::where('user_id', '=', $uid)->delete();
         DetectBanLog::where('user_id', '=', $uid)->delete();
         TelegramTasks::where('userid', '=', $uid)->delete();
+        NodeAccess::where('user_id', '=', $uid)->delete();
+        DedicatedNodeOrder::where('user_id', '=', $uid)->delete();
 
         $this->delete();
 
