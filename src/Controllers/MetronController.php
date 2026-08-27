@@ -496,16 +496,20 @@ class MetronController extends BaseController
         switch ($node->sort) {
             case '0':
             case '10':
-                if ($node->mu_only != -1) {
+                $muNode = Node::where('sort', '=', 9)->first();
+                if ($node->mu_only != -1 && $muNode !== null) {
                     # 不是多端口节点
-                    $mu_port = Node::where('sort', '=', 9)->first();
-                    $mu_user = User::where('port', '=', $mu_port->server)->value('port');
+                    $mu_user = User::where('port', '=', $muNode->server)->value('port');
                     if (URL::SSRCanConnect($user, $mu_user)) {
                         $nodeinfo = $node->getItem($user, $mu_user, 0, 0);
-                        $url = URL::getItemUrl($nodeinfo, 0);
+                        if ($nodeinfo !== null) {
+                            $url = URL::getItemUrl($nodeinfo, 0);
+                        }
                     } else if (URL::SSCanConnect($user, $mu_user)) {
                         $nodeinfo = $node->getItem($user, $mu_user, 0, 1);
-                        $url = URL::getItemUrl($nodeinfo, 1);
+                        if ($nodeinfo !== null) {
+                            $url = URL::getItemUrl($nodeinfo, 1);
+                        }
                     }
 
                 } else {
@@ -523,6 +527,10 @@ class MetronController extends BaseController
                         $url = URL::getItemUrl($nodeinfo, 1);
                     }
                 }
+                if (!isset($nodeinfo) || !is_array($nodeinfo) || !isset($url)) {
+                    $res = ['ret' => 0, 'msg' => '您的协议配置不支持连接该节点'];
+                    break;
+                }
                 $res = [
                     'ret' => 1,
                     'sort' => (int)$node->sort,
@@ -532,9 +540,18 @@ class MetronController extends BaseController
                     'url' => $url
                 ];
                 break;
+            case '1':
+                $info = $this->normalizeNodeConfig($node->getSS2022Item($user));
+                $res = [
+                    'ret' => 1,
+                    'sort' => 1,
+                    'info' => $info,
+                    'url' => AppURI::getV2RayNURI($info),
+                ];
+                break;
             case '11':
             case '12':
-                $info = $node->getV2RayItem($user);
+                $info = $this->normalizeNodeConfig($node->getV2RayItem($user));
                 $res = [
                     'ret' => 1,
                     'sort' => (int)$node->sort,
@@ -544,22 +561,29 @@ class MetronController extends BaseController
                 break;
             case '13':
                 $info = $node->getV2RayPluginItem($user);
+                if ($info === null) {
+                    $res = ['ret' => 0, 'msg' => '您的协议配置不支持连接该节点'];
+                    break;
+                }
+                $info = $this->normalizeNodeConfig($info);
                 $res = [
                     'ret' => 1,
                     'sort' => 13,
                     'info' => $info,
+                    'url' => AppURI::getItemUrl($info, 1),
                 ];
                 break;
             case '14':
-                $info = $node->getTrojanItem($user);
+                $info = $this->normalizeNodeConfig($node->getTrojanItem($user));
                 $res = [
                     'ret' => 1,
                     'sort' => 14,
                     'info' => $info,
+                    'url' => AppURI::getTrojanURI($info),
                 ];
                 break;
             case '15':
-                $info = $node->getV2RayItem($user);
+                $info = $this->normalizeNodeConfig($node->getV2RayItem($user));
                 $res = [
                     'ret' => 1,
                     'sort' => 15,
@@ -568,18 +592,7 @@ class MetronController extends BaseController
                 ];
                 break;
             case '16':
-                $info = $node->getV2RayItem($user);
-                if (!isset($info['security'])) {
-                    $info['security'] = $info['tls'] ?? '';
-                }
-                if (!isset($info['flow'])) {
-                    $info['flow'] = '';
-                }
-                if (!isset($info['aid'])) {
-                    $info['aid'] = 0;
-                }
-                // 移除服务端私钥，不能暴露给前端
-                unset($info['privateKey']);
+                $info = $this->normalizeNodeConfig($node->getV2RayItem($user));
                 $url = URL::getV2UrlVLESS($user, $node);
                 $res = [
                     'ret' => 1,
@@ -589,7 +602,7 @@ class MetronController extends BaseController
                 ];
                 break;
             case '17':
-                $info = $node->getHy2Item($user);
+                $info = $this->normalizeNodeConfig($node->getHy2Item($user));
                 $res = [
                     'ret' => 1,
                     'sort' => 17,
@@ -598,7 +611,7 @@ class MetronController extends BaseController
                 ];
                 break;
             case '18':
-                $info = $node->getAnyTlsItem($user);
+                $info = $this->normalizeNodeConfig($node->getAnyTlsItem($user));
                 $res = [
                     'ret' => 1,
                     'sort' => 18,
@@ -614,8 +627,60 @@ class MetronController extends BaseController
                 break;
         }
 
+        if (($res['ret'] ?? 0) === 1 && isset($res['info']) && is_array($res['info'])) {
+            $res['info'] = $this->normalizeNodeConfig($res['info']);
+            unset($res['info']['privateKey'], $res['info']['private_key'], $res['info']['private-key']);
+            $res['shadowrocket_url'] = AppURI::getShadowrocketURI($res['info']);
+            $res['protocol'] = [
+                0 => 'SS / SSR',
+                1 => 'Shadowsocks 2022',
+                10 => 'SS / SSR',
+                11 => 'VMess',
+                12 => 'VMess',
+                13 => 'V2Ray Plugin',
+                14 => 'Trojan',
+                15 => 'VLESS',
+                16 => 'VLESS Reality',
+                17 => 'Hysteria2',
+                18 => 'AnyTLS',
+            ][(int) $node->sort] ?? ($res['info']['type'] ?? '节点');
+        }
+
         return $response->getBody()->write(json_encode($res));
 
+    }
+
+    /**
+     * 补齐节点 URI 生成器需要的可选字段，并移除不应下发的服务端私钥。
+     */
+    private function normalizeNodeConfig(array $info): array
+    {
+        unset($info['privateKey'], $info['private_key'], $info['private-key']);
+
+        $type = $info['type'] ?? '';
+        if ($type === 'ss') {
+            $info['obfs'] = $info['obfs'] ?? 'plain';
+            $info['obfs_param'] = $info['obfs_param'] ?? '';
+        }
+
+        if ($type === 'vmess' || $type === 'vless') {
+            $info['host'] = $info['host'] ?? '';
+            $info['path'] = $info['path'] ?? '';
+            $info['servicename'] = $info['servicename'] ?? '';
+            $info['headerType'] = $info['headerType'] ?? 'none';
+            $info['aid'] = $info['aid'] ?? 0;
+            $info['tls'] = $info['tls'] ?? '';
+            $info['verify_cert'] = $info['verify_cert'] ?? true;
+            $info['sni'] = $info['sni'] ?? $info['host'];
+            if ($type === 'vmess') {
+                $info['vtype'] = 'vmess://';
+            } else {
+                $info['security'] = $info['security'] ?? $info['tls'];
+                $info['flow'] = $info['flow'] ?? '';
+            }
+        }
+
+        return $info;
     }
 
     /**

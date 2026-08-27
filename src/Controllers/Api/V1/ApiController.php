@@ -345,6 +345,30 @@ class ApiController
     {
         unset($config['privateKey'], $config['private_key'], $config['private-key']);
 
+        $type = $config['type'] ?? '';
+        if ($type === 'ss') {
+            $config['obfs'] = $config['obfs'] ?? 'plain';
+            $config['obfs_param'] = $config['obfs_param'] ?? '';
+        }
+
+        if ($type === 'vmess' || $type === 'vless') {
+            $config['host'] = $config['host'] ?? '';
+            $config['path'] = $config['path'] ?? '';
+            $config['servicename'] = $config['servicename'] ?? '';
+            $config['headerType'] = $config['headerType'] ?? 'none';
+            $config['aid'] = $config['aid'] ?? 0;
+            $config['tls'] = $config['tls'] ?? '';
+            $config['verify_cert'] = $config['verify_cert'] ?? true;
+            $config['sni'] = $config['sni'] ?? $config['host'];
+            if ($type === 'vmess') {
+                // sort=11/12 明确是 VMess，不能依赖节点 server 的可选参数判断。
+                $config['vtype'] = 'vmess://';
+            } else {
+                $config['security'] = $config['security'] ?? $config['tls'];
+                $config['flow'] = $config['flow'] ?? '';
+            }
+        }
+
         return $config;
     }
 
@@ -352,11 +376,10 @@ class ApiController
     {
         switch ($config['type'] ?? '') {
             case 'ss':
-                // SS2022 使用专用的密钥格式，现有通用 URI 生成器不支持该格式。
                 if (strpos((string) ($config['method'] ?? ''), '2022-') === 0) {
-                    return null;
+                    return AppURI::getV2RayNURI($config);
                 }
-                return URL::getItemUrl($config, 2);
+                return URL::getItemUrl($config, 1);
             case 'ssr':
                 return URL::getItemUrl($config, 0);
             default:

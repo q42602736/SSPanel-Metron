@@ -506,6 +506,31 @@
             margin-right: 6px;
         }
 
+        .dedicated-node-owned-view {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            padding: 0 14px;
+            color: #fff;
+            background: #20c7c7;
+            border: 1px solid #20c7c7;
+            border-radius: 6px;
+            font-size: 0.84rem;
+            font-weight: 600;
+        }
+
+        .dedicated-node-owned-view:hover,
+        .dedicated-node-owned-view:focus {
+            color: #fff;
+            background: #18b5b5;
+            border-color: #18b5b5;
+        }
+
+        .dedicated-node-owned-view i {
+            margin-right: 6px;
+        }
+
         .dedicated-node-filter-summary {
             flex: 0 0 auto;
             color: #9aa4b3;
@@ -709,14 +734,219 @@
 
         .dedicated-owned-actions {
             display: flex;
+            flex-wrap: wrap;
+            align-items: center;
             justify-content: flex-end;
+            gap: 8px;
             margin-top: 16px;
+        }
+
+        .dedicated-owned-action {
+            min-width: 92px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .dedicated-owned-action i {
+            margin-right: 5px;
         }
 
         .dedicated-owned-renew {
             min-width: 96px;
             border-radius: 6px;
             font-weight: 600;
+        }
+
+        .dedicated-config-modal .modal-dialog {
+            max-width: 720px;
+        }
+
+        .dedicated-qr-modal .modal-dialog {
+            max-width: 420px;
+        }
+
+        .dedicated-config-modal .modal-content,
+        .dedicated-qr-modal .modal-content {
+            overflow: hidden;
+            border: 0;
+            box-shadow: 0 20px 48px rgba(31, 45, 61, 0.18);
+        }
+
+        .dedicated-config-modal .modal-header,
+        .dedicated-qr-modal .modal-header {
+            align-items: center;
+            padding: 22px 26px 18px;
+            border-bottom: 1px solid #e9edf2;
+        }
+
+        .dedicated-config-modal .modal-title,
+        .dedicated-qr-modal .modal-title {
+            min-width: 0;
+            color: #3f4960;
+            font-size: 1.2rem;
+            overflow-wrap: anywhere;
+        }
+
+        .dedicated-config-modal .modal-body {
+            padding: 22px 26px 24px;
+            background: #f7f9fc;
+        }
+
+        .dedicated-config-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .dedicated-config-protocol {
+            color: #3699ff;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .dedicated-config-status {
+            min-height: 20px;
+            margin: 0;
+            color: #7c8798;
+            font-size: 0.82rem;
+            text-align: right;
+        }
+
+        .dedicated-config-url-box {
+            padding: 14px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .dedicated-config-url-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #7c8798;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .dedicated-config-url {
+            display: block;
+            width: 100%;
+            min-height: 76px;
+            padding: 10px 12px;
+            color: #4e596d;
+            background: #f8fafc;
+            border: 1px solid #e5eaf0;
+            border-radius: 6px;
+            font-family: SFMono-Regular, Consolas, monospace;
+            font-size: 0.78rem;
+            line-height: 1.55;
+            resize: vertical;
+        }
+
+        .dedicated-config-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .dedicated-config-action {
+            min-width: 132px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .dedicated-config-action i {
+            margin-right: 5px;
+        }
+
+        .dedicated-config-details {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .dedicated-config-detail {
+            min-width: 0;
+            padding: 10px 12px;
+            background: #fff;
+            border: 1px solid #e5eaf0;
+            border-radius: 6px;
+        }
+
+        .dedicated-config-detail-label,
+        .dedicated-config-detail-value {
+            display: block;
+            overflow-wrap: anywhere;
+        }
+
+        .dedicated-config-detail-label {
+            margin-bottom: 3px;
+            color: #9aa4b3;
+            font-size: 0.72rem;
+        }
+
+        .dedicated-config-detail-value {
+            color: #556074;
+            font-family: SFMono-Regular, Consolas, monospace;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .dedicated-config-loading {
+            padding: 38px 20px;
+            color: #8993a4;
+            text-align: center;
+        }
+
+        .dedicated-qr-modal .modal-body {
+            padding: 26px;
+            background: #f7f9fc;
+            text-align: center;
+        }
+
+        .dedicated-qr-hint {
+            margin: 0 0 16px;
+            color: #7c8798;
+            font-size: 0.84rem;
+        }
+
+        .dedicated-qr-code {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 250px;
+            min-height: 250px;
+            padding: 12px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .dedicated-qr-code canvas,
+        .dedicated-qr-code img {
+            display: block;
+            max-width: 100%;
+        }
+
+        .dedicated-qr-fallback {
+            max-width: 280px;
+            color: #7c8798;
+            font-size: 0.84rem;
+            line-height: 1.6;
+        }
+
+        .dedicated-qr-url {
+            display: block;
+            max-width: 100%;
+            margin-top: 14px;
+            color: #8b95a5;
+            font-family: SFMono-Regular, Consolas, monospace;
+            font-size: 0.74rem;
+            overflow-wrap: anywhere;
         }
 
         .dedicated-owned-empty {
@@ -943,6 +1173,30 @@
             .dedicated-owned-traffic-metric {
                 padding: 9px 8px;
             }
+
+            .dedicated-config-details {
+                grid-template-columns: 1fr;
+            }
+
+            .dedicated-config-action,
+            .dedicated-owned-action {
+                flex: 1 1 130px;
+            }
+
+            .dedicated-config-modal .modal-header,
+            .dedicated-config-modal .modal-body,
+            .dedicated-config-modal .modal-footer,
+            .dedicated-qr-modal .modal-header,
+            .dedicated-qr-modal .modal-body,
+            .dedicated-qr-modal .modal-footer {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .dedicated-qr-code {
+                min-width: 0;
+                width: 100%;
+            }
         }
 
     </style>
@@ -982,6 +1236,9 @@
                                     </div>
                                     <button type="button" id="dedicated-owned-filter" class="btn dedicated-node-owned-filter" aria-pressed="false">
                                         <i class="fas fa-user-check" aria-hidden="true"></i>已拥有
+                                    </button>
+                                    <button type="button" class="btn dedicated-node-owned-view" data-toggle="modal" data-target="#dedicated-owned-modal">
+                                        <i class="fas fa-list" aria-hidden="true"></i>我的专用节点{if $dedicated_owned_count > 0} · {$dedicated_owned_count}{/if}
                                     </button>
                                 </div>
                                 <span id="dedicated-filter-summary" class="dedicated-node-filter-summary" aria-live="polite"></span>
@@ -1166,6 +1423,18 @@
                                         </div>
                                     {/if}
                                     <div class="dedicated-owned-actions">
+                                        <button type="button" class="btn btn-light-primary dedicated-owned-action" onclick="dedicatedNodeConfig({$ownedNode->id}, '{$ownedNode->name|escape:'javascript'}')" title="查看并复制该节点配置">
+                                            <i class="fas fa-sliders-h" aria-hidden="true"></i>配置
+                                        </button>
+                                        <button type="button" class="btn btn-light-primary dedicated-owned-action" onclick="dedicatedNodeCopy({$ownedNode->id})" title="复制节点链接">
+                                            <i class="fas fa-copy" aria-hidden="true"></i>复制
+                                        </button>
+                                        <button type="button" class="btn btn-light-info dedicated-owned-action" onclick="dedicatedNodeQr({$ownedNode->id}, '{$ownedNode->name|escape:'javascript'}')" title="显示节点二维码">
+                                            <i class="fas fa-qrcode" aria-hidden="true"></i>二维码
+                                        </button>
+                                        <button type="button" class="btn btn-light-success dedicated-owned-action" onclick="dedicatedNodeShadowrocket({$ownedNode->id}, '{$ownedNode->name|escape:'javascript'}')" title="导入 Shadowrocket">
+                                            <i class="fas fa-rocket" aria-hidden="true"></i>Shadowrocket
+                                        </button>
                                         <button type="button" class="btn btn-outline-primary dedicated-owned-renew" onclick="dedicatedRenew({$ownedNode->id}, '{$ownedNode->name|escape:'javascript'}', '{$ownedNode->dedicated_price}')">续费</button>
                                     </div>
                                 </section>
@@ -1177,6 +1446,66 @@
                             <span>购买成功后，节点和独立流量会显示在这里。</span>
                         </div>
                     {/if}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade dedicated-config-modal" id="dedicated-config-modal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="dedicated-config-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dedicated-config-title">节点配置</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div id="dedicated-config-loading" class="dedicated-config-loading">
+                        <i class="fas fa-circle-notch fa-spin mr-2" aria-hidden="true"></i>正在获取节点配置...
+                    </div>
+                    <div id="dedicated-config-content" style="display: none;">
+                        <div class="dedicated-config-meta">
+                            <span id="dedicated-config-protocol" class="dedicated-config-protocol"></span>
+                            <span id="dedicated-config-status" class="dedicated-config-status" aria-live="polite"></span>
+                        </div>
+                        <div class="dedicated-config-url-box">
+                            <span class="dedicated-config-url-label">节点链接（可粘贴到支持该协议的客户端）</span>
+                            <textarea id="dedicated-config-url" class="dedicated-config-url" rows="3" readonly></textarea>
+                        </div>
+                        <div class="dedicated-config-actions">
+                            <button type="button" class="btn btn-primary dedicated-config-action" id="dedicated-config-copy">
+                                <i class="fas fa-copy" aria-hidden="true"></i>复制节点链接
+                            </button>
+                            <button type="button" class="btn btn-info dedicated-config-action" id="dedicated-config-qr">
+                                <i class="fas fa-qrcode" aria-hidden="true"></i>显示二维码
+                            </button>
+                            <button type="button" class="btn btn-success dedicated-config-action" id="dedicated-config-shadowrocket">
+                                <i class="fas fa-rocket" aria-hidden="true"></i>导入 Shadowrocket
+                            </button>
+                        </div>
+                        <div id="dedicated-config-details" class="dedicated-config-details"></div>
+                    </div>
+                    <div id="dedicated-config-error" class="alert alert-danger" style="display: none;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade dedicated-qr-modal" id="dedicated-qr-modal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="dedicated-qr-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dedicated-qr-title">节点二维码</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <p class="dedicated-qr-hint">使用支持该协议的客户端扫描二维码添加节点</p>
+                    <div id="dedicated-qr-code" class="dedicated-qr-code"></div>
+                    <div id="dedicated-qr-fallback" class="dedicated-qr-fallback" style="display: none;"></div>
+                    <code id="dedicated-qr-url" class="dedicated-qr-url"></code>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
@@ -1316,6 +1645,363 @@
                 });
             }
             applyFilters();
+        }());
+
+        (function () {
+            var configModal = document.getElementById('dedicated-config-modal');
+            var qrModal = document.getElementById('dedicated-qr-modal');
+            if (!configModal || !qrModal) {
+                return;
+            }
+
+            var configLoading = document.getElementById('dedicated-config-loading');
+            var configContent = document.getElementById('dedicated-config-content');
+            var configError = document.getElementById('dedicated-config-error');
+            var configTitle = document.getElementById('dedicated-config-title');
+            var configProtocol = document.getElementById('dedicated-config-protocol');
+            var configStatus = document.getElementById('dedicated-config-status');
+            var configUrl = document.getElementById('dedicated-config-url');
+            var configDetails = document.getElementById('dedicated-config-details');
+            var configCopy = document.getElementById('dedicated-config-copy');
+            var configQr = document.getElementById('dedicated-config-qr');
+            var configShadowrocket = document.getElementById('dedicated-config-shadowrocket');
+            var qrTitle = document.getElementById('dedicated-qr-title');
+            var qrCode = document.getElementById('dedicated-qr-code');
+            var qrFallback = document.getElementById('dedicated-qr-fallback');
+            var qrUrl = document.getElementById('dedicated-qr-url');
+            var configCache = {};
+            var currentConfig = null;
+
+            var protocolNames = {
+                0: 'SS / SSR',
+                1: 'Shadowsocks 2022',
+                10: 'SS / SSR',
+                11: 'VMess',
+                12: 'VMess',
+                13: 'V2Ray Plugin',
+                14: 'Trojan',
+                15: 'VLESS',
+                16: 'VLESS Reality',
+                17: 'Hysteria2',
+                18: 'AnyTLS'
+            };
+
+            var fieldDefinitions = [
+                {keys: ['address', 'add'], label: '服务器地址'},
+                {keys: ['port'], label: '服务器端口'},
+                {keys: ['method'], label: '加密方式'},
+                {keys: ['passwd'], label: '密码'},
+                {keys: ['password'], label: '密码'},
+                {keys: ['protocol'], label: '协议'},
+                {keys: ['protocol_param'], label: '协议参数'},
+                {keys: ['obfs'], label: '混淆'},
+                {keys: ['obfs_param'], label: '混淆参数'},
+                {keys: ['net'], label: '传输协议'},
+                {keys: ['path'], label: '路径'},
+                {keys: ['host'], label: '伪装域名'},
+                {keys: ['headerType'], label: '请求头类型'},
+                {keys: ['security'], label: '安全类型'},
+                {keys: ['tls'], label: 'TLS'},
+                {keys: ['flow'], label: '流控'},
+                {keys: ['serverName', 'sni'], label: 'SNI'},
+                {keys: ['fp'], label: '指纹'},
+                {keys: ['publicKey', 'pbk'], label: '公钥'},
+                {keys: ['shortId', 'sid'], label: '短 ID'},
+                {keys: ['up_mbps'], label: '上行速率'},
+                {keys: ['down_mbps'], label: '下行速率'},
+                {keys: ['server_name'], label: 'Server Name'},
+                {keys: ['allow_insecure', 'insecure'], label: '跳过证书验证'},
+                {keys: ['padding_scheme'], label: '填充方案'}
+            ];
+
+            function showModal(element) {
+                if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+                    window.jQuery(element).modal('show');
+                    return;
+                }
+                element.style.display = 'block';
+                element.classList.add('show');
+                element.setAttribute('aria-hidden', 'false');
+            }
+
+            function hideModal(element) {
+                if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+                    window.jQuery(element).modal('hide');
+                    return;
+                }
+                element.style.display = 'none';
+                element.classList.remove('show');
+                element.setAttribute('aria-hidden', 'true');
+            }
+
+            function setConfigState(isLoading, errorMessage) {
+                configLoading.style.display = isLoading ? '' : 'none';
+                configContent.style.display = !isLoading && !errorMessage ? '' : 'none';
+                configError.style.display = errorMessage ? '' : 'none';
+                configError.textContent = errorMessage || '';
+            }
+
+            function fetchConfig(nodeId) {
+                var cacheKey = String(nodeId);
+                if (configCache[cacheKey]) {
+                    return Promise.resolve(configCache[cacheKey]);
+                }
+
+                return fetch('/user/nodeinfo/' + encodeURIComponent(nodeId), {
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    headers: {'Accept': 'application/json'}
+                }).then(function (response) {
+                    return response.text().then(function (text) {
+                        var data = null;
+                        try {
+                            data = JSON.parse(text);
+                        } catch (error) {
+                            throw new Error('节点配置响应格式错误');
+                        }
+                        if (!response.ok || !data || parseInt(data.ret, 10) !== 1) {
+                            throw new Error((data && data.msg) || '无法获取节点配置');
+                        }
+                        configCache[cacheKey] = data;
+                        return data;
+                    });
+                });
+            }
+
+            function getNodeUrl(data) {
+                return (data && (data.url || data.sslink || data.ssrlink)) || '';
+            }
+
+            function getShadowrocketUrl(data) {
+                return (data && (data.shadowrocket_url || getNodeUrl(data))) || '';
+            }
+
+            function formatDetailValue(value) {
+                if (value === true) {
+                    return '是';
+                }
+                if (value === false) {
+                    return '否';
+                }
+                if (value && typeof value === 'object') {
+                    try {
+                        return JSON.stringify(value);
+                    } catch (error) {
+                        return String(value);
+                    }
+                }
+                return String(value);
+            }
+
+            function appendDetail(label, value) {
+                var item = document.createElement('div');
+                var itemLabel = document.createElement('span');
+                var itemValue = document.createElement('span');
+                item.className = 'dedicated-config-detail';
+                itemLabel.className = 'dedicated-config-detail-label';
+                itemValue.className = 'dedicated-config-detail-value';
+                itemLabel.textContent = label;
+                itemValue.textContent = formatDetailValue(value);
+                item.appendChild(itemLabel);
+                item.appendChild(itemValue);
+                configDetails.appendChild(item);
+            }
+
+            function renderDetails(info) {
+                configDetails.innerHTML = '';
+                var usedLabels = {};
+                var isV2 = info && (info.type === 'vmess' || info.type === 'vless');
+                if (isV2 && info.id) {
+                    appendDetail('用户 UUID', info.id);
+                }
+                fieldDefinitions.forEach(function (definition) {
+                    var key = null;
+                    definition.keys.some(function (candidate) {
+                        if (Object.prototype.hasOwnProperty.call(info, candidate)
+                            && info[candidate] !== null && info[candidate] !== '') {
+                            key = candidate;
+                            return true;
+                        }
+                        return false;
+                    });
+                    if (!key || usedLabels[definition.label]) {
+                        return;
+                    }
+                    usedLabels[definition.label] = true;
+                    appendDetail(definition.label, info[key]);
+                });
+                if (!configDetails.children.length) {
+                    appendDetail('配置', '请直接使用上方节点链接导入');
+                }
+            }
+
+            function renderConfig(data, nodeName) {
+                var info = data.info || {};
+                var url = getNodeUrl(data);
+                var protocol = data.protocol || protocolNames[parseInt(data.sort, 10)] || info.type || '节点';
+                currentConfig = data;
+                configTitle.textContent = nodeName + ' · 节点配置';
+                configProtocol.textContent = protocol;
+                configStatus.textContent = '已通过当前账号授权';
+                configUrl.value = url;
+                renderDetails(info);
+                configShadowrocket.disabled = !getShadowrocketUrl(data);
+                setConfigState(false, url ? '' : '该节点暂时没有可用的节点链接');
+            }
+
+            function showMessage(message, isError) {
+                if (window.Swal && typeof window.Swal.fire === 'function') {
+                    window.Swal.fire({
+                        icon: isError ? 'error' : 'success',
+                        title: message,
+                        timer: 1400,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
+                configStatus.textContent = message;
+                configStatus.style.color = isError ? '#f64e60' : '#1bc5bd';
+            }
+
+            function copyText(text) {
+                if (!text) {
+                    return Promise.reject(new Error('没有可复制的节点链接'));
+                }
+                if (navigator.clipboard && window.isSecureContext) {
+                    return navigator.clipboard.writeText(text);
+                }
+                return new Promise(function (resolve, reject) {
+                    var textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.setAttribute('readonly', 'readonly');
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    var copied = false;
+                    try {
+                        copied = document.execCommand('copy');
+                    } catch (error) {
+                        copied = false;
+                    }
+                    document.body.removeChild(textarea);
+                    if (copied) {
+                        resolve();
+                    } else {
+                        reject(new Error('复制失败，请手动选择链接复制'));
+                    }
+                });
+            }
+
+            function showQr(data, nodeName) {
+                var url = getNodeUrl(data);
+                var protocol = data.protocol || protocolNames[parseInt(data.sort, 10)] || '节点';
+                qrTitle.textContent = nodeName + ' · ' + protocol;
+                qrCode.innerHTML = '';
+                qrFallback.style.display = 'none';
+                qrUrl.textContent = url;
+                if (!url) {
+                    qrFallback.textContent = '该节点暂时没有可用的节点链接';
+                    qrFallback.style.display = '';
+                } else if (window.QRCode) {
+                    try {
+                        new window.QRCode(qrCode, {width: 240, height: 240, text: url});
+                    } catch (error) {
+                        qrFallback.textContent = '二维码生成失败，请使用“复制节点链接”导入';
+                        qrFallback.style.display = '';
+                    }
+                } else {
+                    qrFallback.textContent = '二维码组件加载失败，请使用“复制节点链接”导入';
+                    qrFallback.style.display = '';
+                }
+                showModal(qrModal);
+            }
+
+            function importShadowrocket(data) {
+                var url = getShadowrocketUrl(data);
+                if (!url) {
+                    showMessage('该协议暂不支持 Shadowrocket 导入', true);
+                    return;
+                }
+                try {
+                    window.location.href = 'shadowrocket://add/' + encodeURIComponent(url);
+                } catch (error) {
+                    showMessage('无法打开 Shadowrocket，请复制节点链接导入', true);
+                }
+            }
+
+            function openConfig(nodeId, nodeName) {
+                currentConfig = null;
+                configTitle.textContent = nodeName + ' · 节点配置';
+                configProtocol.textContent = '';
+                configStatus.textContent = '';
+                configUrl.value = '';
+                configDetails.innerHTML = '';
+                configShadowrocket.disabled = true;
+                setConfigState(true, '');
+                showModal(configModal);
+                fetchConfig(nodeId).then(function (data) {
+                    renderConfig(data, nodeName);
+                }).catch(function (error) {
+                    setConfigState(false, error.message || '无法获取节点配置');
+                });
+            }
+
+            function runNodeAction(nodeId, nodeName, action) {
+                fetchConfig(nodeId).then(function (data) {
+                    if (action === 'copy') {
+                        return copyText(getNodeUrl(data)).then(function () {
+                            showMessage('节点链接已复制', false);
+                        });
+                    }
+                    if (action === 'qr') {
+                        showQr(data, nodeName);
+                        return null;
+                    }
+                    importShadowrocket(data);
+                    return null;
+                }).catch(function (error) {
+                    showMessage(error.message || '无法获取节点配置', true);
+                });
+            }
+
+            configCopy.addEventListener('click', function () {
+                if (!currentConfig) {
+                    return;
+                }
+                copyText(getNodeUrl(currentConfig)).then(function () {
+                    showMessage('节点链接已复制', false);
+                }).catch(function (error) {
+                    showMessage(error.message, true);
+                });
+            });
+            configQr.addEventListener('click', function () {
+                if (currentConfig) {
+                    var nodeName = configTitle.textContent.replace(/ · 节点配置$/, '');
+                    var config = currentConfig;
+                    hideModal(configModal);
+                    window.setTimeout(function () {
+                        showQr(config, nodeName);
+                    }, 180);
+                }
+            });
+            configShadowrocket.addEventListener('click', function () {
+                if (currentConfig) {
+                    importShadowrocket(currentConfig);
+                }
+            });
+
+            window.dedicatedNodeConfig = openConfig;
+            window.dedicatedNodeCopy = function (nodeId) {
+                runNodeAction(nodeId, '', 'copy');
+            };
+            window.dedicatedNodeQr = function (nodeId, nodeName) {
+                runNodeAction(nodeId, nodeName, 'qr');
+            };
+            window.dedicatedNodeShadowrocket = function (nodeId, nodeName) {
+                runNodeAction(nodeId, nodeName, 'shadowrocket');
+            };
         }());
 
         (function () {
