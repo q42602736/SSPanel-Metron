@@ -4,7 +4,7 @@
 
 namespace App\Controllers;
 
-use App\Models\{Link, Node, User, UserSubscribeLog};
+use App\Models\{Link, Node, NodeAccess, User, UserSubscribeLog};
 use App\Utils\{
     URL,
     Tools,
@@ -392,6 +392,62 @@ class LinkController extends BaseController
     }
 
     /**
+     * 生成订阅使用量元数据。
+     *
+     * 普通服务失效后，已授权的专用节点仍可使用，不能继续发送普通套餐的过期信息。
+     */
+    private static function getSubscriptionMetadata($user): array
+    {
+        $metadata = [
+            'upload' => $user->u,
+            'download' => $user->d,
+            'total' => $user->transfer_enable,
+            'expire' => (int) strtotime((string) $user->class_expire),
+        ];
+
+        if ($user->hasActiveRegularService()) {
+            return $metadata;
+        }
+
+        $accesses = NodeAccess::forUser($user->id);
+        if (count($accesses) === 0) {
+            return $metadata;
+        }
+
+        $trafficUsed = 0;
+        $trafficTotal = 0;
+        $hasUnlimitedTraffic = false;
+        $expireAt = 0;
+        foreach ($accesses as $access) {
+            $trafficLimit = max(0, (int) $access->traffic_limit);
+            $trafficUsed += max(0, (int) $access->traffic_used);
+            if ($trafficLimit === 0) {
+                $hasUnlimitedTraffic = true;
+            } else {
+                $trafficTotal += $trafficLimit;
+            }
+            $expireAt = max($expireAt, (int) $access->expire_at);
+        }
+
+        return [
+            'upload' => 0,
+            'download' => $trafficUsed,
+            'total' => $hasUnlimitedTraffic ? 0 : $trafficTotal,
+            'expire' => $expireAt,
+        ];
+    }
+
+    private static function getSubscriptionUserinfo($user): string
+    {
+        $metadata = self::getSubscriptionMetadata($user);
+
+        return 'upload=' . $metadata['upload']
+            . '; download=' . $metadata['download']
+            . '; total=' . $metadata['total']
+            . '; expire=' . $metadata['expire'];
+    }
+
+    /**
      * 响应内容
      *
      * @param User $user
@@ -416,10 +472,7 @@ class LinkController extends BaseController
             )
             ->withHeader(
                 'Subscription-Userinfo',
-                (' upload=' . $user->u
-                    . '; download=' . $user->d
-                    . '; total=' . $user->transfer_enable
-                    . '; expire=' . strtotime($user->class_expire))
+                self::getSubscriptionUserinfo($user)
             );
 
         return $response->write($content);
@@ -858,7 +911,7 @@ class LinkController extends BaseController
             $Profiles = $_ENV['Clash_DefaultProfiles']; // 默认策略组
         }
 
-        header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
+        header('subscription-userinfo: ' . self::getSubscriptionUserinfo($user));
         header('profile-update-interval: 24');
         header("content-disposition:attachment;filename={$_ENV['appName']}");
 
@@ -898,7 +951,7 @@ class LinkController extends BaseController
         $outbounds[] = $urltest;
         $config['outbounds'] = $outbounds;
 
-        header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
+        header('subscription-userinfo: ' . self::getSubscriptionUserinfo($user));
         header('profile-update-interval: 24');
         header('content-disposition:attachment;filename*=UTF-8\'\'' . rawurlencode($_ENV['appName']));
 
@@ -922,13 +975,18 @@ class LinkController extends BaseController
             return null;
         }
         $array_all = [];
+        $subscriptionMetadata = self::getSubscriptionMetadata($user);
         $array_all['airport'] = $_ENV['appName'];
         $array_all['port'] = $user->port;
         $array_all['encryption'] = $user->method;
         $array_all['password'] = $user->passwd;
-        $array_all['traffic_used'] = Tools::flowToGB($user->u + $user->d);
-        $array_all['traffic_total'] = Tools::flowToGB($user->transfer_enable);
-        $array_all['expiry'] = $user->class_expire;
+        $array_all['traffic_used'] = Tools::flowToGB(
+            $subscriptionMetadata['upload'] + $subscriptionMetadata['download']
+        );
+        $array_all['traffic_total'] = Tools::flowToGB($subscriptionMetadata['total']);
+        $array_all['expiry'] = $subscriptionMetadata['expire'] > 0
+            ? date('Y-m-d H:i:s', $subscriptionMetadata['expire'])
+            : '';
         $array_all['url'] = self::getSubinfo($user, 0)['ssd'];
         $plugin_options = '';
         if (strpos($user->obfs, 'http') != false) {
