@@ -131,9 +131,9 @@ class ApiController
     /**
      * 获取专用节点目录及当前用户授权状态。
      *
-     * 默认返回可售专用节点；传入 owned_only=1 时只返回已拥有节点，
-     * 兼容仅需要下发用户节点配置的客户端。原始 server 字段不直接返回，
-     * 未拥有节点不会返回 configs/urls，避免泄露用户配置和服务端密钥。
+     * 默认返回可售专用节点与当前用户已拥有的节点；传入 owned_only=1 时只返回已拥有节点，
+     * 兼容仅需要下发用户节点配置的客户端。其他用户已占用的节点不进入目录。
+     * 原始 server 字段不直接返回，未拥有节点不会返回 configs/urls，避免泄露用户配置和服务端密钥。
      */
     public function dedicatedNodes($request, $response, $args)
     {
@@ -210,6 +210,9 @@ class ApiController
             $access = $ownedAccessByNodeId[$nodeId] ?? null;
             $activeAccess = $activeAccessByNodeId[$nodeId] ?? null;
             $owned = $access !== null;
+            if ($activeAccess !== null && !$owned) {
+                continue;
+            }
             $occupied = $activeAccess !== null && !$owned;
             $configs = $owned ? $this->dedicatedNodeConfigs($node, $user) : [];
             $urls = [];

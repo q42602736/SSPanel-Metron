@@ -742,6 +742,9 @@ class UserController extends BaseController
         foreach ($nodes as $node) {
             $access = NodeAccess::activeForNode($node->id);
             $myAccess = $access && (int) $access->user_id === (int) $this->user->id ? $access : null;
+            if ($access !== null && $myAccess === null) {
+                continue;
+            }
             $unlock = StreamMedia::where('node_id', $node->id)
                 ->where('created_at', '>', time() - 86460)
                 ->orderBy('id', 'desc')
