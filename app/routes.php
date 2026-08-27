@@ -485,6 +485,7 @@ return function (SlimApp $app) {
         $this->get('/token/{token}', App\Controllers\Api\V1\ApiController::class . ':token');
         $this->post('/token',        App\Controllers\Api\V1\ApiController::class . ':newToken');
         $this->get('/node',          App\Controllers\Api\V1\ApiController::class . ':node')->add(new Api());
+        $this->get('/dedicated-nodes', App\Controllers\Api\V1\ApiController::class . ':dedicatedNodes')->add(new Api());
         $this->get('/user/{id}',     App\Controllers\Api\V1\ApiController::class . ':userInfo')->add(new Api());
         $this->get('/sublink',       App\Controllers\Api\Client\ClientApiController::class . ':GetSubLink');
     });

@@ -11,7 +11,7 @@ class Api
     public function __invoke($request, $response, $next)
     {
         $accessToken = $request->getParam('access_token');
-        if ($accessToken == null) {
+        if (!is_string($accessToken) || trim($accessToken) === '') {
             $res['ret'] = 0;
             $res['msg'] = 'token is null';
             $response->getBody()->write(json_encode($res));
