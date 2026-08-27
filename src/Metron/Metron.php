@@ -463,7 +463,7 @@ class Metron
     }
 
     /**
-     * 支付回调后完成专用节点购买，不在创建支付订单时提前授权。
+     * 支付回调后完成专用节点购买或续费，不在创建支付订单时提前授权。
      */
     public static function metronpay_buy_dedicated_node($pid = 0)
     {
@@ -484,15 +484,25 @@ class Metron
                     throw new Exception('专用节点订单无效');
                 }
 
+                $isRenew = (int) ($shopinfo['dedicated_node_renew'] ?? 0) === 1;
                 NodeAccess::releaseStale($node->id);
-                if (NodeAccess::activeForNode($node->id) !== null) {
+                $activeAccess = NodeAccess::where('node_id', $node->id)
+                    ->whereRaw(NodeAccess::activeSql())
+                    ->lockForUpdate()
+                    ->first();
+                if ($isRenew) {
+                    if ($activeAccess === null || (int) $activeAccess->user_id !== (int) $user->id) {
+                        throw new Exception('专用节点授权已失效，支付金额已退回余额');
+                    }
+                } elseif ($activeAccess !== null) {
                     throw new Exception('该专用节点已被其他用户购买，支付金额已退回余额');
                 }
 
                 $price = (float) ($shopinfo['dedicated_price'] ?? $ps->total);
                 $balanceUsed = (float) ($shopinfo['dedicated_balance_used'] ?? 0);
-                if ($price <= 0 || $balanceUsed < 0 || $balanceUsed > $price) {
-                    throw new Exception('专用节点价格无效');
+                $days = (int) ($shopinfo['dedicated_days'] ?? $node->dedicated_days);
+                if ($price <= 0 || $days < 1 || $balanceUsed < 0 || $balanceUsed > $price) {
+                    throw new Exception('专用节点价格或授权周期无效');
                 }
                 $onlinePrice = number_format($price - $balanceUsed, 2, '.', '');
                 if (bccomp((string) $ps->total, $onlinePrice, 2) !== 0) {
@@ -508,7 +518,7 @@ class Metron
                 $order->user_id = $user->id;
                 $order->node_id = $node->id;
                 $order->price = $price;
-                $order->days = (int) ($shopinfo['dedicated_days'] ?? $node->dedicated_days);
+                $order->days = $days;
                 $order->traffic_limit = (int) ($shopinfo['dedicated_traffic'] ?? $node->dedicatedTrafficBytes());
                 $order->created_at = time();
                 $order->save();
@@ -534,20 +544,31 @@ class Metron
             return ['ret' => 0, 'msg' => $e->getMessage()];
         }
 
-        return ['ret' => 1, 'msg' => '专用节点购买成功'];
+        return [
+            'ret' => 1,
+            'msg' => ((int) ($shopinfo['dedicated_node_renew'] ?? 0) === 1)
+                ? '专用节点续费成功'
+                : '专用节点购买成功',
+        ];
     }
 
     /**
-     * 使用账户余额购买专用节点。
+     * 使用账户余额购买或续费专用节点。
      */
-    public static function buy_dedicated_node_with_balance($userId, $nodeId): array
+    public static function buy_dedicated_node_with_balance($userId, $nodeId, $renew = false): array
     {
         try {
-            DB::connection('default')->transaction(function () use ($userId, $nodeId) {
+            DB::connection('default')->transaction(function () use ($userId, $nodeId, $renew) {
                 $user = User::where('id', (int) $userId)->lockForUpdate()->first();
                 $node = Node::where('id', (int) $nodeId)->lockForUpdate()->first();
-                if ($user === null || $node === null || !$node->isDedicatedForSale()) {
+                if ($user === null || (int) $user->enable !== 1 || $node === null || !$node->isDedicated()) {
                     throw new Exception('专用节点暂不可购买');
+                }
+                if (!$renew && !$node->isDedicatedForSale()) {
+                    throw new Exception('专用节点暂不可购买');
+                }
+                if ((float) $node->dedicated_price <= 0 || (int) $node->dedicated_days < 1) {
+                    throw new Exception('专用节点价格或授权周期无效');
                 }
 
                 NodeAccess::releaseStale($node->id);
@@ -555,7 +576,10 @@ class Metron
                     ->whereRaw(NodeAccess::activeSql())
                     ->lockForUpdate()
                     ->first();
-                if ($access !== null) {
+                if ($renew && ($access === null || (int) $access->user_id !== (int) $user->id)) {
+                    throw new Exception('专用节点授权已失效，请重新购买');
+                }
+                if (!$renew && $access !== null) {
                     throw new Exception('该专用节点已被购买');
                 }
 
@@ -593,7 +617,12 @@ class Metron
             return ['ret' => 0, 'msg' => $e->getMessage()];
         }
 
-        return ['ret' => 1, 'msg' => '余额支付成功，专用节点已开通'];
+        return [
+            'ret' => 1,
+            'msg' => $renew
+                ? '余额支付成功，专用节点已续费'
+                : '余额支付成功，专用节点已开通',
+        ];
     }
 
     /**

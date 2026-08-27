@@ -392,11 +392,33 @@
             font-size: 0.9rem;
         }
 
-        .dedicated-node-buy {
+        .dedicated-node-buy,
+        .dedicated-node-renew {
             min-width: 108px;
             padding: 11px 22px;
             border-radius: 8px;
             font-weight: 700;
+        }
+
+        .btn.dedicated-node-renew {
+            color: #4269c4;
+            background-color: #f2f6ff;
+            border-color: #b9c9f4;
+        }
+
+        .btn.dedicated-node-renew:hover:not(.btn-text),
+        .btn.dedicated-node-renew:focus:not(.btn-text),
+        .btn.dedicated-node-renew.focus {
+            color: #fff;
+            background-color: #5d7fe8;
+            border-color: #5d7fe8;
+        }
+
+        .btn.dedicated-node-renew:not(:disabled):not(.disabled):active,
+        .btn.dedicated-node-renew:not(:disabled):not(.disabled).active {
+            color: #fff;
+            background-color: #4d6fd6;
+            border-color: #4d6fd6;
         }
 
         .dedicated-node-toolbar {
@@ -685,6 +707,18 @@
             color: #3699ff;
         }
 
+        .dedicated-owned-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .dedicated-owned-renew {
+            min-width: 96px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
         .dedicated-owned-empty {
             padding: 38px 20px;
             color: #8993a4;
@@ -701,6 +735,129 @@
         .dedicated-owned-modal .modal-footer {
             padding: 14px 26px 18px;
             border-top: 1px solid #e9edf2;
+        }
+
+        .dedicated-confirm-modal .modal-dialog {
+            max-width: 460px;
+        }
+
+        .dedicated-confirm-modal .modal-content {
+            overflow: hidden;
+            border: 0;
+            box-shadow: 0 20px 48px rgba(31, 45, 61, 0.2);
+        }
+
+        .dedicated-confirm-modal .modal-header {
+            align-items: center;
+            padding: 24px 26px 16px;
+            border-bottom: 0;
+        }
+
+        .dedicated-confirm-heading {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .dedicated-confirm-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            color: #5d7fe8;
+            background: #eef3ff;
+            border-radius: 50%;
+        }
+
+        .dedicated-confirm-modal .modal-title {
+            margin: 0;
+            color: #3f4960;
+            font-size: 1.2rem;
+        }
+
+        .dedicated-confirm-modal .modal-body {
+            padding: 0 26px 22px;
+        }
+
+        .dedicated-confirm-lead {
+            margin: 0 0 10px;
+            color: #7b8697;
+            font-size: 0.88rem;
+        }
+
+        .dedicated-confirm-node {
+            display: flex;
+            align-items: center;
+            min-height: 48px;
+            padding: 12px 14px;
+            color: #3f4960;
+            background: #f7f9fc;
+            border: 1px solid #e6ebf2;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .dedicated-confirm-warning {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            margin: 14px 0 0;
+            padding: 11px 12px;
+            color: #687386;
+            background: #fff8e8;
+            border: 1px solid #f6e4b6;
+            border-radius: 7px;
+            font-size: 0.84rem;
+            line-height: 1.55;
+        }
+
+        .dedicated-confirm-warning i {
+            flex: 0 0 auto;
+            margin-top: 3px;
+            color: #d99b18;
+        }
+
+        .dedicated-confirm-modal .modal-footer {
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 16px 26px 22px;
+            border-top: 1px solid #edf0f4;
+        }
+
+        .btn.dedicated-confirm-cancel,
+        .btn.dedicated-confirm-submit {
+            min-width: 96px;
+            border-radius: 7px;
+            font-weight: 600;
+        }
+
+        .btn.dedicated-confirm-cancel {
+            color: #687386;
+            background-color: #f1f4f7;
+            border-color: #e1e6ec;
+        }
+
+        .btn.dedicated-confirm-cancel:hover,
+        .btn.dedicated-confirm-cancel:focus {
+            color: #4e596d;
+            background-color: #e6ebf0;
+            border-color: #d7dee7;
+        }
+
+        @media (max-width: 479.98px) {
+            .dedicated-confirm-modal .modal-dialog {
+                margin: 10px;
+            }
+
+            .dedicated-confirm-modal .modal-header,
+            .dedicated-confirm-modal .modal-body,
+            .dedicated-confirm-modal .modal-footer {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
         }
 
         @media (max-width: 767.98px) {
@@ -920,6 +1077,8 @@
                                             </div>
                                             {if $item['occupied']}
                                                 <span class="label label-inline label-secondary dedicated-node-state">已售出</span>
+                                            {elseif $access}
+                                                <button type="button" class="btn dedicated-node-renew" onclick="dedicatedRenew({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}')">续费</button>
                                             {elseif !$access}
                                                 <button type="button" class="btn btn-primary dedicated-node-buy" onclick="dedicatedBuy({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}')">购买</button>
                                             {/if}
@@ -1006,6 +1165,9 @@
                                             <strong>总量不限</strong>
                                         </div>
                                     {/if}
+                                    <div class="dedicated-owned-actions">
+                                        <button type="button" class="btn btn-outline-primary dedicated-owned-renew" onclick="dedicatedRenew({$ownedNode->id}, '{$ownedNode->name|escape:'javascript'}', '{$ownedNode->dedicated_price}')">续费</button>
+                                    </div>
                                 </section>
                             {/foreach}
                         </div>
@@ -1018,6 +1180,31 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade dedicated-confirm-modal" id="dedicated-renew-confirm-modal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="dedicated-renew-confirm-title" aria-describedby="dedicated-renew-confirm-description" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="dedicated-confirm-heading">
+                        <span class="dedicated-confirm-icon" aria-hidden="true"><i class="fas fa-sync-alt"></i></span>
+                        <h5 class="modal-title" id="dedicated-renew-confirm-title">确认续费</h5>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <p class="dedicated-confirm-lead">即将续费专用节点</p>
+                    <div id="dedicated-renew-confirm-node" class="dedicated-confirm-node"></div>
+                    <p class="dedicated-confirm-warning" id="dedicated-renew-confirm-description">
+                        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                        <span>续费后会覆盖当前有效期和专用流量，确认继续吗？</span>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn dedicated-confirm-cancel" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary dedicated-confirm-submit" id="dedicated-renew-confirm-submit">确认续费</button>
                 </div>
             </div>
         </div>
@@ -1134,6 +1321,7 @@
         (function () {
             var dedicatedPaymentNodeId = 0;
             var dedicatedPaymentPrice = 0;
+            var dedicatedPaymentAction = 'buy';
             var modal = document.getElementById('dedicated-payment-modal');
             var dedicatedPaymentBalance = parseFloat(modal.getAttribute('data-user-balance')) || 0;
             var title = document.getElementById('dedicated-payment-title');
@@ -1146,6 +1334,10 @@
             var paymentWindowPending = false;
 
             var ownedModal = document.getElementById('dedicated-owned-modal');
+            var renewConfirmModal = document.getElementById('dedicated-renew-confirm-modal');
+            var renewConfirmNode = document.getElementById('dedicated-renew-confirm-node');
+            var renewConfirmSubmit = document.getElementById('dedicated-renew-confirm-submit');
+            var pendingRenewal = null;
             if (ownedModal && ownedModal.getAttribute('data-auto-open') === '1' && window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
                 window.jQuery(function () {
                     window.jQuery(ownedModal).modal('show');
@@ -1277,20 +1469,116 @@
                 modal.setAttribute('aria-hidden', 'true');
             }
 
-            window.dedicatedBuy = function (nodeId, nodeName, price) {
+            function showRenewConfirm(nodeId, nodeName, price) {
+                if (!renewConfirmModal) {
+                    openPayment('renew', nodeId, nodeName, price);
+                    return;
+                }
+                pendingRenewal = {
+                    nodeId: parseInt(nodeId, 10),
+                    nodeName: nodeName,
+                    price: price
+                };
+                renewConfirmNode.textContent = nodeName;
+                renewConfirmSubmit.disabled = false;
+                if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+                    window.jQuery(renewConfirmModal).modal('show');
+                    return;
+                }
+                renewConfirmModal.style.display = 'block';
+                renewConfirmModal.classList.add('show');
+                renewConfirmModal.setAttribute('aria-hidden', 'false');
+            }
+
+            function hideRenewConfirm() {
+                if (!renewConfirmModal) {
+                    return;
+                }
+                if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+                    window.jQuery(renewConfirmModal).modal('hide');
+                    return;
+                }
+                renewConfirmModal.style.display = 'none';
+                renewConfirmModal.classList.remove('show');
+                renewConfirmModal.setAttribute('aria-hidden', 'true');
+            }
+
+            function startRenewal(renewal) {
+                if (ownedModal && window.jQuery && window.jQuery.fn && window.jQuery.fn.modal
+                    && window.jQuery(ownedModal).hasClass('show')) {
+                    window.jQuery(ownedModal).one('hidden.bs.modal', function () {
+                        openPayment('renew', renewal.nodeId, renewal.nodeName, renewal.price);
+                    });
+                    window.jQuery(ownedModal).modal('hide');
+                    return;
+                }
+                openPayment('renew', renewal.nodeId, renewal.nodeName, renewal.price);
+            }
+
+            function confirmRenewal() {
+                var renewal = pendingRenewal;
+                if (renewConfirmSubmit) {
+                    renewConfirmSubmit.disabled = true;
+                }
+                pendingRenewal = null;
+                if (!renewal) {
+                    return;
+                }
+                if (renewConfirmModal && window.jQuery && window.jQuery.fn && window.jQuery.fn.modal
+                    && window.jQuery(renewConfirmModal).hasClass('show')) {
+                    window.jQuery(renewConfirmModal).one('hidden.bs.modal', function () {
+                        startRenewal(renewal);
+                    });
+                    hideRenewConfirm();
+                    return;
+                }
+                hideRenewConfirm();
+                startRenewal(renewal);
+            }
+
+            function openPayment(action, nodeId, nodeName, price) {
                 stopPolling();
                 paymentWindow = null;
                 paymentWindowPending = false;
+                dedicatedPaymentAction = action;
                 dedicatedPaymentNodeId = parseInt(nodeId, 10);
                 dedicatedPaymentPrice = parseFloat(price);
-                title.textContent = '选择支付方式';
+                title.textContent = action === 'renew' ? '专用节点续费' : '选择支付方式';
                 var balanceUsed = Math.min(Math.max(dedicatedPaymentBalance, 0), dedicatedPaymentPrice);
                 var onlineAmount = Math.max(0, dedicatedPaymentPrice - balanceUsed);
-                summary.textContent = nodeName + '，总价 ' + dedicatedPaymentPrice.toFixed(2) + ' 元；余额抵扣 ' + balanceUsed.toFixed(2) + ' 元，在线支付 ' + onlineAmount.toFixed(2) + ' 元';
+                if (action === 'renew') {
+                    summary.textContent = nodeName + '，续费 ' + dedicatedPaymentPrice.toFixed(2) + ' 元；本次将覆盖当前有效期和专用流量。余额抵扣 ' + balanceUsed.toFixed(2) + ' 元，在线支付 ' + onlineAmount.toFixed(2) + ' 元';
+                } else {
+                    summary.textContent = nodeName + '，总价 ' + dedicatedPaymentPrice.toFixed(2) + ' 元；余额抵扣 ' + balanceUsed.toFixed(2) + ' 元，在线支付 ' + onlineAmount.toFixed(2) + ' 元';
+                }
                 clearResult();
                 resetPaymentButtons();
                 showModal();
+            }
+
+            window.dedicatedBuy = function (nodeId, nodeName, price) {
+                openPayment('buy', nodeId, nodeName, price);
             };
+
+            window.dedicatedRenew = function (nodeId, nodeName, price) {
+                showRenewConfirm(nodeId, nodeName, price);
+            };
+
+            if (renewConfirmSubmit) {
+                renewConfirmSubmit.addEventListener('click', confirmRenewal);
+            }
+            if (renewConfirmModal) {
+                Array.prototype.forEach.call(renewConfirmModal.querySelectorAll('[data-dismiss="modal"]'), function (button) {
+                    button.addEventListener('click', function () {
+                        pendingRenewal = null;
+                    });
+                });
+                if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+                    window.jQuery(renewConfirmModal).on('hidden.bs.modal', function () {
+                        pendingRenewal = null;
+                    });
+                }
+            }
 
             Array.prototype.forEach.call(modal.querySelectorAll('[data-dismiss="modal"]'), function (button) {
                 button.addEventListener('click', hideModal);
@@ -1302,6 +1590,7 @@
                     var paymentType = button.getAttribute('data-type');
                     var body = new URLSearchParams();
                     var isBalancePayment = paymentType === 'balance';
+                    var isRenewal = dedicatedPaymentAction === 'renew';
                     if (!isBalancePayment && button.getAttribute('data-payment-mode') === 'url') {
                         paymentWindow = window.open('about:blank', '_blank');
                         paymentWindowPending = true;
@@ -1317,6 +1606,7 @@
                         body.set('type', paymentType);
                         body.set('shopid', '0');
                         body.set('dedicated_node_id', dedicatedPaymentNodeId);
+                        body.set('dedicated_node_renew', isRenewal ? '1' : '0');
                     }
                     button.disabled = true;
                     button.textContent = '正在创建订单...';
@@ -1324,7 +1614,9 @@
                         item.disabled = true;
                     });
 
-                    fetch(isBalancePayment ? '/user/dedicated-node/buy' : '/user/payment/purchase', {
+                    fetch(isBalancePayment
+                        ? (isRenewal ? '/user/dedicated-node/renew' : '/user/dedicated-node/buy')
+                        : '/user/payment/purchase', {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
@@ -1340,12 +1632,14 @@
                         });
                     }).then(function (data) {
                         if (!data || data.ret !== 1) {
-                            throw new Error((data && data.msg) || (isBalancePayment ? '余额支付失败' : '创建支付订单失败'));
+                            throw new Error((data && data.msg) || (isBalancePayment
+                                ? (isRenewal ? '专用节点续费失败' : '余额支付失败')
+                                : '创建支付订单失败'));
                         }
                         if (isBalancePayment) {
-                            title.textContent = '购买成功';
-                            setResult(data.msg || '余额支付成功，专用节点已开通', false, false);
-                            button.textContent = '已开通';
+                            title.textContent = isRenewal ? '续费成功' : '购买成功';
+                            setResult(data.msg || (isRenewal ? '余额支付成功，专用节点已续费' : '余额支付成功，专用节点已开通'), false, false);
+                            button.textContent = isRenewal ? '已续费' : '已开通';
                             window.setTimeout(function () {
                                 window.location.reload();
                             }, 1000);

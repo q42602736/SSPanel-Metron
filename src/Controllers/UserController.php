@@ -710,6 +710,7 @@ class UserController extends BaseController
         $ownedNodes = Node::where('sale_type', 1)
             ->where('type', 1)
             ->whereIn('id', $myNodeIds)
+            ->orderBy('node_sort', 'desc')
             ->orderBy('name')->get();
         foreach ($ownedNodes as $node) {
             $access = $myAccessByNodeId[(int) $node->id];
@@ -737,6 +738,7 @@ class UserController extends BaseController
             ->where('dedicated_status', 1)
             ->where('dedicated_price', '>', 0)
             ->where('dedicated_days', '>', 0)
+            ->orderBy('node_sort', 'desc')
             ->orderBy('name')->get();
         foreach ($nodes as $node) {
             $access = NodeAccess::activeForNode($node->id);
@@ -811,6 +813,12 @@ class UserController extends BaseController
                 return $left['occupied'] ? 1 : -1;
             }
 
+            $leftSort = (int) $left['node']->node_sort;
+            $rightSort = (int) $right['node']->node_sort;
+            if ($leftSort !== $rightSort) {
+                return $rightSort <=> $leftSort;
+            }
+
             return strnatcasecmp((string) $left['node']->name, (string) $right['node']->name);
         });
         asort($countryOptions, SORT_STRING);
@@ -874,6 +882,16 @@ class UserController extends BaseController
         }
 
         return $response->withJson(Metron::buy_dedicated_node_with_balance($this->user->id, $nodeId));
+    }
+
+    public function dedicatedNodeRenew($request, $response, $args)
+    {
+        $nodeId = (int) $request->getParam('node_id', 0);
+        if ($nodeId < 1) {
+            return $response->withJson(['ret' => 0, 'msg' => '专用节点参数无效']);
+        }
+
+        return $response->withJson(Metron::buy_dedicated_node_with_balance($this->user->id, $nodeId, true));
     }
 
     public function CouponCheck($request, $response, $args)

@@ -56,6 +56,7 @@ return function (SlimApp $app) {
         $this->get('/shop',                     App\Controllers\UserController::class . ':shop');
         $this->get('/dedicated-node',            App\Controllers\UserController::class . ':dedicatedNode');
         $this->post('/dedicated-node/buy',       App\Controllers\UserController::class . ':dedicatedNodeBuy');
+        $this->post('/dedicated-node/renew',     App\Controllers\UserController::class . ':dedicatedNodeRenew');
         $this->post('/coupon_check',            App\Controllers\UserController::class . ':CouponCheck');
         $this->post('/buy',                     App\Controllers\UserController::class . ':buy');
         $this->post('/buy_traffic_package',     App\Controllers\UserController::class . ':buy_traffic_package');

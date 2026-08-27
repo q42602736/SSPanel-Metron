@@ -31,19 +31,31 @@ class MetronPay extends AbstractPayment
 
             $dedicatedNodeId = (int) $request->getParam('dedicated_node_id', 0);
             if ($dedicatedNodeId > 0) {
+                $dedicatedRenew = (int) $request->getParam('dedicated_node_renew', 0) === 1;
+                $currentUser = Auth::getUser();
+                if ($currentUser === null || (int) $currentUser->enable !== 1) {
+                    return json_encode(['ret' => 0, 'msg' => '登录状态已失效']);
+                }
                 $node = Node::find($dedicatedNodeId);
-                if ($node === null || !$node->isDedicatedForSale()) {
+                if ($node === null || !$node->isDedicated()) {
                     return json_encode(['ret' => 0, 'msg' => '专用节点暂不可购买']);
                 }
                 NodeAccess::releaseStale($node->id);
-                if (NodeAccess::activeForNode($node->id) !== null) {
+                $activeAccess = NodeAccess::activeForNode($node->id);
+                if ($dedicatedRenew) {
+                    if ($activeAccess === null || (int) $activeAccess->user_id !== (int) $currentUser->id) {
+                        return json_encode(['ret' => 0, 'msg' => '专用节点授权已失效，请重新购买']);
+                    }
+                } elseif ($activeAccess !== null) {
                     return json_encode(['ret' => 0, 'msg' => '该专用节点已被购买']);
+                } elseif (!$node->isDedicatedForSale()) {
+                    return json_encode(['ret' => 0, 'msg' => '专用节点暂不可购买']);
                 }
                 $price = (float) $node->dedicated_price;
-                if ($price <= 0) {
-                    return json_encode(['ret' => 0, 'msg' => '专用节点价格必须大于 0 元']);
+                if ($price <= 0 || (int) $node->dedicated_days < 1) {
+                    return json_encode(['ret' => 0, 'msg' => '专用节点价格或授权周期无效']);
                 }
-                $balance = max(0, (float) Auth::getUser()->money);
+                $balance = max(0, (float) $currentUser->money);
                 $balanceUsed = min($balance, $price);
                 $onlinePrice = (float) bcsub(
                     number_format($price, 2, '.', ''),
@@ -57,6 +69,7 @@ class MetronPay extends AbstractPayment
                 $shopinfo['dedicated_balance_used'] = number_format($balanceUsed, 2, '.', '');
                 $shopinfo['dedicated_days'] = (int) $node->dedicated_days;
                 $shopinfo['dedicated_traffic'] = (int) $node->dedicatedTrafficBytes();
+                $shopinfo['dedicated_node_renew'] = $dedicatedRenew ? 1 : 0;
                 if ($onlinePrice <= 0) {
                     return json_encode(['ret' => 0, 'msg' => '余额已足够支付，请使用余额支付']);
                 }
