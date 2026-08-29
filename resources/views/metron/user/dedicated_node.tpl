@@ -1201,6 +1201,343 @@
 
     </style>
     {include file='include/global/head.tpl'}
+    {if $theme_style === 'dark'}
+    <style>
+        /* 专用节点页使用与 Metron 深色主题一致的层级色，避免浅色页面样式覆盖深色基底。 */
+        #kt_body {
+            --dedicated-bg: #18191a;
+            --dedicated-surface: #242526;
+            --dedicated-surface-raised: #2d2f31;
+            --dedicated-input: #3a3b3c;
+            --dedicated-border: #3a3b3c;
+            --dedicated-text: #ecf0f3;
+            --dedicated-text-muted: #b5b5c3;
+            --dedicated-text-soft: #8f98a6;
+        }
+
+        .dedicated-node-card {
+            background-color: var(--dedicated-surface);
+            border-color: var(--dedicated-border);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+        }
+
+        .dedicated-node-card:hover {
+            box-shadow: 0 16px 34px rgba(0, 0, 0, 0.32);
+        }
+
+        .dedicated-node-header {
+            background: rgba(58, 59, 60, 0.62);
+            border-bottom-color: var(--dedicated-border);
+        }
+
+        .dedicated-node-title,
+        .dedicated-node-price-value {
+            color: var(--dedicated-text);
+        }
+
+        .dedicated-node-type,
+        .dedicated-node-description,
+        .dedicated-node-price-line {
+            color: var(--dedicated-text-muted);
+        }
+
+        .dedicated-node-empty-description,
+        .dedicated-node-term {
+            color: var(--dedicated-text-soft);
+        }
+
+        .dedicated-node-fact {
+            background: var(--dedicated-input);
+        }
+
+        .dedicated-node-fact-icon {
+            background: rgba(105, 147, 255, 0.2);
+            color: #9eb8ff;
+        }
+
+        .dedicated-node-fact-label,
+        .dedicated-node-filter-label,
+        .dedicated-node-filter-summary,
+        .dedicated-node-unlock-title,
+        .dedicated-node-unlock-item,
+        .dedicated-node-unlock-heading .text-muted {
+            color: var(--dedicated-text-muted) !important;
+        }
+
+        .dedicated-node-fact-value {
+            color: var(--dedicated-text);
+        }
+
+        .dedicated-node-unlock,
+        .dedicated-node-footer {
+            border-color: var(--dedicated-border);
+        }
+
+        .btn.dedicated-node-renew {
+            color: #b8caff;
+            background-color: rgba(105, 147, 255, 0.16);
+            border-color: rgba(105, 147, 255, 0.58);
+        }
+
+        .btn.dedicated-node-renew:hover:not(.btn-text),
+        .btn.dedicated-node-renew:focus:not(.btn-text),
+        .btn.dedicated-node-renew.focus {
+            color: #fff;
+            background-color: #6993ff;
+            border-color: #6993ff;
+        }
+
+        .dedicated-node-state.label-light-primary {
+            color: #b8caff !important;
+            background-color: rgba(105, 147, 255, 0.18) !important;
+            border-color: rgba(105, 147, 255, 0.35) !important;
+        }
+
+        .dedicated-node-state.label-secondary {
+            color: var(--dedicated-text-muted) !important;
+            background-color: var(--dedicated-input) !important;
+            border-color: var(--dedicated-border) !important;
+        }
+
+        .dedicated-node-toolbar {
+            background: rgba(36, 37, 38, 0.94);
+            border-color: var(--dedicated-border);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .dedicated-node-filter-chip,
+        .dedicated-node-owned-filter {
+            color: var(--dedicated-text-muted);
+            background: var(--dedicated-input);
+            border-color: #4a4b4d;
+        }
+
+        .dedicated-node-filter-chip:hover,
+        .dedicated-node-filter-chip:focus,
+        .dedicated-node-owned-filter:hover,
+        .dedicated-node-owned-filter:focus {
+            color: #c6d4ff;
+            background: rgba(105, 147, 255, 0.18);
+            border-color: rgba(105, 147, 255, 0.6);
+        }
+
+        .dedicated-node-filter-chip-count {
+            color: var(--dedicated-text-muted);
+            background: var(--dedicated-surface-raised);
+        }
+
+        .dedicated-node-filter-chip.is-active .dedicated-node-filter-chip-count {
+            color: #527bea;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .dedicated-node-filter-empty,
+        .dedicated-node-filter-empty strong {
+            color: var(--dedicated-text-muted);
+        }
+
+        .dedicated-node-filter-empty strong {
+            color: var(--dedicated-text);
+        }
+
+        #kt_body .dedicated-node-empty-alert {
+            color: var(--dedicated-text-muted);
+            background-color: var(--dedicated-surface);
+            border-color: var(--dedicated-border);
+        }
+
+        .dedicated-owned-modal .modal-content,
+        .dedicated-config-modal .modal-content,
+        .dedicated-qr-modal .modal-content,
+        .dedicated-confirm-modal .modal-content,
+        .dedicated-payment-modal .modal-content {
+            color: var(--dedicated-text);
+            background-color: var(--dedicated-surface);
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.38);
+        }
+
+        .dedicated-owned-modal .modal-header,
+        .dedicated-config-modal .modal-header,
+        .dedicated-qr-modal .modal-header,
+        .dedicated-confirm-modal .modal-header,
+        .dedicated-payment-modal .modal-header,
+        .dedicated-owned-modal .modal-footer,
+        .dedicated-confirm-modal .modal-footer,
+        .dedicated-payment-modal .modal-footer {
+            border-color: var(--dedicated-border);
+        }
+
+        .dedicated-owned-modal .modal-title,
+        .dedicated-config-modal .modal-title,
+        .dedicated-qr-modal .modal-title,
+        .dedicated-confirm-modal .modal-title,
+        .dedicated-payment-modal .modal-title,
+        .dedicated-owned-node-name,
+        .dedicated-confirm-node,
+        .dedicated-payment-summary {
+            color: var(--dedicated-text);
+        }
+
+        .dedicated-owned-modal .modal-body,
+        .dedicated-config-modal .modal-body,
+        .dedicated-qr-modal .modal-body {
+            background: var(--dedicated-bg);
+        }
+
+        .dedicated-owned-item,
+        .dedicated-config-url-box,
+        .dedicated-config-detail {
+            background: var(--dedicated-surface);
+            border-color: var(--dedicated-border);
+        }
+
+        .dedicated-owned-node-ip,
+        .dedicated-owned-expire,
+        .dedicated-owned-remaining-label,
+        .dedicated-owned-traffic-label,
+        .dedicated-config-url-label,
+        .dedicated-config-status,
+        .dedicated-config-loading,
+        .dedicated-qr-hint,
+        .dedicated-qr-fallback,
+        .dedicated-qr-url,
+        .dedicated-owned-empty,
+        .dedicated-confirm-lead,
+        .dedicated-payment-hint {
+            color: var(--dedicated-text-muted);
+        }
+
+        .dedicated-owned-empty strong {
+            color: var(--dedicated-text);
+        }
+
+        .dedicated-owned-expire strong,
+        .dedicated-owned-traffic-value,
+        .dedicated-config-detail-value {
+            color: var(--dedicated-text);
+        }
+
+        .dedicated-owned-progress,
+        .dedicated-owned-traffic-metric {
+            background: var(--dedicated-input);
+        }
+
+        .dedicated-owned-unlimited {
+            color: var(--dedicated-text-muted);
+            background: rgba(54, 153, 255, 0.14);
+        }
+
+        .dedicated-payment-qr {
+            background: var(--dedicated-input);
+        }
+
+        .dedicated-config-url {
+            color: var(--dedicated-text);
+            background: var(--dedicated-input);
+            border-color: #4a4b4d;
+        }
+
+        .dedicated-confirm-node {
+            background: var(--dedicated-input);
+            border-color: #4a4b4d;
+        }
+
+        .dedicated-confirm-icon {
+            color: #a9bdff;
+            background: rgba(105, 147, 255, 0.18);
+        }
+
+        .dedicated-confirm-warning {
+            color: #e3c47c;
+            background: rgba(255, 168, 0, 0.12);
+            border-color: rgba(255, 168, 0, 0.34);
+        }
+
+        .btn.dedicated-confirm-cancel,
+        .dedicated-pay-balance.btn {
+            color: var(--dedicated-text-muted);
+            background-color: var(--dedicated-input);
+            border-color: #4a4b4d;
+        }
+
+        .btn.dedicated-confirm-cancel:hover,
+        .btn.dedicated-confirm-cancel:focus,
+        .dedicated-pay-balance.btn:hover:not(:disabled),
+        .dedicated-pay-balance.btn:focus:not(:disabled) {
+            color: var(--dedicated-text);
+            background-color: #4a4b4d;
+            border-color: #626468;
+        }
+
+        .dedicated-pay-option.btn-light-primary,
+        .dedicated-owned-action.btn-light-primary {
+            color: #b8caff;
+            background-color: rgba(105, 147, 255, 0.16);
+            border-color: rgba(105, 147, 255, 0.45);
+        }
+
+        .dedicated-pay-option.btn-light-success,
+        .dedicated-owned-action.btn-light-success {
+            color: #8be5dc;
+            background-color: rgba(27, 197, 189, 0.14);
+            border-color: rgba(27, 197, 189, 0.42);
+        }
+
+        .dedicated-pay-option.btn-light-info,
+        .dedicated-owned-action.btn-light-info {
+            color: #c2aaff;
+            background-color: rgba(137, 80, 252, 0.14);
+            border-color: rgba(137, 80, 252, 0.42);
+        }
+
+        .dedicated-pay-option.btn-light-warning {
+            color: #f1cf83;
+            background-color: rgba(255, 168, 0, 0.14);
+            border-color: rgba(255, 168, 0, 0.42);
+        }
+
+        .dedicated-pay-option.btn-light-primary:hover,
+        .dedicated-pay-option.btn-light-primary:focus,
+        .dedicated-owned-action.btn-light-primary:hover,
+        .dedicated-owned-action.btn-light-primary:focus {
+            color: #fff;
+            background-color: #6993ff;
+            border-color: #6993ff;
+        }
+
+        .dedicated-pay-option.btn-light-success:hover,
+        .dedicated-pay-option.btn-light-success:focus,
+        .dedicated-owned-action.btn-light-success:hover,
+        .dedicated-owned-action.btn-light-success:focus {
+            color: #fff;
+            background-color: #1bc5bd;
+            border-color: #1bc5bd;
+        }
+
+        .dedicated-pay-option.btn-light-info:hover,
+        .dedicated-pay-option.btn-light-info:focus,
+        .dedicated-owned-action.btn-light-info:hover,
+        .dedicated-owned-action.btn-light-info:focus {
+            color: #fff;
+            background-color: #8950fc;
+            border-color: #8950fc;
+        }
+
+        .dedicated-pay-option.btn-light-warning:hover,
+        .dedicated-pay-option.btn-light-warning:focus {
+            color: #fff;
+            background-color: #ffa800;
+            border-color: #ffa800;
+        }
+
+        #dedicated-payment-result.alert-light,
+        .dedicated-payment-result.alert-light {
+            color: var(--dedicated-text-muted);
+            background-color: var(--dedicated-input);
+            border-color: var(--dedicated-border);
+        }
+    </style>
+    {/if}
     <div class="d-flex flex-column flex-root">
         <div class="d-flex flex-row flex-column-fluid page">
             <div class="d-flex flex-column flex-row-fluid wrapper" id="kt_wrapper">
@@ -1345,7 +1682,7 @@
                             </div>
                         {foreachelse}
                             <div class="col-12">
-                                <div class="alert alert-light d-flex align-items-center justify-content-between flex-wrap py-5 px-6">
+                                <div class="alert alert-light dedicated-node-empty-alert d-flex align-items-center justify-content-between flex-wrap py-5 px-6">
                                     <span>暂无可购买的专用节点</span>
                                 </div>
                             </div>
