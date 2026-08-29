@@ -854,6 +854,10 @@ class UserController extends BaseController
             '加拿大' => 'ca',
             '菲律宾' => 'ph',
             '德国' => 'de',
+            '泰国' => 'th',
+            '越南' => 'vn',
+            '印度' => 'in',
+            '意大利' => 'it',
         ][$matches[0] ?? ''] ?? 'un';
     }
 
@@ -873,6 +877,10 @@ class UserController extends BaseController
             'ca' => '加拿大',
             'ph' => '菲律宾',
             'de' => '德国',
+            'th' => '泰国',
+            'vn' => '越南',
+            'in' => '印度',
+            'it' => '意大利',
         ][$flagCode] ?? '其他';
     }
 
