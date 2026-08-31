@@ -2255,6 +2255,36 @@
                 });
             }
 
+            function renderQrCode(container, text, size) {
+                var correctLevel = window.QRCode.CorrectLevel;
+                var levels = correctLevel
+                    ? [correctLevel.H, correctLevel.Q, correctLevel.M, correctLevel.L]
+                    : [2, 3, 0, 1];
+                if (levels.some(function (level) {
+                    return typeof level === 'undefined';
+                })) {
+                    levels = [2, 3, 0, 1];
+                }
+
+                for (var index = 0; index < levels.length; index += 1) {
+                    container.innerHTML = '';
+                    try {
+                        new window.QRCode(container, {
+                            width: size,
+                            height: size,
+                            text: text,
+                            correctLevel: levels[index]
+                        });
+                        return true;
+                    } catch (error) {
+                        // 长链接可能超过当前纠错级别容量，继续尝试更低级别。
+                    }
+                }
+
+                container.innerHTML = '';
+                return false;
+            }
+
             function showQr(data, nodeName) {
                 var url = getNodeUrl(data);
                 var protocol = data.protocol || protocolNames[parseInt(data.sort, 10)] || '节点';
@@ -2266,9 +2296,7 @@
                     qrFallback.textContent = '该节点暂时没有可用的节点链接';
                     qrFallback.style.display = '';
                 } else if (window.QRCode) {
-                    try {
-                        new window.QRCode(qrCode, {width: 240, height: 240, text: url});
-                    } catch (error) {
+                    if (!renderQrCode(qrCode, url, 240)) {
                         qrFallback.textContent = '二维码生成失败，请使用“复制节点链接”导入';
                         qrFallback.style.display = '';
                     }
