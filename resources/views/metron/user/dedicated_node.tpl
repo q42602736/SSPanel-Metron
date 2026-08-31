@@ -1378,6 +1378,30 @@
             color: var(--dedicated-text);
         }
 
+        /* Metron 的 modal 标题选择器优先级更高，专用节点弹窗需要显式覆盖。 */
+        body#kt_body .dedicated-owned-modal .modal-header .modal-title {
+            color: var(--dedicated-text) !important;
+        }
+
+        body#kt_body .dedicated-owned-modal .dedicated-owned-count {
+            color: #b8caff !important;
+            background-color: rgba(105, 147, 255, 0.18) !important;
+            border: 1px solid rgba(105, 147, 255, 0.35);
+        }
+
+        body#kt_body .dedicated-owned-modal .modal-footer .btn.btn-secondary {
+            color: var(--dedicated-text) !important;
+            background-color: var(--dedicated-input) !important;
+            border-color: #4a4b4d !important;
+        }
+
+        body#kt_body .dedicated-owned-modal .modal-footer .btn.btn-secondary:hover,
+        body#kt_body .dedicated-owned-modal .modal-footer .btn.btn-secondary:focus {
+            color: #fff !important;
+            background-color: #4a4b4d !important;
+            border-color: #626468 !important;
+        }
+
         .dedicated-owned-modal .modal-body,
         .dedicated-config-modal .modal-body,
         .dedicated-qr-modal .modal-body {
