@@ -179,10 +179,10 @@ class AppURI
                 } else {
                     if ($item['headerType'] != "") $node .= "&headerType=" . $item['headerType'];
                 }
-                $return = $node . '#' . $item['remark'];
+                $return = $node . '#' . rawurlencode($item['remark']);
                 break;
             case 'trojan':
-                $return = 'trojan://' . $item['passwd'] . '@' . $item['address'] . ':' . $item['port'] . '?sni=' . $item['host'] . '#' . $item['remark'];
+                $return = 'trojan://' . $item['passwd'] . '@' . $item['address'] . ':' . $item['port'] . '?sni=' . $item['host'] . '#' . rawurlencode($item['remark']);
                 break;
             case 'hysteria2':
                 $return = 'hysteria2://' . $item['password'] . '@' . $item['address'] . ':' . $item['port'];

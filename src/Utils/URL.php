@@ -560,7 +560,7 @@ class URL
         if (isset($item['spx']) && $item['spx']){
             $node .= '&spx='.$item['spx'];
         }
-        $node .= '#' . $item['remark'];
+        $node .= '#' . rawurlencode($item['remark']);
         if (!$arrout) {
             return $node;
         }
