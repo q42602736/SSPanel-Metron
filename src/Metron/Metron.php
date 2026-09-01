@@ -483,6 +483,9 @@ class Metron
                 if ($user === null || $node === null || !$node->isDedicated()) {
                     throw new Exception('专用节点订单无效');
                 }
+                if (!$node->isDedicatedPurchaseAvailable()) {
+                    throw new Exception('当前离线，暂时无法购买');
+                }
 
                 $isRenew = (int) ($shopinfo['dedicated_node_renew'] ?? 0) === 1;
                 NodeAccess::releaseStale($node->id);
@@ -563,6 +566,9 @@ class Metron
                 $node = Node::where('id', (int) $nodeId)->lockForUpdate()->first();
                 if ($user === null || (int) $user->enable !== 1 || $node === null || !$node->isDedicated()) {
                     throw new Exception('专用节点暂不可购买');
+                }
+                if (!$node->isDedicatedPurchaseAvailable()) {
+                    throw new Exception('当前离线，暂时无法购买');
                 }
                 if (!$renew && !$node->isDedicatedForSale()) {
                     throw new Exception('专用节点暂不可购买');

@@ -198,6 +198,14 @@ class Node extends Model
             && (int) ($this->attributes['dedicated_days'] ?? 0) > 0;
     }
 
+    /**
+     * 专用节点只有明确离线时才禁止购买；无法检测在线状态的节点继续允许购买。
+     */
+    public function isDedicatedPurchaseAvailable(): bool
+    {
+        return $this->isNodeOnline() !== false;
+    }
+
     public function dedicatedTrafficBytes(): int
     {
         return max(0, (int) ($this->attributes['dedicated_traffic'] ?? 0)) * 1024 * 1024 * 1024;

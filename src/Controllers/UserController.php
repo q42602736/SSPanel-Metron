@@ -714,6 +714,7 @@ class UserController extends BaseController
             ->orderBy('name')->get();
         foreach ($ownedNodes as $node) {
             $access = $myAccessByNodeId[(int) $node->id];
+            $onlineState = $node->isNodeOnline();
             $trafficLimit = max(0, (int) $access->traffic_limit);
             $trafficUsed = max(0, (int) $access->traffic_used);
             $trafficRemaining = $trafficLimit > 0 ? max(0, $trafficLimit - $trafficUsed) : 0;
@@ -721,6 +722,8 @@ class UserController extends BaseController
                 'node' => $node,
                 'access' => $access,
                 'flag' => $this->dedicatedFlagCode($node->name),
+                'online' => $onlineState === true,
+                'purchase_available' => $onlineState !== false,
                 'expire_text' => date('Y-m-d H:i', $access->expire_at),
                 'traffic_used_text' => Tools::flowAutoShow($trafficUsed),
                 'traffic_limit_text' => $trafficLimit > 0 ? Tools::flowAutoShow($trafficLimit) : '不限',
@@ -740,6 +743,7 @@ class UserController extends BaseController
             ->orderBy('node_sort', 'desc')
             ->orderBy('name')->get();
         foreach ($nodes as $node) {
+            $onlineState = $node->isNodeOnline();
             $access = NodeAccess::activeForNode($node->id);
             $myAccess = $access && (int) $access->user_id === (int) $this->user->id ? $access : null;
             if ($access !== null && $myAccess === null) {
@@ -802,7 +806,8 @@ class UserController extends BaseController
                 'occupied' => $access !== null && $myAccess === null,
                 'flag' => $flagCode,
                 'country_code' => $flagCode,
-                'online' => $node->isNodeOnline() === true,
+                'online' => $onlineState === true,
+                'purchase_available' => $onlineState !== false,
                 'unlock_items' => $unlockItems,
                 'dedicated_traffic_text' => $node->dedicatedTrafficBytes() > 0
                     ? Tools::flowAutoShow($node->dedicatedTrafficBytes())

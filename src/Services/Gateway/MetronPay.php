@@ -40,6 +40,9 @@ class MetronPay extends AbstractPayment
                 if ($node === null || !$node->isDedicated()) {
                     return json_encode(['ret' => 0, 'msg' => '专用节点暂不可购买']);
                 }
+                if (!$node->isDedicatedPurchaseAvailable()) {
+                    return json_encode(['ret' => 0, 'msg' => '当前离线，暂时无法购买']);
+                }
                 NodeAccess::releaseStale($node->id);
                 $activeAccess = NodeAccess::activeForNode($node->id);
                 if ($dedicatedRenew) {

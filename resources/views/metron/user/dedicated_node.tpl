@@ -1383,6 +1383,10 @@
             color: var(--dedicated-text) !important;
         }
 
+        body#kt_body .dedicated-confirm-modal .modal-header .modal-title {
+            color: var(--dedicated-text) !important;
+        }
+
         body#kt_body .dedicated-owned-modal .dedicated-owned-count {
             color: #b8caff !important;
             background-color: rgba(105, 147, 255, 0.18) !important;
@@ -1696,9 +1700,9 @@
                                             {if $item['occupied']}
                                                 <span class="label label-inline label-secondary dedicated-node-state">已售出</span>
                                             {elseif $access}
-                                                <button type="button" class="btn dedicated-node-renew" onclick="dedicatedRenew({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}')">续费</button>
+                                                <button type="button" class="btn dedicated-node-renew" onclick="dedicatedRenew({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}', {if $item['purchase_available']}1{else}0{/if})">续费</button>
                                             {elseif !$access}
-                                                <button type="button" class="btn btn-primary dedicated-node-buy" onclick="dedicatedBuy({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}')">购买</button>
+                                                <button type="button" class="btn btn-primary dedicated-node-buy" onclick="dedicatedBuy({$node->id}, '{$node->name|escape:'javascript'}', '{$node->dedicated_price}', {if $item['purchase_available']}1{else}0{/if})">购买</button>
                                             {/if}
                                         </div>
                                     </div>
@@ -1796,7 +1800,7 @@
                                         <button type="button" class="btn btn-light-success dedicated-owned-action" onclick="dedicatedNodeShadowrocket({$ownedNode->id}, '{$ownedNode->name|escape:'javascript'}')" title="导入 Shadowrocket">
                                             <i class="fas fa-rocket" aria-hidden="true"></i>Shadowrocket
                                         </button>
-                                        <button type="button" class="btn btn-outline-primary dedicated-owned-renew" onclick="dedicatedRenew({$ownedNode->id}, '{$ownedNode->name|escape:'javascript'}', '{$ownedNode->dedicated_price}')">续费</button>
+                                        <button type="button" class="btn btn-outline-primary dedicated-owned-renew" onclick="dedicatedRenew({$ownedNode->id}, '{$ownedNode->name|escape:'javascript'}', '{$ownedNode->dedicated_price}', {if $ownedItem['purchase_available']}1{else}0{/if})">续费</button>
                                     </div>
                                 </section>
                             {/foreach}
@@ -2419,6 +2423,24 @@
                 });
             }
 
+            function isPurchaseAvailable(value) {
+                return value !== false && value !== 0 && value !== '0';
+            }
+
+            function showOfflineMessage() {
+                if (window.Swal && typeof window.Swal.fire === 'function') {
+                    window.Swal.fire({
+                        icon: 'warning',
+                        title: '当前离线',
+                        text: '暂时无法购买',
+                        confirmButtonText: '知道了'
+                    });
+                    return;
+                }
+                setResult('当前离线，暂时无法购买', true, false);
+                showModal();
+            }
+
             function setResult(message, isError, html) {
                 result.className = 'alert mt-3 ' + (isError ? 'alert-danger' : 'alert-light');
                 if (html) {
@@ -2544,15 +2566,20 @@
                 modal.setAttribute('aria-hidden', 'true');
             }
 
-            function showRenewConfirm(nodeId, nodeName, price) {
+            function showRenewConfirm(nodeId, nodeName, price, purchaseAvailable) {
+                if (!isPurchaseAvailable(purchaseAvailable)) {
+                    showOfflineMessage();
+                    return;
+                }
                 if (!renewConfirmModal) {
-                    openPayment('renew', nodeId, nodeName, price);
+                    openPayment('renew', nodeId, nodeName, price, purchaseAvailable);
                     return;
                 }
                 pendingRenewal = {
                     nodeId: parseInt(nodeId, 10),
                     nodeName: nodeName,
-                    price: price
+                    price: price,
+                    purchaseAvailable: purchaseAvailable
                 };
                 renewConfirmNode.textContent = nodeName;
                 renewConfirmSubmit.disabled = false;
@@ -2579,15 +2606,19 @@
             }
 
             function startRenewal(renewal) {
+                if (!isPurchaseAvailable(renewal.purchaseAvailable)) {
+                    showOfflineMessage();
+                    return;
+                }
                 if (ownedModal && window.jQuery && window.jQuery.fn && window.jQuery.fn.modal
                     && window.jQuery(ownedModal).hasClass('show')) {
                     window.jQuery(ownedModal).one('hidden.bs.modal', function () {
-                        openPayment('renew', renewal.nodeId, renewal.nodeName, renewal.price);
+                        openPayment('renew', renewal.nodeId, renewal.nodeName, renewal.price, renewal.purchaseAvailable);
                     });
                     window.jQuery(ownedModal).modal('hide');
                     return;
                 }
-                openPayment('renew', renewal.nodeId, renewal.nodeName, renewal.price);
+                openPayment('renew', renewal.nodeId, renewal.nodeName, renewal.price, renewal.purchaseAvailable);
             }
 
             function confirmRenewal() {
@@ -2611,7 +2642,11 @@
                 startRenewal(renewal);
             }
 
-            function openPayment(action, nodeId, nodeName, price) {
+            function openPayment(action, nodeId, nodeName, price, purchaseAvailable) {
+                if (!isPurchaseAvailable(purchaseAvailable)) {
+                    showOfflineMessage();
+                    return;
+                }
                 stopPolling();
                 paymentWindow = null;
                 paymentWindowPending = false;
@@ -2631,12 +2666,16 @@
                 showModal();
             }
 
-            window.dedicatedBuy = function (nodeId, nodeName, price) {
-                openPayment('buy', nodeId, nodeName, price);
+            window.dedicatedBuy = function (nodeId, nodeName, price, purchaseAvailable) {
+                if (!isPurchaseAvailable(purchaseAvailable)) {
+                    showOfflineMessage();
+                    return;
+                }
+                openPayment('buy', nodeId, nodeName, price, purchaseAvailable);
             };
 
-            window.dedicatedRenew = function (nodeId, nodeName, price) {
-                showRenewConfirm(nodeId, nodeName, price);
+            window.dedicatedRenew = function (nodeId, nodeName, price, purchaseAvailable) {
+                showRenewConfirm(nodeId, nodeName, price, purchaseAvailable);
             };
 
             if (renewConfirmSubmit) {
