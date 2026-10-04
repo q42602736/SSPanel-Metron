@@ -41,7 +41,7 @@
                         var clashUrl = '{$subInfo["clash"]}';
                         $('#qrcode-sublink-content').html('<div class="text-center"><p>使用 Clash 客户端扫描</p><div align="center" id="qrcode" style="padding-top:10px;"></div></div>');
                         $('#qrcode').qrcode({
-                            text: 'clash://install-config?url=' + encodeURIComponent(clashUrl)
+                            text: clashUrl
                         });
                         $('#qrcode-sublink-modal').modal('show');
                     });
