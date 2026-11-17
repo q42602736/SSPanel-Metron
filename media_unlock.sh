@@ -1183,7 +1183,10 @@ MediaUnlockTest_TikTok() {
     fi
 
     log "DEBUG" "步骤3：解析地区信息"
-    local FRegion=$(echo "$Ftmpresult" | grep '"region":' | sed 's/.*"region"//' | cut -f2 -d'"')
+    # 仅提取一个两位地区码，忽略 ttp 等值，避免换行导致 JSON 写入失败
+    local FRegion=$(printf '%s' "$Ftmpresult" | tr -d '\r\n' \
+        | grep -oE '"region"[[:space:]]*:[[:space:]]*"[A-Za-z]{2}"' \
+        | head -n 1 | cut -d'"' -f4 | tr '[:lower:]' '[:upper:]')
     
     if [ -n "$FRegion" ]; then
         log "INFO" "解锁成功，区域: ${FRegion}"
@@ -1201,7 +1204,9 @@ MediaUnlockTest_TikTok() {
         -H "Accept-Language: en" \
         "https://www.tiktok.com" 2>&1 | gunzip 2>/dev/null)
     
-    local SRegion=$(echo "$STmpresult" | grep '"region":' | sed 's/.*"region"//' | cut -f2 -d'"')
+    local SRegion=$(printf '%s' "$STmpresult" | tr -d '\r\n' \
+        | grep -oE '"region"[[:space:]]*:[[:space:]]*"[A-Za-z]{2}"' \
+        | head -n 1 | cut -d'"' -f4 | tr '[:lower:]' '[:upper:]')
     
     if [ -n "$SRegion" ]; then
         log "INFO" "解锁成功（可能为IDC IP），区域: ${SRegion}"
