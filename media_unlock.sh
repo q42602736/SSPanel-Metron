@@ -1183,12 +1183,12 @@ MediaUnlockTest_TikTok() {
     fi
 
     log "DEBUG" "步骤3：解析地区信息"
-    # 仅提取一个两位地区码，忽略 ttp 等值，避免换行导致 JSON 写入失败
+    # 仅提取一个原始大写两位地区码，忽略小写或非两位值，避免多行写入
     local FRegion=$(printf '%s' "$Ftmpresult" | tr -d '\r\n' \
-        | grep -oE '"region"[[:space:]]*:[[:space:]]*"[A-Za-z]{2}"' \
-        | head -n 1 | cut -d'"' -f4 | tr '[:lower:]' '[:upper:]')
+        | grep -oE '"region"[[:space:]]*:[[:space:]]*"[A-Z]{2}"' \
+        | head -n 1 | cut -d'"' -f4)
     
-    if [ -n "$FRegion" ]; then
+    if [[ "$FRegion" =~ ^[A-Z]{2}$ ]]; then
         log "INFO" "解锁成功，区域: ${FRegion}"
         echo -n -e "\r TikTok Region:\t\t\t\t${Font_Green}Yes (Region: ${FRegion})${Font_Suffix}\n"
         modifyJsonTemplate 'TikTok_result' 'Yes' "${FRegion}"
@@ -1205,10 +1205,10 @@ MediaUnlockTest_TikTok() {
         "https://www.tiktok.com" 2>&1 | gunzip 2>/dev/null)
     
     local SRegion=$(printf '%s' "$STmpresult" | tr -d '\r\n' \
-        | grep -oE '"region"[[:space:]]*:[[:space:]]*"[A-Za-z]{2}"' \
-        | head -n 1 | cut -d'"' -f4 | tr '[:lower:]' '[:upper:]')
+        | grep -oE '"region"[[:space:]]*:[[:space:]]*"[A-Z]{2}"' \
+        | head -n 1 | cut -d'"' -f4)
     
-    if [ -n "$SRegion" ]; then
+    if [[ "$SRegion" =~ ^[A-Z]{2}$ ]]; then
         log "INFO" "解锁成功（可能为IDC IP），区域: ${SRegion}"
         echo -n -e "\r TikTok Region:\t\t\t\t${Font_Yellow}Yes (Region: ${SRegion}) (IDC IP)${Font_Suffix}\n"
         modifyJsonTemplate 'TikTok_result' 'Yes' "${SRegion}"
